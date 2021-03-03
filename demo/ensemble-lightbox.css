@@ -90,6 +90,7 @@
 .modal-captions {
   bottom: 0;
   width: 100%;
+  min-height: 8.2vh;
   padding: 3vh 1rem;
   font-size: .9rem;
   line-height: 1.5;
@@ -97,6 +98,9 @@
 
   color: #fff;
   background: rgba(0, 0, 0, .8);
+}
+.modal-captions:empty {
+  display: none;
 }
 .modal-captions p {
   margin: 0 0 1rem;
@@ -171,6 +175,14 @@
 .modal.modal-fx .modal-object {
   opacity: 1;
   transition: opacity 100ms ease;
+}
+.modal.modal-fx .modal-captions:empty {
+  opacity: 0;
+}
+.modal.modal-fx .modal-captions {
+  display: block !important;
+  opacity: 1;
+  transition: opacity 200ms ease-out;
 }
 .modal.modal-fx .modal-button {
   transition: all 30ms linear;
