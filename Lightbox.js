@@ -306,7 +306,6 @@
       if (! this.options.infinite && typeof way != 'undefined') {
         switch (way) {
           case -1:
-            console.log(nav.last);
             nav.first.setAttr('disabled', true);
             nav.last.delAttr('disabled');
             break;
