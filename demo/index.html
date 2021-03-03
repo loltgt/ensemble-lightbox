@@ -93,7 +93,7 @@ section button { margin: 1.5rem 0 0; }
 </figure>
 
 <figure>
-<a href="test-pdf-document.pdf" data-caption="pdf"></a>
+    <a href="test-pdf-document.pdf" data-caption="pdf"></a>
 </figure>
 
 <figure>
@@ -117,6 +117,7 @@ section button { margin: 1.5rem 0 0; }
     <img src="test-webp-image-126293.webp">
 </a>
 </figure>
+
 <figure>
 <a href="test-avif-image-1510592.avif">
     <img src="test-avif-image-1510592.avif">
@@ -132,6 +133,20 @@ section button { margin: 1.5rem 0 0; }
 <script src="../../ensemble-modal/Modal.js"></script>
 <script src="../../ensemble-lightbox/Lightbox.js"></script>
 <script>
+const g1 = document.querySelector('.grid:last-child');
+
+for (const o of g1.querySelectorAll('img')) {
+  const n = new Image();
+  n.onerror = e => {
+    o.parentElement.parentElement.remove();
+
+    if (! g1.children.length) {
+      g1.hidden = g1.previousElementSibling.hidden = true;
+    }
+  };
+  n.src = o.src;
+}
+
 const element = document.querySelector('.content');
 const modal = new ensemble.Modal(element);
 const button = document.querySelector('button[type="button"]');
