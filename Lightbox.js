@@ -6,12 +6,14 @@
  * @license MIT License
  */
 
-
 'use strict';
 
-(function(ensemble) {
+(function(window, module, require, ensemble) {
 
-  class Lightbox extends ensemble.Modal {
+  const Modal = ensemble ? ensemble.Modal : require('../ensemble-modal/Modal');
+
+
+  class Lightbox extends Modal {
 
     _defaults() {
       return Object.assign(super._defaults(), {
@@ -373,6 +375,7 @@
   }
 
 
-  globalThis.ensemble = { ...ensemble, ...{ Lightbox } };
+  window.ensemble = { ...ensemble, ...{ Lightbox } };
+  module.exports = Lightbox;
 
-}(globalThis.ensemble));
+}((typeof window != 'undefined' ? window : {}), (typeof module != 'undefined' ? module : {}), (typeof require != 'undefined' ? require : function() {}), globalThis.ensemble));
