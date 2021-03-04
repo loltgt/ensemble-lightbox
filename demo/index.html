@@ -127,9 +127,9 @@ section button { margin: 1.5rem 0 0; }
 </section>
 </main>
 
-<script src="../../ensemble-stack-d1/base.js"></script>
 <script src="../../ensemble/Compo.js"></script>
 <script src="../../ensemble/Event.js"></script>
+<script src="../../ensemble-stack-d1/base.js"></script>
 <script src="../../ensemble-modal/Modal.js"></script>
 <script src="../../ensemble-lightbox/Lightbox.js"></script>
 <script>
@@ -164,7 +164,9 @@ for (const el of elements) {
 
   const lightbox = new ensemble.Lightbox(el, options);
 
-  el.addEventListener('click', lightbox.open, true);
+  for (const a of el.querySelectorAll('a')) {
+    a.addEventListener('click', lightbox.open, true);
+  }
 }
 </script>
 </body>

@@ -43,10 +43,10 @@
     _bindings() {
       super._bindings();
 
-      this.add = this.add.bind(this);
-      this.remove = this.remove.bind(this);
-      this.prev = this.prev.bind(this);
-      this.next = this.next.bind(this);
+      this.add = this.binds(this.add);
+      this.remove = this.binds(this.remove)
+      this.prev = this.binds(this.prev);
+      this.next = this.binds(this.next);
     }
 
     sanitize(contents) {
@@ -86,6 +86,8 @@
     }
 
     populate(target) {
+      console.log('populate', target);
+
       const opts = this.options;
 
       let contents;
@@ -100,8 +102,7 @@
       for (const node of contents) {
         const content = this.content(node);
 
-        // target
-        if (target === content.srcNode || target.parentElement === content.srcNode) {
+        if (target && target === content.srcNode) {
           this.current = content;
         }
 
@@ -125,13 +126,10 @@
       const childs = this.gallery.children;
 
       for (const child of childs) {
-        //TODO
-        // direct access to reserved __compo
-        this.setAttr(child.__compo, 'hidden', true);
+        this.setAttr(child, 'hidden', true);
 
-        // target
-        if (target === child.__compo.srcNode || target.parentElement === child.__compo.srcNode) {
-          this.current = child.__compo;
+        if (target && target === child.srcNode) {
+          this.current = child;
         }
       }
 
@@ -232,15 +230,13 @@
     }
 
     prev(e) {
-      e.preventDefault();
-      e.target.blur();
+      e && ! e.preventDefault() && e.target.blur();
 
       this.slide(-1);
     }
 
     next(e) {
-      e.preventDefault();
-      e.target.blur();
+      e && ! e.preventDefault() && e.target.blur();
 
       this.slide(1);
     }
