@@ -195,7 +195,7 @@
           const qel = this.selector(chref);
 
           if (qel) {
-            inner = cloning ? this.clone(qel, true) : qel;
+            inner = clone ? this.clone(qel, true) : qel;
           }
         } else if (exref) {
           inner = this.compo('iframe', true, {
