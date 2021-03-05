@@ -44,13 +44,9 @@
       super._bindings();
 
       this.add = this.binds(this.add);
-      this.remove = this.binds(this.remove)
+      this.remove = this.binds(this.remove);
       this.prev = this.binds(this.prev);
       this.next = this.binds(this.next);
-    }
-
-    sanitize(contents) {
-      return contents && contents.length ? contents : [ this.element ];
     }
 
     generator() {
@@ -97,7 +93,7 @@
       } else if (opts.selector) {
         contents = this.selector(opts.selector, this.element, true);
       }
-      contents = this.sanitize(contents);
+      contents = this.prepare(contents);
 
       for (const node of contents) {
         const content = this.content(node);
@@ -133,9 +129,10 @@
         }
       }
 
-      if (! this.current) {
-        this.current = this.gallery.first;
-      }
+      //TODO
+      // if (! this.current) {
+      //   this.current = this.gallery.first;
+      // }
 
       this.slide(0);
 
@@ -143,71 +140,77 @@
       opts.captioned && this.caption();
     }
 
-    content(node, clone) {
-      const wrap = super.content();
+    content(data, clone) {
       const opts = this.options;
+      clone = typeof clone != 'undefined' ? clone : opts.cloning;
+      const wrap = this.compo('object');
 
-      let chref;
-      let ctype;
+      const csrc = data.src;
+      let ctype = data.type;
 
-      if (this.hasAttr(node, 'data-href')) {
-        chref = node.dataset.href;
-      } else if (this.hasAttr(node, 'href')) {
-        chref = node.href;
+      if (ctype) {
+        ctype = ctype.match(/^image|video|audio/);
+        ctype = ctype ? ctype[0] : data.type;
       }
 
-      // const exref = /^https?:\/\//.test(chref);
-      const exref = true;
-
+      const exref = /^https?:\/\//.test(csrc);
       let dhref = false;
+      let xclassn;
 
-      if (this.hasAttr(node, 'data-content-type')) {
-        if (/^image/.test(node.dataset.contentType)) {
+      if (csrc && opts.autoDiscover) {
+        if (/\.jpg|\.jpeg|\.png|\.apng|\.gif|\.webp|\.avif|\.bmp|\.svg$/i.test(csrc)) {
           ctype = 'image';
-        }
-      } else if (opts.autoDiscover) {
-        if (/\.jpg|\.jpeg|\.png|\.apng|\.gif|\.webp|\.avif|\.bmp|\.svg$/i.test(chref)) {
-          ctype = 'image';
-        } else if (/^data:image\/jpeg|png|apng|gif|webp|avif|bmp|svg\+xml/.test(chref)) {
+        } else if (/^data:image\/jpeg|png|apng|gif|webp|avif|bmp|svg\+xml/.test(csrc)) {
           dhref = true;
           ctype = 'image';
-        } else if (/\.pdf$/.test(chref)) {
+        } else if (/\.pdf$/.test(csrc)) {
           ctype = 'pdf';
         }
       }
-      if (opts.checkOrigin) {
-        const whost = window.origin;
-        const chost = chref.replace(/^(.+\/\/[^\/]+).*$/, '$1');
+      if (ctype === 'pdf') {
+        ctype = 'iframe';
+        xclassn = 'pdf';
+      }
+      if (csrc && ! dhref && opts.checkOrigin) {
+        const worigin = window.origin != 'null' ? window.origin : window.location.origin;
+        const corigin = new URL(csrc).origin;
 
-        // if (! exref && dhref || whost != chost) {
-        //   ctype = '';
-        // }
+        if (worigin != corigin) {
+          ctype = '';
+        }
+      }
+
+      if (csrc && ! ctype) {
+        if (csrc[0] === '#') {
+          const qel = this.selector(csrc);
+
+          if (qel) {
+            data.node = qel;
+            ctype = 'element';
+          }
+        } else {
+          ctype = 'iframe';
+        }
       }
 
       let inner;
 
-      if (ctype === 'image') {
-        inner = this.compo('img', true, {
-          src: chref
-        });
-      } else if (chref) {
-        if (chref[0] === '#') {
-          const qel = this.selector(chref);
-
-          if (qel) {
-            inner = clone ? this.clone(qel, true) : qel;
-          }
-        } else if (exref) {
-          inner = this.compo('iframe', true, {
-            src: chref,
-            frameborder: 0
-          });
-          wrap.classList.add(opts.ns + '-iframe');
-        }
+      if (data.pass && data.node) {
+        inner = clone ? this.cloneNode(data.node, true) : data.node;
+      } else if (ctype) {
+        inner = this.inner(data, ctype, csrc);
       }
 
-      wrap.classList.add(opts.ns + '-' + (ctype || 'element'));
-      wrap.srcNode = node;
+      if (ctype) {
+        wrap.classList.add(opts.ns + '-' + ctype);
+      }
+      if (xclassn) {
+        wrap.classList.add(opts.ns + '-' + xclassn);
+      }
+
+      opts.onContent.call(this, this, wrap, inner);
+
+      wrap.srcNode = data.node ? data.node : data;
       wrap.setAttr('hidden', true);
 
       if (inner) {
@@ -215,6 +218,86 @@
       }
 
       return wrap;
+    }
+
+    //TODO
+    inner(data, ctype, csrc) {
+      let tag = ctype;
+      const props = {};
+
+      if (csrc) {
+        props.src = csrc;
+      }
+
+      switch (ctype) {
+        case 'image':
+          //TODO
+          // <picture> or <figure>
+          tag = 'img';
+          break;
+        case 'iframe':
+          props.frameBorder = 0;
+
+          if (! csrc) {
+            return null;
+          }
+
+          break;
+      }
+
+      return this.compo(tag, true, props);
+    }
+
+    prepare(contents) {
+      const c = [];
+
+      if (contents && typeof contents === 'object' && contents.length) {
+        for (const obj of contents) {
+          if ('nodeName' in obj) {
+            const data = { node: obj };
+            const sdat = obj.dataset;
+
+            if (sdat.length) {
+              for (const p of sdat) {
+                if (/{*}/.test(p)) {
+                  try {
+                    p = JSON.parse(p);
+                  } catch {}
+                }
+              }
+            }
+            if (sdat.type) {
+              data.type = sdat.type;
+            }
+            if (obj.href) {
+              data.src = obj.href;
+            } else if (sdat.href) {
+              data.src = sdat.href;
+            } else if (/iframe|img|picture|figure|video|audio/i.test(obj.nodeName)) {
+              if (/img|picture|figure/i.test(obj.nodeName)) {
+                data.type = 'image';
+              } else {
+                data.type = obj.nodeName.toLowerCase();
+              }
+
+              data.pass = true;
+            } else {
+              data.type = 'element';
+            }
+
+            c.push(data);
+          } else if ('type' in obj && /(^element|iframe|image|video|audio|pdf)/.test(obj.type)) {
+            // options freezed
+            const data = Object.assign({}, obj);
+
+            c.push(data);
+          } else {
+            c.push(null);
+          }
+        }
+      }
+
+      return c;
     }
 
     add(content) {
