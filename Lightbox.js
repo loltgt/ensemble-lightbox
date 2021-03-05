@@ -60,24 +60,30 @@
       cnt.append(gallery);
 
       if (opts.navigation) {
-        var nav = this.nav = this.compo('nav');
+        var nav = this.nav = {};
+        const wrap = nav.wrap = this.compo('nav');
         const prev = this.compo('button', 'prev', opts.prev);
         const next = this.compo('button', 'next', opts.next);
 
-        nav.append(prev);
-        nav.append(next);
+        wrap.append(prev);
+        nav.prev = prev;
+
+        wrap.append(next);
+        nav.next = next;
       }
 
       if (opts.captioned) {
-        var captions = this.captions = this.compo('captions');
+        var captions = this.captions = {};
+        const wrap = this.compo('captions');
+        captions.wrap = wrap;
       }
 
       if (opts.windowed) {
-        opts.navigation && cnt.append(nav);
-        opts.captioned && cnt.append(captions);
+        opts.navigation && cnt.append(nav.wrap);
+        opts.captioned && cnt.append(captions.wrap);
       } else {
-        opts.navigation && box.append(nav);
-        opts.captioned && box.append(captions);
+        opts.navigation && box.append(nav.wrap);
+        opts.captioned && box.append(captions.wrap);
       }
     }
 
@@ -93,22 +99,21 @@
       } else if (opts.selector) {
         contents = this.selector(opts.selector, this.element, true);
       }
-      contents = this.prepare(contents);
+      contents = this.contents = this.prepare(contents);
 
-      for (const node of contents) {
-        const content = this.content(node);
+      for (const obj of contents) {
+        const content = this.content(obj);
 
-        if (target && target === content.srcNode) {
+        if (target && target === content.ref) {
+          this.index = contents.indexOf(content);
           this.current = content;
         }
 
         this.add(content);
       }
 
-      if (! this.current) {
-        this.current = this.gallery.first;
-      }
-
+      this.current = this.current || contents[0];
+      this.index = this.index || 0;
       this.slide(0);
 
       opts.navigation && this.navigation();
@@ -119,21 +124,19 @@
       console.log('resume', target);
 
       const opts = this.options;
-      const childs = this.gallery.children;
+      const contents = this.contents;
 
-      for (const child of childs) {
-        this.setAttr(child, 'hidden', true);
+      for (const content of contents) {
+        content.wrap.setAttr('hidden', true);
 
-        if (target && target === child.srcNode) {
-          this.current = child;
+        if (target && target === content.ref) {
+          this.index = contents.indexOf(content);
+          this.current = content;
         }
       }
 
-      //TODO
-      // if (! this.current) {
-      //   this.current = this.gallery.first;
-      // }
-
+      this.current = this.current || contents[0];
+      this.index = this.index || 0;
       this.slide(0);
 
       opts.navigation && this.navigation();
@@ -148,6 +151,7 @@
       const csrc = data.src;
       let ctype = data.type;
 
+      //TODO
       if (ctype) {
         ctype = ctype.match(/^image|video|audio/);
         ctype = ctype ? ctype[0] : data.type;
@@ -157,7 +161,7 @@
       let dhref = false;
       let xclassn;
 
-      if (csrc && opts.autoDiscover) {
+      if (opts.autoDiscover && csrc && ! ctype) {
         if (/\.jpg|\.jpeg|\.png|\.apng|\.gif|\.webp|\.avif|\.bmp|\.svg$/i.test(csrc)) {
           ctype = 'image';
         } else if (/^data:image\/jpeg|png|apng|gif|webp|avif|bmp|svg\+xml/.test(csrc)) {
@@ -171,7 +175,7 @@
         ctype = 'iframe';
         xclassn = 'pdf';
       }
-      if (csrc && ! dhref && opts.checkOrigin) {
+      if (opts.checkOrigin && csrc && ! dhref) {
         const worigin = window.origin != 'null' ? window.origin : window.location.origin;
         const corigin = new URL(csrc).origin;
 
@@ -210,14 +214,20 @@
 
       opts.onContent.call(this, this, wrap, inner);
 
-      wrap.srcNode = data.node ? data.node : data;
       wrap.setAttr('hidden', true);
+
+      data.ref = data.ref || null;
+      data.type = ctype;
+      data.src = csrc;
+      data.wrap = wrap;
 
       if (inner) {
         wrap.append(inner);
+
+        data.inner = inner;
       }
 
-      return wrap;
+      return data;
     }
 
     //TODO
@@ -235,6 +245,9 @@
           // <picture> or <figure>
           tag = 'img';
           break;
+        //TODO
+        case 'video': break;
+        case 'audio': break;
         case 'iframe':
           props.frameBorder = 0;
 
@@ -254,11 +267,11 @@
       if (contents && typeof contents === 'object' && contents.length) {
         for (const obj of contents) {
           if ('nodeName' in obj) {
-            const data = { node: obj };
-            const sdat = obj.dataset;
+            const data = { ref: obj };
+            const sds = obj.dataset;
 
-            if (sdat.length) {
-              for (const p of sdat) {
+            if (sds.length) {
+              for (const p of sds) {
                 if (/{*}/.test(p)) {
                   try {
                     p = JSON.parse(p);
@@ -266,15 +279,15 @@
                 }
               }
             }
-            if (sdat.type) {
-              data.type = sdat.type;
+            if (sds.type) {
+              data.type = sds.type;
             }
             if (obj.href) {
               data.src = obj.href;
-            } else if (sdat.href) {
-              data.src = sdat.href;
-            } else if (/iframe|img|picture|figure|video|audio/i.test(obj.nodeName)) {
-              if (/img|picture|figure/i.test(obj.nodeName)) {
+            } else if (sds.href) {
+              data.src = sds.href;
+            } else if (/iframe|img|picture|video|audio/i.test(obj.nodeName)) {
+              if (/img|picture/i.test(obj.nodeName)) {
                 data.type = 'image';
               } else {
                 data.type = obj.nodeName.toLowerCase();
@@ -283,6 +296,9 @@
               data.pass = true;
             } else {
               data.type = 'element';
+            }
+            if (sds.caption) {
+              data.caption = sds.caption;
             }
 
             c.push(data);
@@ -301,13 +317,13 @@
     }
 
     add(content) {
-      this.gallery.append(content);
+      this.gallery.append(content.wrap);
 
       this.options.navigation && this.navigation();
     }
 
     remove(content) {
-      this.gallery.remove(content);
+      this.gallery.remove(content.wrap);
 
       this.options.navigation && this.navigation();
     }
@@ -332,26 +348,30 @@
         return;
       }
 
+      const contents = this.contents;
+      let index = this.index;
       let current = this.current;
       let adjacent = current;
 
       opts.onStep.call(this, this, current, step);
 
       if (step != 0) {
-        const sibling = (step === -1 ? 'previous' : 'next');
-        const child = (step === -1 ? 'last' : 'first');
+        const clenm1 = contents.length - 1;
+        const sibling = step === -1 ? contents[index - 1] : contents[index + 1];
+        const child = step === -1 ? contents[clenm1] : contents[0];
 
-        adjacent = current[sibling] ? current[sibling] : this.gallery[child];
+        adjacent = !! sibling ? sibling : child;
+        index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? clenm1 : 0);
 
-        current.setAttr('hidden', true);
+        current.wrap.setAttr('hidden', true);
       }
 
       if (! opts.infinite) {
         let way = 0;
 
-        if (! adjacent.previous) {
+        if (! adjacent.wrap.previous) {
           way = -1;
-        } else if (! adjacent.next) {
+        } else if (! adjacent.wrap.next) {
           way = 1;
         }
 
@@ -363,23 +383,25 @@
       }
 
       setTimeout(function() {
-        adjacent.delAttr('hidden');
+        adjacent.wrap.delAttr('hidden');
 
-        opts.onSlide.call(self, self, current, step, (current != adjacent ? adjacent : null));
-      }, this.timing(current));
+        opts.onSlide.call(self, self, current, step, (current.wrap != adjacent.wrap ? adjacent.wrap : null));
+      }, this.timing(current.wrap));
 
-      this.current = adjacent;
-      this.caption();
+      this.index = index;
+      this.current = contents[index];
+
+      opts.captioned && this.caption();
     }
 
     navigation(way) {
       const nav = this.nav;
-      const childs = this.gallery.children;
+      const contents = this.contents;
 
-      if (childs.length > 1) {
-        nav.delAttr('hidden');
+      if (contents.length > 1) {
+        nav.wrap.delAttr('hidden');
       } else {
-        nav.setAttr('hidden', true);
+        nav.wrap.setAttr('hidden', true);
 
         return;
       }
@@ -387,54 +409,55 @@
       if (! this.options.infinite && typeof way != 'undefined') {
         switch (way) {
           case -1:
-            nav.first.setAttr('disabled', true);
-            nav.last.delAttr('disabled');
+            nav.prev.setAttr('disabled', true);
+            nav.next.delAttr('disabled');
             break;
           case 1:
-            nav.first.delAttr('disabled');
-            nav.last.setAttr('disabled', true);
+            nav.prev.delAttr('disabled');
+            nav.next.setAttr('disabled', true);
             break;
           default:
-            nav.first.delAttr('disabled');
-            nav.last.delAttr('disabled');
+            nav.prev.delAttr('disabled');
+            nav.next.delAttr('disabled');
         }
       }
     }
 
     caption(text) {
+      const opts = this.options;
       const captions = this.captions;
       const current = this.current;
-      const caption = this.compo('p', true);
 
-      if (captions.first) {
-        captions.remove(captions.first);
+      while (captions.wrap.first) {
+        captions.wrap.remove(captions.wrap.first);
       }
 
-      if (this.options.onCaption(this, this, caption, current, text)) {
+      if (opts.onCaption(this, this, current, text)) {
         return;
       }
 
-      const source = current.srcNode;
-      const inner = source.firstElementChild;
-
       if (! text) {
-        if (this.hasAttr(source, 'data-caption')) {
-          text = source.dataset.caption;
-        } else if (this.hasAttr(source, 'title')) {
-          text = source.title;
-        } else if (this.selector('figcaption', source)) {
-          text = this.selector('figcaption', source).innerText;
-        } else if (inner && (inner.nodeName == 'IMG' || inner.nodeName == 'PICTURE')) {
-          text = inner.alt;
+        if (current.caption) {
+          text = current.caption;
+        } else if (opts.selector) {
+          const ref = current.ref;
+
+          if (this.hasAttr(ref, 'title')) {
+            text = this.getAttr(ref, 'title');
+          } else if (current.type === 'image') {
+            const img = this.selector('img', ref);
+            text = img.alt;
+          }
         }
       }
 
       if (text) {
-        //TODO
-        // direct access to node
-        caption.node.innerText = text;
+        text = text.split(/\n\n|\r\n\r\n/);
 
-        captions.append(caption);
+        for (const line of text) {
+          const caption = this.compo('p', true, { innerText: line });
+          captions.wrap.append(caption);
+        }
       }
     }
 

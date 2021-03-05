@@ -66,12 +66,12 @@ section button { margin: 1.5rem 0 0; }
 <div class="grid">
 <figure>
 <a href="image-test-28231.jpg">
-    <img src="image-test-28231.jpg">
+    <img src="image-test-28231.jpg" alt="caption from img[alt]">
 </a>
 </figure>
 
 <figure>
-<a href="image-test-109054.jpeg">
+<a href="image-test-109054.jpeg" title="caption from a[title]">
     <img src="image-test-109054.jpeg">
 </a>
 </figure>
@@ -82,13 +82,13 @@ section button { margin: 1.5rem 0 0; }
 
 <figure>
 <a href="image-test-821573.png">
-    <img src="image-test-821573.png">
+    <img src="image-test-821573.png" alt="caption from img[alt]">
 </a>
 </figure>
 
 <figure>
 <a href="image-test-demo-lightbox-image008.jpg">
-    <img src="image-test-demo-lightbox-image008.jpg">
+    <img src="image-test-demo-lightbox-image008.jpg" data-caption="caption from img[data-caption]">
 </a>
 </figure>
 
@@ -115,15 +115,22 @@ section button { margin: 1.5rem 0 0; }
 <div class="grid">
 <figure>
 <a href="test-webp-image-126293.webp">
-    <img src="test-webp-image-126293.webp">
+    <img src="test-webp-image-126293.webp" alt="image webp">
 </a>
 </figure>
 
 <figure>
 <a href="test-avif-image-1510592.avif">
-    <img src="test-avif-image-1510592.avif">
+    <img src="test-avif-image-1510592.avif" alt="image avif">
 </a>
 </figure>
+</div>
+
+
+<h3>Test with data contents passed with options.</h3>
+
+<div>
+    <button type="button">Open lightbox</button>
 </div>
 </section>
 </main>
@@ -134,7 +141,7 @@ section button { margin: 1.5rem 0 0; }
 <script src="../../ensemble-modal/Modal.js"></script>
 <script src="../../ensemble-lightbox/Lightbox.js"></script>
 <script>
-const g1 = document.querySelector('.grid:last-child');
+const g1 = document.querySelector('.grid:nth-child(n+3)');
 
 for (const o of g1.querySelectorAll('img')) {
   const n = new Image();
@@ -148,27 +155,147 @@ for (const o of g1.querySelectorAll('img')) {
   n.src = o.src;
 }
 
-const element = document.querySelector('.content');
-const modal = new ensemble.Modal(element);
-const button = document.querySelector('button[type="button"]');
-button.addEventListener('click', modal.open, true);
+
+const modal_element = document.querySelector('.content');
+const modal = new ensemble.Modal(modal_element);
+const modal_button = document.querySelector('section button[type="button"]');
+modal_button.addEventListener('click', modal.open, true);
 
 
-const elements = document.querySelectorAll('.grid');
+const lightbox_grid = document.querySelectorAll('.grid');
 
-for (const el of elements) {
-  var options = { selector: 'a' };
+for (const lightbox_group of lightbox_grid) {
+  var lightbox_options = { selector: 'a' };
 
-  if (el === elements[1]) {
-    options.infinite = false;
+  if (lightbox_group === lightbox_grid[1]) {
+    lightbox_options.infinite = false;
   }
 
-  const lightbox = new ensemble.Lightbox(el, options);
+  const lightbox = new ensemble.Lightbox(lightbox_group, lightbox_options);
 
-  for (const a of el.querySelectorAll('a')) {
+  for (const a of lightbox_group.querySelectorAll('a')) {
     a.addEventListener('click', lightbox.open, true);
   }
 }
+
+const lightbox_contents = [
+  // {
+  //   type: 'image',
+  //   tag: 'picture',
+  //   sources: [
+  //     {
+  //       type: 'image/jpeg',
+  //       src: 'image.jpg'
+  //     },
+  //     {
+  //       type: 'image/webp',
+  //       src: 'image.webm'
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   type: 'image',
+  //   attributes: {
+  //     srcset: '',
+  //     sizes: '',
+  //   }
+  // },
+
+  // {
+  //   type: 'iframe',
+  //   src: 'iframe-test-demo-lightbox.html',
+  //   attributes: {
+  //     allow: 'autoplay'
+  //   }
+  // }
+
+  // {
+  //   type: 'audio',
+  //   attributes: {
+  //     controls: true,
+  //     poster: 'audio-thumb.jpg'
+  //   },
+  //   sources: [
+  //     {
+  //       type: 'audio/ogg; codecs=opus',
+  //       src: 'audio.opus'
+  //     },
+  //     {
+  //       type: 'audio/aac',
+  //       src: 'audio.aac'
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   type: 'video',
+  //   attributes: {
+  //     controls: true,
+  //     poster: 'video-thumb.jpg'
+  //   },
+  //   sources: [
+  //     {
+  //       type: 'video/mp4',
+  //       src: 'video.mp4'
+  //     },
+  //     {
+  //       type: 'video/webp',
+  //       src: 'video.webp'
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   type: 'pdf',
+  //   src: 'test-pdf-document.pdf'
+  // }
+
+  // {
+  //   type: 'element',
+  //   element: Object
+  // }
+
+
+  {
+    type: 'iframe',
+    src: 'https://www.youtube.com/embed/mN0zPOpADL4',
+    caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio'
+    // attributes: {
+    //   allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+    //   allowfullscreen: true
+    // }
+  },
+  {
+    type: 'iframe',
+    src: 'https://player.vimeo.com/video/325910798',
+    caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio'
+    // attributes: {
+    //   allow: 'autoplay; fullscreen; picture-in-picture',
+    //   allowfullscreen: true
+    // }
+  },
+  {
+    type: 'iframe',
+    src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
+    // attributes: {
+    //   allowtransparency: true,
+    //   allow: 'encrypted-media'
+    // }
+  },
+  {
+    type: 'iframe',
+    src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ'
+  },
+  {
+    type: 'iframe',
+    src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
+  }
+];
+const lightbox_element = null;
+const lightbox_button = document.querySelector('div button[type="button"]');
+const lightbox = new ensemble.Lightbox(lightbox_element, { contents: lightbox_contents });
+lightbox_button.addEventListener('click', lightbox.open, true);
 </script>
 </body>
 </html>
