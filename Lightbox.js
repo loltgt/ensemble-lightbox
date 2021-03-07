@@ -60,7 +60,7 @@
       cnt.append(gallery);
 
       if (opts.navigation) {
-        var nav = this.nav = {};
+        var nav = this.nav = this.data();
         const wrap = nav.wrap = this.compo('nav');
         const prev = this.compo('button', 'prev', opts.prev);
         const next = this.compo('button', 'next', opts.next);
@@ -73,7 +73,7 @@
       }
 
       if (opts.captioned) {
-        var captions = this.captions = {};
+        var captions = this.captions = this.data();
         const wrap = this.compo('captions');
         captions.wrap = wrap;
       }
@@ -197,13 +197,15 @@
         }
       }
 
-      let inner;
+      // let inner;
+      //
+      // if (data.pass && data.node) {
+      //   inner = clone ? this.cloneNode(data.node, true) : data.node;
+      // } else if (ctype) {
+      //   inner = this.inner(data, ctype, csrc);
+      // }
 
-      if (data.pass && data.node) {
-        inner = clone ? this.cloneNode(data.node, true) : data.node;
-      } else if (ctype) {
-        inner = this.inner(data, ctype, csrc);
-      }
+      const inner = this.inner(data, ctype, csrc);
 
       if (ctype) {
         wrap.classList.add(opts.ns + '-' + ctype);
@@ -222,9 +224,16 @@
       data.wrap = wrap;
 
       if (inner) {
-        wrap.append(inner);
+        // wrap.append(inner);
+        // data.inner = inner;
 
-        data.inner = inner;
+        data.load = function() {
+          data.wrap.delAttr('hidden');
+        }
+        data.unload = function() {
+          data.wrap.setAttr('hidden', true);
+        }
+        data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.load, data.unload);
       }
 
       return data;
@@ -233,6 +242,7 @@
     //TODO
     inner(data, ctype, csrc) {
       let tag = ctype;
+      let name = true;
       const props = {};
 
       if (csrc) {
@@ -242,12 +252,14 @@
       switch (ctype) {
         case 'image':
           //TODO
-          // <picture> or <figure>
+          // <picture>
           tag = 'img';
           break;
         //TODO
-        case 'video': break;
-        case 'audio': break;
+        case 'video':
+        case 'audio':
+
+        break;
         case 'iframe':
           props.frameBorder = 0;
 
@@ -256,9 +268,13 @@
           }
 
           break;
+        default:
+          name = false;
       }
 
-      return this.compo(tag, true, props);
+      return { tag, name, props };
+
+      // return this.compo(tag, true, props);
     }
 
     prepare(contents) {
@@ -267,7 +283,7 @@
       if (contents && typeof contents === 'object' && contents.length) {
         for (const obj of contents) {
           if ('nodeName' in obj) {
-            const data = { ref: obj };
+            const data = this.data({ ref: obj });
             const sds = obj.dataset;
 
             if (sds.length) {
@@ -293,7 +309,7 @@
                 data.type = obj.nodeName.toLowerCase();
               }
 
-              data.pass = true;
+              // data.pass = true;
             } else {
               data.type = 'element';
             }
@@ -304,11 +320,9 @@
             c.push(data);
           } else if ('type' in obj && /(^element|iframe|image|video|audio|pdf)/.test(obj.type)) {
             // options freezed
-            const data = Object.assign({}, obj);
-
-            c.push(data);
+            c.push(this.data(obj));
           } else {
-            c.push(null);
+            c.push(this.data());
           }
         }
       }
@@ -363,7 +377,8 @@
         adjacent = !! sibling ? sibling : child;
         index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? clenm1 : 0);
 
-        current.wrap.setAttr('hidden', true);
+        // current.wrap.setAttr('hidden', true);
+        current.stale('inner');
       }
 
       if (! opts.infinite) {
@@ -382,9 +397,17 @@
         }
       }
 
-      adjacent.wrap.delAttr('hidden');
+      // adjacent.wrap.append(adjacent.inner);
+      // adjacent.wrap.delAttr('hidden');
+
+      adjacent.render('inner');
+      adjacent.wrap.append(adjacent.inner);
 
       opts.onSlide.call(self, self, current, step, (current.wrap != adjacent.wrap ? adjacent.wrap : null));
+
+      this.delay(function() {
+        step != 0 && current.wrap.remove(current.inner);
+      }, current.wrap);
 
       this.index = index;
       this.current = contents[index];

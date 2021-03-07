@@ -136,6 +136,7 @@ section button { margin: 1.5rem 0 0; }
 </main>
 
 <script src="../../ensemble/Compo.js"></script>
+<script src="../../ensemble/Data.js"></script>
 <script src="../../ensemble/Event.js"></script>
 <script src="../../ensemble-stack-d1/base.js"></script>
 <script src="../../ensemble-modal/Modal.js"></script>
@@ -256,7 +257,6 @@ const lightbox_contents = [
   //   element: Object
   // }
 
-
   {
     type: 'iframe',
     src: 'https://www.youtube.com/embed/mN0zPOpADL4',
@@ -290,7 +290,14 @@ const lightbox_contents = [
   {
     type: 'iframe',
     src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
-  }
+  },
+
+  //TODO
+  // {
+  //   type: 'element',
+  //   node: (function() { var el = document.createElement('div'); el.innerText = 'Test for a custom element.'; return el; }())
+  // }
+
 ];
 const lightbox_element = null;
 const lightbox_button = document.querySelector('div button[type="button"]');
