@@ -180,6 +180,13 @@ for (const lightbox_group of lightbox_grid) {
 }
 
 const lightbox_contents = [
+
+  //TODO
+  {
+    type: 'element',
+    node: (function() { var el = document.createElement('div'); el.innerText = 'Test for a custom element.'; return el; }())
+  },
+
   // {
   //   type: 'image',
   //   tag: 'picture',
@@ -290,13 +297,7 @@ const lightbox_contents = [
   {
     type: 'iframe',
     src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
-  },
-
-  //TODO
-  // {
-  //   type: 'element',
-  //   node: (function() { var el = document.createElement('div'); el.innerText = 'Test for a custom element.'; return el; }())
-  // }
+  }
 
 ];
 const lightbox_element = null;

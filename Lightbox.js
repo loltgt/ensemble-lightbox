@@ -127,7 +127,7 @@
       const contents = this.contents;
 
       for (const content of contents) {
-        content.wrap.setAttr('hidden', true);
+        content.wrap.hide();
 
         if (target && target === content.ref) {
           this.index = contents.indexOf(content);
@@ -216,7 +216,7 @@
 
       opts.onContent.call(this, this, wrap, inner);
 
-      wrap.setAttr('hidden', true);
+      wrap.hide();
 
       data.ref = data.ref || null;
       data.type = ctype;
@@ -227,13 +227,9 @@
         // wrap.append(inner);
         // data.inner = inner;
 
-        data.load = function() {
-          data.wrap.delAttr('hidden');
-        }
-        data.unload = function() {
-          data.wrap.setAttr('hidden', true);
-        }
-        data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.load, data.unload);
+        data.fresh = function() { data.wrap.show() };
+        data.stale = function() { data.wrap.hide(); }
+        data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.fresh, data.stale);
       }
 
       return data;
@@ -420,9 +416,9 @@
       const contents = this.contents;
 
       if (contents.length > 1) {
-        nav.wrap.delAttr('hidden');
+        nav.wrap.show();
       } else {
-        nav.wrap.setAttr('hidden', true);
+        nav.wrap.hide();
 
         return;
       }
@@ -430,16 +426,16 @@
       if (! this.options.infinite && typeof way != 'undefined') {
         switch (way) {
           case -1:
-            nav.prev.setAttr('disabled', true);
-            nav.next.delAttr('disabled');
+            nav.prev.disable();
+            nav.next.enable();
             break;
           case 1:
-            nav.prev.delAttr('disabled');
-            nav.next.setAttr('disabled', true);
+            nav.prev.enable();
+            nav.next.disable();
             break;
           default:
-            nav.prev.delAttr('disabled');
-            nav.next.delAttr('disabled');
+            nav.prev.enable();
+            nav.next.enable();
         }
       }
     }
@@ -449,9 +445,7 @@
       const captions = this.captions;
       const current = this.current;
 
-      while (captions.wrap.first) {
-        captions.wrap.remove(captions.wrap.first);
-      }
+      captions.wrap.empty();
 
       if (opts.onCaption(this, this, current, text)) {
         return;
