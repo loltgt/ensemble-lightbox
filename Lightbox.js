@@ -56,28 +56,24 @@
       const cnt = this.cnt;
       const opts = this.options;
 
-      box.classList.add(opts.ns + '-lightbox');
-
       const gallery = this.gallery = this.compo('gallery');
       cnt.append(gallery);
+
+      box.classList.add(opts.ns + '-lightbox');
 
       if (opts.navigation) {
         var nav = this.nav = this.data();
         const wrap = nav.wrap = this.compo('nav');
-        const prev = this.compo('button', 'prev', opts.prev);
-        const next = this.compo('button', 'next', opts.next);
+        const prev = nav.prev = this.compo('button', 'prev', opts.prev);
+        const next = nav.next = this.compo('button', 'next', opts.next);
 
         wrap.append(prev);
-        nav.prev = prev;
-
         wrap.append(next);
-        nav.next = next;
       }
 
       if (opts.captioned) {
         var captions = this.captions = this.data();
-        const wrap = this.compo('captions');
-        captions.wrap = wrap;
+        captions.wrap = this.compo('captions');
       }
       if (opts.overlayed) {
         const overlay = opts.overlayed.toString().match(/captions|navigation/);
@@ -163,7 +159,6 @@
 
     content(data, clone) {
       const opts = this.options;
-      clone = typeof clone != 'undefined' ? clone : opts.cloning;
       const wrap = this.compo('object');
 
       const csrc = data.src;
@@ -215,6 +210,7 @@
         }
       }
       if (ctype === 'element') {
+        clone = typeof clone != 'undefined' ? clone : opts.cloning;
         data.node = clone ? this.cloneNode(data.node, true) : data.node;
       }
 
@@ -367,7 +363,6 @@
     }
 
     slide(step) {
-      const self = this;
       const opts = this.options;
 
       if (! opts.infinite && this.way != 0 && this.way === step) {
@@ -411,7 +406,7 @@
       adjacent.render('inner');
       adjacent.wrap.append(adjacent.inner);
 
-      opts.onSlide.call(self, self, current, step, (current.wrap != adjacent.wrap ? adjacent.wrap : null));
+      opts.onSlide.call(this, this, current, step, (current.wrap != adjacent.wrap ? adjacent.wrap : null));
 
       this.delay(function() {
         step != 0 && current.wrap.remove(current.inner);
@@ -425,9 +420,8 @@
 
     navigation(way) {
       const nav = this.nav;
-      const contents = this.contents;
 
-      if (contents.length > 1) {
+      if (this.contents.length > 1) {
         nav.wrap.show();
       } else {
         nav.wrap.hide();
