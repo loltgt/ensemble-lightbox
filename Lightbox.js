@@ -23,6 +23,8 @@
         captioned: true,
         infinite: true,
         autoDiscover: true,
+        autoHide: 'navigation', // true | 'captions|navigation'
+        overlayed: false, // true | 'captions|navigation'
         checkOrigin: true,
         prev: {
           onclick: this.prev,
@@ -76,6 +78,22 @@
         var captions = this.captions = this.data();
         const wrap = this.compo('captions');
         captions.wrap = wrap;
+      }
+      if (opts.overlayed) {
+        const overlay = opts.overlayed.toString().match(/captions|navigation/);
+        box.classList.add(opts.ns + '-overlayed');
+
+        if (overlay) {
+          box.classList.add(opts.ns + '-overlayed-' + overlayed[0]);
+        }
+      }
+      if (opts.autoHide) {
+        const autohide = opts.autoHide.toString().match(/captions|navigation/);
+        box.classList.add(opts.ns + '-autohide');
+
+        if (autohide) {
+          box.classList.add(opts.ns + '-autohide-' + autohide[0]);
+        }
       }
 
       if (opts.windowed) {
@@ -196,15 +214,12 @@
           ctype = 'iframe';
         }
       }
+      if (ctype === 'element') {
+        data.node = clone ? this.cloneNode(data.node, true) : data.node;
+      }
 
-      // let inner;
-      //
-      // if (data.pass && data.node) {
-      //   inner = clone ? this.cloneNode(data.node, true) : data.node;
-      // } else if (ctype) {
-      //   inner = this.inner(data, ctype, csrc);
-      // }
-
+      //TODO
+      // name conflicts
       const inner = this.inner(data, ctype, csrc);
 
       if (ctype) {
@@ -224,11 +239,14 @@
       data.wrap = wrap;
 
       if (inner) {
-        // wrap.append(inner);
-        // data.inner = inner;
-
-        data.fresh = function() { data.wrap.show() };
-        data.stale = function() { data.wrap.hide(); }
+        data.fresh = function() {
+          data.node && data.inner.inject(data.node);
+          data.wrap.show();
+        };
+        data.stale = function() {
+          data.node && data.inner.empty();
+          data.wrap.hide();
+        }
         data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.fresh, data.stale);
       }
 
@@ -265,12 +283,11 @@
 
           break;
         default:
-          name = false;
+          tag = 'div';
+          name = 'custom-element';
       }
 
       return { tag, name, props };
-
-      // return this.compo(tag, true, props);
     }
 
     prepare(contents) {
@@ -305,9 +322,9 @@
                 data.type = obj.nodeName.toLowerCase();
               }
 
-              // data.pass = true;
             } else {
               data.type = 'element';
+              data.node = obj;
             }
             if (sds.caption) {
               data.caption = sds.caption;
@@ -315,7 +332,6 @@
 
             c.push(data);
           } else if ('type' in obj && /(^element|iframe|image|video|audio|pdf)/.test(obj.type)) {
-            // options freezed
             c.push(this.data(obj));
           } else {
             c.push(this.data());
@@ -373,7 +389,6 @@
         adjacent = !! sibling ? sibling : child;
         index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? clenm1 : 0);
 
-        // current.wrap.setAttr('hidden', true);
         current.stale('inner');
       }
 
@@ -392,9 +407,6 @@
           this.navigation(way);
         }
       }
-
-      // adjacent.wrap.append(adjacent.inner);
-      // adjacent.wrap.delAttr('hidden');
 
       adjacent.render('inner');
       adjacent.wrap.append(adjacent.inner);
