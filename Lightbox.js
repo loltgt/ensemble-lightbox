@@ -295,15 +295,15 @@
             const data = this.data({ ref: obj });
             const sds = obj.dataset;
 
-            if (sds.length) {
-              for (const p of sds) {
-                if (/{*}/.test(p)) {
-                  try {
-                    p = JSON.parse(p);
-                  } catch {}
-                }
-              }
-            }
+            // if (sds.length) {
+            //   for (const p of sds) {
+            //     if (/{*}/.test(p)) {
+            //       try {
+            //         p = JSON.parse(p);
+            //       } catch {}
+            //     }
+            //   }
+            // }
             if (sds.type) {
               data.type = sds.type;
             }
@@ -336,6 +336,25 @@
       }
 
       return c;
+    }
+
+    allowedProps(obj) {
+      if (! this.cachedProps) {
+        this.cache_props = [];
+
+        for (const prop in HTMLElement.prototype) {
+          if (prop.indexOf('on') !== 0) {
+            this.cache_props.push(prop);
+          }
+        }
+      }
+
+      const props = this.cache_props;
+      const proto = Object.getPrototypeOf(obj);
+
+      return Object.keys(proto).filter(function(i) {
+        return props.indexOf(i) < 0;
+      });
     }
 
     add(content) {
