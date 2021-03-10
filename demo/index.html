@@ -187,6 +187,22 @@ const lightbox_contents = [
     node: (function() { var el = document.createElement('div'); el.innerText = 'Test for a custom element.'; return el; }())
   },
 
+  {
+    type: 'video',
+    loop: true,
+    poster: 'video-test-card.png',
+    sources: [
+      {
+        type: 'video/mp4',
+        src: 'video-test-card.mp4'
+      },
+      {
+        type: 'video/webm',
+        src: 'video-test-card.webm'
+      }
+    ]
+  },
+
   // {
   //   type: 'image',
   //   tag: 'picture',
@@ -204,26 +220,20 @@ const lightbox_contents = [
 
   // {
   //   type: 'image',
-  //   attributes: {
-  //     srcset: '',
-  //     sizes: '',
-  //   }
+  //   srcset: '',
+  //   sizes: ''
   // },
 
   // {
   //   type: 'iframe',
   //   src: 'iframe-test-demo-lightbox.html',
-  //   attributes: {
-  //     allow: 'autoplay'
-  //   }
+  //   allow: 'autoplay'
   // }
 
   // {
   //   type: 'audio',
-  //   attributes: {
-  //     controls: true,
-  //     poster: 'audio-thumb.jpg'
-  //   },
+  //   controls: true,
+  //   poster: 'audio-thumb.jpg'
   //   sources: [
   //     {
   //       type: 'audio/ogg; codecs=opus',
@@ -238,10 +248,8 @@ const lightbox_contents = [
 
   // {
   //   type: 'video',
-  //   attributes: {
-  //     controls: true,
-  //     poster: 'video-thumb.jpg'
-  //   },
+  //   controls: true,
+  //   poster: 'video-thumb.jpg'
   //   sources: [
   //     {
   //       type: 'video/mp4',
@@ -261,34 +269,28 @@ const lightbox_contents = [
 
   // {
   //   type: 'element',
-  //   element: Object
+  //   node: Object | Element
   // }
 
   {
     type: 'iframe',
     src: 'https://www.youtube.com/embed/mN0zPOpADL4',
     caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio'
-    // attributes: {
-    //   allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-    //   allowfullscreen: true
-    // }
+    // allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+    // allowfullscreen: true
   },
   {
     type: 'iframe',
     src: 'https://player.vimeo.com/video/325910798',
     caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio'
-    // attributes: {
-    //   allow: 'autoplay; fullscreen; picture-in-picture',
-    //   allowfullscreen: true
-    // }
+    // allow: 'autoplay; fullscreen; picture-in-picture',
+    // allowfullscreen: true
   },
   {
     type: 'iframe',
     src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
-    // attributes: {
-    //   allowtransparency: true,
-    //   allow: 'encrypted-media'
-    // }
+    // allowtransparency: true,
+    // allow: 'encrypted-media'
   },
   {
     type: 'iframe',
@@ -297,6 +299,12 @@ const lightbox_contents = [
   {
     type: 'iframe',
     src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
+  },
+
+  {
+    type: 'audio',
+    src: 'audio-test.wav',
+    autoplay: true
   }
 
 ];

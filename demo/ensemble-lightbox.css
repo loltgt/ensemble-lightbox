@@ -96,6 +96,13 @@
   margin: auto;
   border: 0;
 }
+.modal-video video {
+  height: 100%;
+}
+.modal-video video,
+.modal-audio audio {
+  outline: 0;
+}
 .modal-gallery {
   display: inline-block;
   width: 100%;

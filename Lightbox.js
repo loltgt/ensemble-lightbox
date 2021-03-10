@@ -108,7 +108,7 @@
 
       let contents;
 
-      if (opts.contents && typeof opts.contents === 'object') {
+      if (opts.contents && typeof opts.contents == 'object') {
         contents = opts.contents;
       } else if (opts.selector) {
         contents = this.selector(opts.selector, this.element, true);
@@ -157,9 +157,44 @@
       opts.captioned && this.caption();
     }
 
-    content(data, clone) {
+    /*
+      this.add( this.content() )
+      this.remove( this.content() )
+
+
+      String 'image.jpg'
+
+      String '#div'
+
+      Element <video src="video.mp4">
+
+      Data {
+        ref: <button>,
+        type: 'pdf',
+        src: 'document.pdf'
+      }
+
+      Data {
+        ref: <a>,
+        src: '#div'
+      }
+
+      Data {
+        src: 'image.jpg'
+      }
+    */
+    content(src, clone) {
       const opts = this.options;
       const wrap = this.compo('object');
+      wrap.hide();
+
+      var data;
+
+      if (typeof src == 'string') {
+        data = this.data({ src });
+      } else {
+        data = src;
+      }
 
       const csrc = data.src;
       let ctype = data.type;
@@ -177,18 +212,22 @@
       if (opts.autoDiscover && csrc && ! ctype) {
         if (/\.jpg|\.jpeg|\.png|\.apng|\.gif|\.webp|\.avif|\.bmp|\.svg$/i.test(csrc)) {
           ctype = 'image';
+        } else if (/\.pdf$/.test(csrc)) {
+          ctype = 'pdf';
+        } else if (/\.mp4|\.webm|\.ogv|\.m4v|\.hevc|\.ivf|\.obu|\.ismv|\.mkv$/i.test(csrc)) {
+          ctype = 'video';
+        } else if (/\.mp3|\.opus|\.ogg|\.m4a|\.aac|\.flac|\.wav|\.weba|\.mka$/i.test(csrc)) {
+          ctype = 'audio';
         } else if (/^data:image\/jpeg|png|apng|gif|webp|avif|bmp|svg\+xml/.test(csrc)) {
           dhref = true;
           ctype = 'image';
-        } else if (/\.pdf$/.test(csrc)) {
-          ctype = 'pdf';
         }
       }
       if (ctype === 'pdf') {
         ctype = 'iframe';
         xclassn = 'pdf';
       }
-      if (opts.checkOrigin && csrc && ! dhref) {
+      if (opts.checkOrigin && csrc && exref && ! dhref) {
         const worigin = window.origin != 'null' ? window.origin : window.location.origin;
         const corigin = new URL(csrc).origin;
 
@@ -203,7 +242,16 @@
 
           if (qel) {
             data.node = qel;
-            ctype = 'element';
+
+            if (/iframe|img|picture|video|audio/i.test(qel.nodeName)) {
+              if (/img|picture/i.test(qel.nodeName)) {
+                ctype = 'image';
+              } else {
+                ctype = qel.nodeName.toLowerCase();
+              }
+            } else {
+              ctype = 'element';
+            }
           }
         } else {
           ctype = 'iframe';
@@ -214,9 +262,11 @@
         data.node = clone ? this.cloneNode(data.node, true) : data.node;
       }
 
-      //TODO
-      // name conflicts
-      const inner = this.inner(data, ctype, csrc);
+      data.ref = data.ref || null;
+      data.type = ctype;
+      data.src = csrc;
+
+      opts.onContent.call(this, this, data);
 
       if (ctype) {
         wrap.classList.add(opts.ns + '-' + ctype);
@@ -225,59 +275,137 @@
         wrap.classList.add(opts.ns + '-' + xclassn);
       }
 
-      opts.onContent.call(this, this, wrap, inner);
+      const inner = this.inner(data);
 
-      wrap.hide();
-
-      data.ref = data.ref || null;
-      data.type = ctype;
-      data.src = csrc;
-      data.wrap = wrap;
-
-      if (inner) {
-        data.fresh = function() {
-          data.node && data.inner.inject(data.node);
-          data.wrap.show();
-        };
-        data.stale = function() {
-          data.node && data.inner.empty();
-          data.wrap.hide();
-        }
-        data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.fresh, data.stale);
+      data.fresh = function() {
+        data.node && data.inner.inject(data.node);
+        data.wrap.show();
+      };
+      data.stale = function() {
+        data.node && data.inner.empty();
+        data.wrap.hide();
       }
+      data.wrap = wrap;
+      data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.fresh, data.stale);
 
       return data;
     }
 
-    //TODO
-    inner(data, ctype, csrc) {
-      let tag = ctype;
-      let name = true;
-      const props = {};
+    /*
+      Data {
+        ref: <a>,
+        type: 'image',
+        src: undefined | 'image.jpg',
+        node: undefined | Element,
 
-      if (csrc) {
-        props.src = csrc;
+        ... /properties
+
+
+
+        fresh: Function,
+        stale: Function,
+        wrap: Compo,
+        inner: Object { tag, name, props }  -->  Compo
       }
 
-      switch (ctype) {
+
+      {
+        tag: 'img' | 'picture' | 'video' | 'audio' | 'iframe' | 'div.custom-element',
+        name: Data.type | ?true,
+        props: {
+          srcset,
+          sizes,
+          onload,
+          onabort,
+          onerror,
+          preload,
+          controls,
+          onseek,
+        }
+      }
+    */
+    inner(data) {
+      let tag = data.type;
+      let name = true;
+      let props = {};
+
+      for (const prop in data) {
+        if (! /ref|src|type|sources|subtitles|children/.test(prop) && prop[0] != '_') {
+          props[prop] = data[prop];
+        }
+      }
+
+      //TODO
+
+      if (data.src) {
+        props.src = data.src;
+      }
+
+      switch (data.type) {
         case 'image':
-          //TODO
-          // <picture>
           tag = 'img';
-          break;
-        //TODO
-        case 'video':
-        case 'audio':
 
-        break;
-        case 'iframe':
-          props.frameBorder = 0;
+          if (data.sources || data.children) {
+            tag = 'picture';
 
-          if (! csrc) {
-            return null;
+            props.children = [];
+
+            if (data.sources && typeof data.source == 'object') {
+              for (const source of data.sources) {
+                const src = data.sources[source].src;
+                const type = data.sources[source].type;
+
+                props.children.push({ tag: 'source', name: true, props: { src, type } });
+              }
+            } else if (data.children && data.children.length) {
+              for (const prop of data.children) {
+                if (prop == 'img') {
+                  const src = data.sources[source].src;
+                  const alt = data.sources[source].alt || null;
+
+                  props.children.push({ tag: 'img', name: true, props: { src, alt } });
+                }
+                if (prop == 'source') {
+                  const src = data.sources[source].src;
+                  const type = data.sources[source].type;
+
+                  props.children.push({ tag: 'source', name: true, props: { src, type } });
+                }
+              }
+            }
           }
 
           break;
+
+        case 'video':
+        case 'audio':
+          props.controls = data.controls ? data.controls : true;
+          props.children = [];
+
+          if (data.sources && typeof data.sources == 'object') {
+            for (const source of data.sources) {
+              const src = source.src;
+              const type = source.type;
+
+              props.children.push({ tag: 'source', name: true, props: { src, type } });
+            }
+          }
+          if (data.subtitles && typeof data.subtitles == 'object') {
+            for (const track of data.subtitles) {
+
+              props.children.push({ tag: 'track', name: true });
+            }
+          }
+
+          break;
+
+        case 'iframe':
+          props.frameBorder = 0;
+
+          if (! props.src) return null;
+
+          break;
+
         default:
           tag = 'div';
           name = 'custom-element';
@@ -286,38 +414,107 @@
       return { tag, name, props };
     }
 
+    /*
+      <a href="content.jpg">
+      <a data-href="content.jpg" data-type="image/jpeg">
+      <a href="content.jpg" data-type="image">
+      <button data-href="content.jpg" data-type="image/jpeg">
+      <img src="image.jpg">
+      <img srcset sizes>
+      <picture><source src="image.webp" type="image/webp"><img src="image.jpg">
+      <a data-type="image" data-sources="[{\"src\": \"image.avif\", \"type\": \"image/avif\"}]">
+      <video src="video.mp4">
+      <a data-type="video" data-sources="[{\"src\": \"video.ogv\", \"type\": \"video/theora\"}, {\"src\": \"video.mp4\", \"type\": \"video/mp4\"}}]">
+      <audio><source src="audio.ogg" type="audio/ogg"><source src="audio.mp4" type="audio/aac">Fallback text</audio>
+      <a href="#div"> <div id="div">
+      <a href="#video"> <video id="video" src="video.webm">
+      <button data-href="document.pdf">
+      <a href="document.pdf" data-type="pdf">
+      <a href="document.pdf" data-type="application/pdf">
+
+      ?: <video src="blob:">
+      ?: <svg>
+      ?: m3u, m3u8
+
+
+      contents: [ 'image.jpg', 'video.mp4' ]
+
+      contents: [
+        {
+          type: 'image',
+          src: 'image.jpg',
+          srcset,
+          sizes,
+          onload,
+          onabort,
+          onerror,
+        },
+        {
+          type: 'video',
+          preload,
+          controls,
+          sources: [
+            {
+              src: 'video.webm',
+              type: 'video/webm'
+            }
+          ],
+          subtitles: ?,
+          onseek,
+        }
+      ]
+
+
+
+
+      [
+        Data {
+          ref: <button>,
+          type: 'pdf',
+          src: 'document.pdf'
+        },
+        Data {
+          ref: <a>,
+          src: '#div'
+        },
+        Data {
+          src: 'image.jpg'
+        }
+      ]
+    */
     prepare(contents) {
       const c = [];
 
-      if (contents && typeof contents === 'object' && contents.length) {
+      if (contents && typeof contents == 'object' && contents.length) {
         for (const obj of contents) {
           if ('nodeName' in obj) {
-            const data = this.data({ ref: obj });
+            const data = this.data();
             const sds = obj.dataset;
 
-            // if (sds.length) {
-            //   for (const p of sds) {
-            //     if (/{*}/.test(p)) {
-            //       try {
-            //         p = JSON.parse(p);
-            //       } catch {}
-            //     }
-            //   }
-            // }
-            if (sds.type) {
-              data.type = sds.type;
+            Object.assign(data, sds);
+
+            data.ref = obj;
+
+            if (sds.sources) {
+              try {
+                data.sources = JSON.parse(sds.sources);
+              } catch {}
             }
             if (obj.href) {
               data.src = obj.href;
             } else if (sds.href) {
               data.src = sds.href;
             } else if (/iframe|img|picture|video|audio/i.test(obj.nodeName)) {
-              if (/img|picture/i.test(obj.nodeName)) {
+              const tag = obj.nodeName.toLowerCase();
+
+              if (/img|picture/.test(tag)) {
                 data.type = 'image';
               } else {
-                data.type = obj.nodeName.toLowerCase();
+                data.type = tag;
               }
-
+              if (tag != 'iframe' && obj.children && obj.children.length) {
+                data.children = obj.children;
+              }
             } else {
               data.type = 'element';
               data.node = obj;
@@ -327,6 +524,8 @@
             }
 
             c.push(data);
+          } else if (typeof obj == 'string') {
+            c.push(obj);
           } else if ('type' in obj && /(^element|iframe|image|video|audio|pdf)/.test(obj.type)) {
             c.push(this.data(obj));
           } else {
@@ -338,24 +537,24 @@
       return c;
     }
 
-    allowedProps(obj) {
-      if (! this.cachedProps) {
-        this.cache_props = [];
+    // allowedProps(obj) {
+    //   if (! this.cachedProps) {
+    //     this.cache_props = [];
 
-        for (const prop in HTMLElement.prototype) {
-          if (prop.indexOf('on') !== 0) {
-            this.cache_props.push(prop);
-          }
-        }
-      }
+    //     for (const prop in HTMLElement.prototype) {
+    //       if (prop.indexOf('on') !== 0) {
+    //         this.cache_props.push(prop);
+    //       }
+    //     }
+    //   }
 
-      const props = this.cache_props;
-      const proto = Object.getPrototypeOf(obj);
+    //   const props = this.cache_props;
+    //   const proto = Object.getPrototypeOf(obj);
 
-      return Object.keys(proto).filter(function(i) {
-        return props.indexOf(i) < 0;
-      });
-    }
+    //   return Object.keys(proto).filter(function(i) {
+    //     return props.indexOf(i) < 0;
+    //   });
+    // }
 
     add(content) {
       this.gallery.append(content.wrap);
