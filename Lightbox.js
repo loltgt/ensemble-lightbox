@@ -199,10 +199,9 @@
       const csrc = data.src;
       let ctype = data.type;
 
-      //TODO
       if (ctype) {
-        ctype = ctype.match(/^image|video|audio/);
-        ctype = ctype ? ctype[0] : data.type;
+        ctype = ctype.match(/(^image|video|audio)|(pdf$)/);
+        ctype = ctype ? ctype[0] : '';
       }
 
       const exref = /^https?:\/\//.test(csrc);
@@ -237,6 +236,7 @@
       }
 
       if (csrc && ! ctype) {
+        //TODO
         if (csrc[0] === '#') {
           const qel = this.selector(csrc);
 
@@ -335,8 +335,6 @@
         }
       }
 
-      //TODO
-
       if (data.src) {
         props.src = data.src;
       }
@@ -352,25 +350,17 @@
 
             if (data.sources && typeof data.source == 'object') {
               for (const source of data.sources) {
-                const src = data.sources[source].src;
-                const type = data.sources[source].type;
-
-                props.children.push({ tag: 'source', name: true, props: { src, type } });
+                props.children.push({ tag: 'source', name: true, props: source });
               }
             } else if (data.children && data.children.length) {
-              for (const prop of data.children) {
-                if (prop == 'img') {
-                  const src = data.sources[source].src;
-                  const alt = data.sources[source].alt || null;
+              for (const child of data.children) {
+                const tag = child.tagName.toLowerCase();
 
-                  props.children.push({ tag: 'img', name: true, props: { src, alt } });
+                if (tag != 'source' || tag != 'img') {
+                  continue;
                 }
-                if (prop == 'source') {
-                  const src = data.sources[source].src;
-                  const type = data.sources[source].type;
 
-                  props.children.push({ tag: 'source', name: true, props: { src, type } });
-                }
+                props.children.push({ tag: tag, name: true, props: child.attributes });
               }
             }
           }
@@ -384,17 +374,24 @@
 
           if (data.sources && typeof data.sources == 'object') {
             for (const source of data.sources) {
-              const src = source.src;
-              const type = source.type;
-
-              props.children.push({ tag: 'source', name: true, props: { src, type } });
+              props.children.push({ tag: 'source', name: true, props: source });
             }
-          }
-          if (data.subtitles && typeof data.subtitles == 'object') {
-            for (const track of data.subtitles) {
 
-              props.children.push({ tag: 'track', name: true });
+            if (data.subtitles && typeof data.subtitles == 'object') {
+              for (const track of data.subtitles) {
+                props.children.push({ tag: 'track', name: true, props: track });
+              }
             }
+          } else if (data.children && data.children.length) {
+              for (const child of data.children) {
+                const tag = child.tagName.toLowerCase();
+
+                if (tag != 'source' || tag != 'track') {
+                  continue;
+                }
+
+                props.children.push({ tag: tag, name: true, props: child.attributes });
+              }
           }
 
           break;
@@ -487,7 +484,7 @@
 
       if (contents && typeof contents == 'object' && contents.length) {
         for (const obj of contents) {
-          if ('nodeName' in obj) {
+          if (typeof obj == 'object' && 'nodeName' in obj) {
             const data = this.data();
             const sds = obj.dataset;
 
@@ -536,25 +533,6 @@
 
       return c;
     }
-
-    // allowedProps(obj) {
-    //   if (! this.cachedProps) {
-    //     this.cache_props = [];
-
-    //     for (const prop in HTMLElement.prototype) {
-    //       if (prop.indexOf('on') !== 0) {
-    //         this.cache_props.push(prop);
-    //       }
-    //     }
-    //   }
-
-    //   const props = this.cache_props;
-    //   const proto = Object.getPrototypeOf(obj);
-
-    //   return Object.keys(proto).filter(function(i) {
-    //     return props.indexOf(i) < 0;
-    //   });
-    // }
 
     add(content) {
       this.gallery.append(content.wrap);
