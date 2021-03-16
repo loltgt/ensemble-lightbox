@@ -1,3 +1,11 @@
+/*!
+ * loltgt ensemble.Lightbox
+ *
+ * @version 0.0.1
+ * @copyright Copyright (C) Leonardo Laureti
+ * @license MIT License
+ */
+
 .modal, .modal-content, .modal-object, .modal-nav, .modal-captions, .modal-button {
   margin: 0;
   padding: 0;

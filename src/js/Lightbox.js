@@ -10,7 +10,7 @@
 
 (function(window, module, require, ensemble) {
 
-  const Modal = ensemble ? ensemble.Modal : require('../ensemble-modal/Modal');
+  const Modal = ensemble ? ensemble.Modal : require('../../../../ensemble-modal/src/js/Modal');
 
 
   class Lightbox extends Modal {
