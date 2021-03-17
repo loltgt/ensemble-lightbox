@@ -8,9 +8,11 @@
 
 'use strict';
 
-(function(window, module, require, ensemble) {
+// (function(window, module, require, ensemble) {
 
-  const Modal = ensemble ? ensemble.Modal : require('../../../../ensemble-modal/src/js/Modal');
+  // const Modal = ensemble ? ensemble.Modal : require('../../../ensemble-modal/src/js/Modal');
+
+  import { Modal } from '../../../ensemble-modal/src/js/Modal.js';
 
 
   class Lightbox extends Modal {
@@ -694,7 +696,10 @@
   }
 
 
-  window.ensemble = { ...ensemble, ...{ Lightbox } };
-  module.exports = Lightbox;
+  // window.ensemble = { ...ensemble, ...{ Lightbox } };
+  // module.exports = Lightbox;
 
-}((typeof window != 'undefined' ? window : {}), (typeof module != 'undefined' ? module : {}), (typeof require != 'undefined' ? require : function() {}), globalThis.ensemble));
+// }((typeof window != 'undefined' ? window : {}), (typeof module != 'undefined' ? module : {}), (typeof require != 'undefined' ? require : function() {}), globalThis.ensemble));
+
+
+export { Lightbox, Modal };
