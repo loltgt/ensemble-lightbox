@@ -1,0 +1,45 @@
+
+
+// Container
+
+$ensemble-lightbox_foreground: #fff;
+$ensemble-lightbox_background: rgba(0, 0, 0, .93);
+
+
+
+// Image
+
+$ensemble-lightbox_image_padding: 0;
+$ensemble-lightbox_image_prevent_dnd: true;
+
+
+
+// Captions
+
+$ensemble-lightbox_captions_height: 8.2vh;
+$ensemble-lightbox_captions_padding: 3vh 1rem;
+$ensemble-lightbox_captions_font-size: .9rem;
+$ensemble-lightbox_captions_line-height: 1.5;
+$ensemble-lightbox_captions_text-align: center;
+$ensemble-lightbox_captions_paragraph-margin: 0 0 1rem;
+
+$ensemble-lightbox_captions_foreground: #fff;
+$ensemble-lightbox_captions_background: rgba(0, 0, 0, .8);
+
+
+
+// Fx
+
+$ensemble-lightbox_fx_object_transition: opacity 100ms ease;
+$ensemble-lightbox_fx_captions_transition: opacity 200ms ease-out;
+
+
+
+// Responsive
+
+
+// 992 – md
+
+$ensemble-lightbox_md__image_padding: 10vh;
+$ensemble-lightbox_md__captions_font_size: 1rem;
+
