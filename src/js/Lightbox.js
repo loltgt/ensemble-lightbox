@@ -228,6 +228,8 @@
         ctype = 'iframe';
         xclassn = 'pdf';
       }
+      //TODO
+      // backward compatibility
       if (opts.checkOrigin && csrc && exref && ! dhref) {
         const worigin = window.origin != 'null' ? window.origin : window.location.origin;
         const corigin = new URL(csrc).origin;
