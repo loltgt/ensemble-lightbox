@@ -27,11 +27,17 @@
   width: 100%;
   height: auto;
   border: 0;
+@if $ensemble_compat {
+} @else {
   aspect-ratio: 16/9;
+}
 }
 .modal-pdf {
   min-height: 100%;
+@if $ensemble_compat {
+} @else {
   aspect-ratio: auto;
+}
 }
 .modal-iframe iframe {
   display: block;
@@ -96,6 +102,9 @@
 .modal-captions {
   bottom: 0;
   width: 100%;
+@if $ensemble_compat {
+  font-size: floor($ensemble-lightbox_captions_font-size / 1rem * 16px);
+}
   min-height: $ensemble-lightbox_captions_height;
   padding: $ensemble-lightbox_captions_padding;
   font-size: $ensemble-lightbox_captions_font-size;
@@ -129,6 +138,9 @@
 
 
 .modal.modal-fx .modal-object[hidden] {
+@if $ensemble_compat {
+  display: block !important;
+}
   display: flex !important;
   opacity: 0;
   z-index: -1;
@@ -136,6 +148,11 @@
 .modal.modal-fx .modal-object {
   opacity: 1;
   transition: $ensemble-lightbox_fx_object_transition;
+@if $ensemble_compat {
+  -webkit-transition: $ensemble-lightbox_fx_object_transition;
+  -moz-transition: $ensemble-lightbox_fx_object_transition;
+  -ms-transition: $ensemble-lightbox_fx_object_transition;
+}
 }
 .modal.modal-fx .modal-captions:empty {
   opacity: 0;
@@ -144,6 +161,11 @@
   display: block !important;
   opacity: 1;
   transition: $ensemble-lightbox_fx_captions_transition;
+@if $ensemble_compat {
+  -webkit-transition: $ensemble-lightbox_fx_captions_transition;
+  -moz-transition: $ensemble-lightbox_fx_captions_transition;
+  -ms-transition: $ensemble-lightbox_fx_captions_transition;
+}
 }
 
 .modal.modal-autohide .modal-nav,
@@ -177,6 +199,9 @@
 .modal.modal-overlayed-navigation .modal-captions,
 .modal.modal-overlayed-captions .modal-nav {
   position: initial;
+@if $ensemble_compat {
+  position: relative;
+}
 }
 
 
@@ -207,6 +232,9 @@
     margin-top: -5.5rem;
   }
   .modal-captions {
+@if $ensemble_compat {
+    font-size: floor($ensemble-lightbox_md__captions_font_size / 1rem * 16px);
+}
     font-size: $ensemble-lightbox_md__captions_font_size;
   }
 }
