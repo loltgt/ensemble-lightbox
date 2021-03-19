@@ -30,9 +30,7 @@
   const DENIED_PROPS = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
 
   class Compo {
-    // #rejectedTagNames = /html|head|body|meta|link|style|script/i;
-    // #rejectedTags = /(<(html|head|body|meta|link|style|script)*>)/i;
-    // #deniedProps = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
+    //private proposal
     //TODO
     // tag, name
     constructor(ns, tag, name, props) {
@@ -42,7 +40,7 @@
 
       const _ns = this._ns = '_' + ns;
 
-      const ctag = name ? tag.toString() : 'div'; // if (this.#rejectedTagNames.test(ctag)) {
+      const ctag = name ? tag.toString() : 'div';
 
       if (REJECTED_TAG_NAMES.test(ctag)) {
         throw new Error(`ensemble.Compo error: The tag name provided (\'${ctag}\') is not a valid name.`);
@@ -53,7 +51,7 @@
 
       if (props && typeof props == 'object') {
         for (const prop in props) {
-          const cprop = prop.toString(); // if (this.#deniedProps.test(cprop)) {
+          const cprop = prop.toString();
 
           if (DENIED_PROPS.test(cprop)) {
             throw new Error(`ensemble.Compo error: The property name provided (\'${cprop}\')' is not a valid name.`);
@@ -89,21 +87,24 @@
           node.className += ' ' + _name;
         }
       }
-    }
+    } // return bool
 
-    install(root) {
-      root.appendChild(this[this._ns]);
-    }
 
-    uninstall(root) {
-      root.removeChild(this[this._ns]);
-    }
+    install(root, cb) {
+      typeof cb === 'function' && cb.call(this, this[this._ns]);
+      return !!root.appendChild(this[this._ns]);
+    } // return bool
 
-    up(node) {
-      this.node = Object.seal({
-        ref: node
-      });
-      return !!node.replaceWith(this[this._ns]);
+
+    uninstall(root, cb) {
+      typeof cb === 'function' && cb.call(this, this[this._ns]);
+      return !!root.removeChild(this[this._ns]);
+    } // return bool
+
+
+    up(pholder, cb) {
+      typeof cb === 'function' && cb.call(this, this[this._ns]);
+      return !!pholder.replaceWith(this[this._ns]);
     } // return bool
 
 
@@ -131,13 +132,13 @@
     clone(deep = false) {}
 
     inject(node) {
-      // if (node instanceof Element === false || this.#rejectedTagNames.test(node.tagName) || this.#rejectedTags.test(node.innerHTML)) {
       if (node instanceof Element === false || REJECTED_TAG_NAMES.test(node.tagName) || REJECTED_TAGS.test(node.innerHTML)) {
         throw new Error('ensemble.Compo error: The remote object could not be resolved into a valid node.');
       }
 
       this.empty();
-      this._node = this[this._ns].appendChild(node);
+
+      this[this._ns].appendChild(node);
     }
 
     empty() {
@@ -184,6 +185,16 @@
       this[this._ns].disabled = true;
     }
 
+    get node() {
+      console.warn('ensemble.Compo', 'Direct access to the Element node is strongly discouraged.');
+      return this[this._ns];
+    }
+
+    get parent() {
+      const _ns = this._ns;
+      return this[_ns].parentElement && '__compo' in this[_ns].parentElement ? this[_ns].parentElement.__compo : null;
+    }
+
     get children() {
       return Array.prototype.map.call(this[this._ns].children, node => {
         return node.__compo;
@@ -214,8 +225,8 @@
       return this[this._ns].classList;
     }
 
-    static isCompo(node) {
-      return Symbol.for(node) === Symbol.for(Compo.prototype);
+    static isCompo(obj) {
+      return Symbol.for(obj) === Symbol.for(Compo.prototype);
     } //TODO undef
 
 
@@ -314,8 +325,8 @@
       }
     }
 
-    static isData(node) {
-      return Symbol.for(node) === Symbol.for(Data.prototype);
+    static isData(obj) {
+      return Symbol.for(obj) === Symbol.for(Data.prototype);
     }
 
     get [Symbol.toStringTag]() {
@@ -355,8 +366,8 @@
       this[this._ns].node.removeEventListener(this[this._ns].name, handle);
     }
 
-    static isEvent(node) {
-      return Symbol.for(node) === Symbol.for(Event.prototype);
+    static isEvent(obj) {
+      return Symbol.for(obj) === Symbol.for(Event.prototype);
     }
 
     get [Symbol.toStringTag]() {
@@ -395,11 +406,11 @@
     }
 
     compo(tag, name, props) {
-      return new Compo(this.options.ns, tag, name, props);
+      return tag ? new Compo(this.options.ns, tag, name, props) : Compo;
     }
 
     data(obj) {
-      return new Data(this.options.ns, obj);
+      return obj ? new Data(this.options.ns, obj) : Data;
     }
 
     event(event, node, concurrency = true) {
@@ -408,6 +419,8 @@
       } else if (event) {
         event.preventDefault();
         event.target.blur();
+      } else {
+        return Event;
       }
     }
 
@@ -717,7 +730,7 @@
       box.classList.add(opts.ns + '-lightbox');
 
       if (opts.navigation) {
-        var nav = this.nav = this.data();
+        var nav = this.nav = this.data(true);
         const wrap = nav.wrap = this.compo('nav');
         const prev = nav.prev = this.compo('button', 'prev', opts.prev);
         const next = nav.next = this.compo('button', 'next', opts.next);
@@ -726,7 +739,7 @@
       }
 
       if (opts.captioned) {
-        var captions = this.captions = this.data();
+        var captions = this.captions = this.data(true);
         captions.wrap = this.compo('captions');
       }
 
@@ -1145,7 +1158,7 @@
       if (contents && typeof contents == 'object' && contents.length) {
         for (const obj of contents) {
           if (typeof obj == 'object' && 'nodeName' in obj) {
-            const data = this.data();
+            const data = this.data(true);
             const sds = obj.dataset;
             Object.assign(data, sds);
             data.ref = obj;
@@ -1187,7 +1200,7 @@
           } else if ('type' in obj && /(^element|iframe|image|video|audio|pdf)/.test(obj.type)) {
             c.push(this.data(obj));
           } else {
-            c.push(this.data());
+            c.push(this.data(true));
           }
         }
       }

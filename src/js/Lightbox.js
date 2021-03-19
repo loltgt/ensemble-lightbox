@@ -64,7 +64,7 @@
       box.classList.add(opts.ns + '-lightbox');
 
       if (opts.navigation) {
-        var nav = this.nav = this.data();
+        var nav = this.nav = this.data(true);
         const wrap = nav.wrap = this.compo('nav');
         const prev = nav.prev = this.compo('button', 'prev', opts.prev);
         const next = nav.next = this.compo('button', 'next', opts.next);
@@ -74,7 +74,7 @@
       }
 
       if (opts.captioned) {
-        var captions = this.captions = this.data();
+        var captions = this.captions = this.data(true);
         captions.wrap = this.compo('captions');
       }
       if (opts.overlayed) {
@@ -487,7 +487,7 @@
       if (contents && typeof contents == 'object' && contents.length) {
         for (const obj of contents) {
           if (typeof obj == 'object' && 'nodeName' in obj) {
-            const data = this.data();
+            const data = this.data(true);
             const sds = obj.dataset;
 
             Object.assign(data, sds);
@@ -528,7 +528,7 @@
           } else if ('type' in obj && /(^element|iframe|image|video|audio|pdf)/.test(obj.type)) {
             c.push(this.data(obj));
           } else {
-            c.push(this.data());
+            c.push(this.data(true));
           }
         }
       }
