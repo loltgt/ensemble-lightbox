@@ -54,7 +54,9 @@
     }
 
     generator() {
-      const box = super.generator();
+      super.generator();
+
+      const box = this.box.wrap;
       const cnt = this.cnt;
       const opts = this.options;
 
@@ -199,6 +201,7 @@
       }
 
       const csrc = data.src;
+      let mtype = data.type;
       let ctype = data.type;
 
       if (ctype) {
@@ -208,7 +211,7 @@
 
       const exref = /^https?:\/\//.test(csrc);
       let dhref = false;
-      let xclassn;
+      let xclassm;
 
       if (opts.autoDiscover && csrc && ! ctype) {
         if (/\.jpg|\.jpeg|\.png|\.apng|\.gif|\.webp|\.avif|\.bmp|\.svg$/i.test(csrc)) {
@@ -224,9 +227,9 @@
           ctype = 'image';
         }
       }
-      if (ctype === 'pdf') {
+      if (ctype == 'pdf') {
         ctype = 'iframe';
-        xclassn = 'pdf';
+        xclassm = 'pdf';
       }
       //TODO
       // backward compatibility
@@ -241,7 +244,7 @@
 
       if (csrc && ! ctype) {
         //TODO
-        if (csrc[0] === '#') {
+        if (csrc[0] == '#') {
           const qel = this.selector(csrc);
 
           if (qel) {
@@ -265,6 +268,9 @@
         clone = typeof clone != 'undefined' ? clone : opts.cloning;
         data.node = clone ? this.cloneNode(data.node, true) : data.node;
       }
+      if (! xclassm && mtype != ctype) {
+        xclassm = mtype;
+      }
 
       data.ref = data.ref || null;
       data.type = ctype;
@@ -275,8 +281,8 @@
       if (ctype) {
         wrap.classList.add(opts.ns + '-' + ctype);
       }
-      if (xclassn) {
-        wrap.classList.add(opts.ns + '-' + xclassn);
+      if (xclassm) {
+        wrap.classList.add(opts.ns + '-' + xclassm);
       }
 
       const inner = this.inner(data);

@@ -166,105 +166,35 @@ const lightbox_contents = [
       }
     ]
   },
-
-  // {
-  //   type: 'image',
-  //   tag: 'picture',
-  //   sources: [
-  //     {
-  //       type: 'image/jpeg',
-  //       src: 'image.jpg'
-  //     },
-  //     {
-  //       type: 'image/webp',
-  //       src: 'image.webm'
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   type: 'image',
-  //   srcset: '',
-  //   sizes: ''
-  // },
-
-  // {
-  //   type: 'iframe',
-  //   src: 'iframe-test-demo-lightbox.html',
-  //   allow: 'autoplay'
-  // }
-
-  // {
-  //   type: 'audio',
-  //   controls: true,
-  //   poster: 'audio-thumb.jpg'
-  //   sources: [
-  //     {
-  //       type: 'audio/ogg; codecs=opus',
-  //       src: 'audio.opus'
-  //     },
-  //     {
-  //       type: 'audio/aac',
-  //       src: 'audio.aac'
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   type: 'video',
-  //   controls: true,
-  //   poster: 'video-thumb.jpg'
-  //   sources: [
-  //     {
-  //       type: 'video/mp4',
-  //       src: 'video.mp4'
-  //     },
-  //     {
-  //       type: 'video/webp',
-  //       src: 'video.webp'
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   type: 'pdf',
-  //   src: 'test-pdf-document.pdf'
-  // }
-
-  // {
-  //   type: 'element',
-  //   node: Object | Element
-  // }
-
   {
-    type: 'iframe',
+    type: 'video',
     src: 'https://www.youtube.com/embed/mN0zPOpADL4',
-    caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio'
-    // allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-    // allowfullscreen: true
+    caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio',
+    allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+    allowfullscreen: true //TODO FIX
   },
   {
-    type: 'iframe',
+    type: 'video',
     src: 'https://player.vimeo.com/video/325910798',
-    caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio'
-    // allow: 'autoplay; fullscreen; picture-in-picture',
-    // allowfullscreen: true
+    caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio',
+    allow: 'autoplay; fullscreen; picture-in-picture',
+    allowfullscreen: true //TODO FIX
   },
   {
-    type: 'iframe',
+    type: 'audio',
     src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
-    // allowtransparency: true,
-    // allow: 'encrypted-media'
+    allowtransparency: true, //TODO FIX
+    allow: 'encrypted-media'
   },
   {
     type: 'iframe',
-    src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ'
+    src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ',
+    height: '100%' //TODO FIX
   },
   {
     type: 'iframe',
     src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
   },
-
   {
     type: 'audio',
     src: 'audio-test.wav',
@@ -274,7 +204,7 @@ const lightbox_contents = [
 ];
 const lightbox_element = null;
 const lightbox_button = document.getElementById('button-lightbox');
-const lightbox = new ensemble.Lightbox(lightbox_element, { contents: lightbox_contents });
+const lightbox = new ensemble.Lightbox(lightbox_element, { backClose: false, contents: lightbox_contents });
 lightbox_button.addEventListener('click', lightbox.open, true);
 </script>
 </body>
