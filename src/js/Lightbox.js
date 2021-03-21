@@ -10,7 +10,6 @@
 
 /**
  * @namespace ensemble
- * @module Lightbox
  * @exports Lightbox
  * @exports Modal
  */
@@ -23,24 +22,23 @@ import { Modal } from '../../../ensemble-modal/src/js/Modal.js';
  *
  * @class
  * @extends Modal
- * @constructs
  * @param {Element} element - An optional Element node for lightbox grouping
- * @param {objects} options - Options object
+ * @param {object} options - Options object
  * @param {string} [options.ns=modal] - The namespace for lightbox
  * @param {string} [options.root=body] - The root Element node
  * @param {string} [options.selector] - A selector to find elements
  * @param {object} [options.contents] - An object of contents
  * @param {boolean} [options.fx=true] - Switch for allow effects
  * @param {boolean} [options.windowed=false] - Switch for framing in a window
- * @param {boolean} [options.cloning=true] - Allow cloning of passed element(s)
+ * @param {boolean} [options.cloning=true] - Allow cloning of Element nodes
  * @param {boolean} [options.backClose=true] - Switch for closing on tap/click outside the content
  * @param {boolean} [options.keyboard=true] - Switch for keyboard navigation
  * @param {boolean} [options.navigation=true] - Switch for navigation
  * @param {boolean} [options.captioned=true] - Switch for captions
  * @param {boolean} [options.infinite=true] - Switch for carousel alike loop navigation
  * @param {boolean} [options.autoDiscover=true] - Switch for auto-discover type of contents
- * @param {mixed} [options.autoHide=navigation] - Switch for auto-hide 'navigation' or 'captions', boolean or string value, true for both
- * @param {mixed} [options.overlayed=false] - Switch for overlayed 'navigation' or 'captions', boolean or string value, true for both
+ * @param {mixed} [options.autoHide=navigation] - Switch for auto-hide "navigation" or "captions", boolean or string value, true for both
+ * @param {mixed} [options.overlayed=false] - Switch for overlayed "navigation" or "captions", boolean or string value, true for both
  * @param {boolean} [options.checkOrigin=true] - Switch for a bland control of origin capted from src url
  * @param {object} [options.close] - Custom parameters for close button
  * @param {object} [options.prev] - Custom parameters for button of the previous arrow
@@ -103,7 +101,7 @@ class Lightbox extends Modal {
   /**
    * The generator creates the container box with almost everything the component needs.
    *
-   * @todo
+   * @todo TODO
    */
   generator() {
     super.generator();
@@ -161,7 +159,7 @@ class Lightbox extends Modal {
    * In this stage the component is populated with all the content progeny.
    *
    * @param {Element} target - The element that is invoking
-   * @todo
+   * @todo TODO
    */
   populate(target) {
     console.log('ensemble.Lightbox', 'populate', target);
@@ -200,7 +198,7 @@ class Lightbox extends Modal {
    * Processing when the component is resumed.
    *
    * @param {Element} target - The element that is invoking
-   * @todo
+   * @todo TODO
    */
   resume(target) {
     console.log('ensemble.Lightbox', 'resume', target);
@@ -228,12 +226,12 @@ class Lightbox extends Modal {
   /**
    * The single content.
    *
-   * @global {mixed} window.origin
-   * @global {object} window.location
+   * //global window.origin
+   * //global window.location
    * @param {mixed} src - A URL src -or- an ensemble.Data object
    * @param {boolean} clone - Eventually clones Element nodes
    * @returns {ensemble.Data} data - An ensemble.Data instance
-   * @todo
+   * @todo TODO
    */
   /*
     this.add( this.content() )
@@ -388,7 +386,7 @@ class Lightbox extends Modal {
    * @param {ensemble.Compo} data.wrap - The main composition of content
    * @param {mixed} data.inner - The inner content, Object placeholder -or- ensemble.Compo
    * @returns {object} props - Properties for composition 
-   * @todo
+   * @todo TODO
    */
   /*
     Data {
@@ -515,7 +513,7 @@ class Lightbox extends Modal {
    *
    * @param {object} contents - The passed object of contents
    * @returns {array} c - An array of contents
-   * @todo
+   * @todo TODO
    */
   /*
     <a href="content.jpg">
@@ -644,7 +642,7 @@ class Lightbox extends Modal {
    * Adds a content.
    *
    * @param {ensemble.Compo} content
-   * @todo 
+   * @todo TODO
    */
   add(content) {
     this.gallery.append(content.wrap);
@@ -656,7 +654,7 @@ class Lightbox extends Modal {
    * Removes a content.
    *
    * @param {ensemble.Compo} content
-   * @todo 
+   * @todo TODO
    */
   remove(content) {
     this.gallery.remove(content.wrap);
@@ -668,7 +666,7 @@ class Lightbox extends Modal {
    * Steps to previous slide.
    *
    * @param {Event} e - An Event
-   * @todo 
+   * @todo TODO
    */
   prev(e) {
     this.event(e);
@@ -680,7 +678,7 @@ class Lightbox extends Modal {
    * Steps to next slide.
    *
    * @param {Event} e - An Event
-   * @todo 
+   * @todo TODO
    */
   next(e) {
     this.event(e);
@@ -692,7 +690,7 @@ class Lightbox extends Modal {
    * Slides to previous or next slide.
    *
    * @param {number} step - Step to previous: -1, Step to next: 1
-   * @todo
+   * @todo TODO
    */
   slide(step) {
     const opts = this.options;
@@ -754,7 +752,7 @@ class Lightbox extends Modal {
    * Enable and disable the navigation.
    *
    * @param {number} way - Could step both: 0, Could step to next: -1, Could step to previous: 1
-   * @todo
+   * @todo TODO
    */
   navigation(way) {
     const nav = this.nav;
@@ -788,7 +786,7 @@ class Lightbox extends Modal {
    * Inserts or overwrites caption text
    *
    * @param {string} text - Text content
-   * @todo
+   * @todo TODO
    */
   caption(text) {
     const opts = this.options;

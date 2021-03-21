@@ -22,7 +22,7 @@
 
   /**
    * @namespace ensemble
-   * @module Compo
+   * @exports Compo
    */
 
   /**
@@ -48,7 +48,6 @@
    *
    * @example
    * new ensemble.Compo('namespace-of-my-foo-component', 'div', 'foo', { id: 'fooDiv', tabIndex: 1 });
-   * @lends ensemble.Compo
    * @class
    */
 
@@ -59,11 +58,11 @@
      * @see document.createElement()
      * @see document.createElementNS()
      *
+     * //global document.createElement
      * @constructs
      * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
      * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
      * @constant {RegExp} DENIED_PROPS - A regular expression for denied properties
-     * @global {function} document.createElement
      * @param {string} ns - Composition namespace
      * @param {string} tag - The [DOM] Element node tag -or- component name
      * @param {string} name
@@ -218,7 +217,7 @@
     /**
      * Replace this composition with another compo.
      *
-     * @todo
+     * @todo TODO
      * @param {ensemble.Compo} compo - An ensemble.Compo composition
      */
 
@@ -227,7 +226,7 @@
     /**
      * Clones this composition.
      * 
-     * @todo
+     * @todo TODO
      * @param {boolean} deep - Clone also all compo inside this composition
      */
 
@@ -323,7 +322,7 @@
      *
      * @see window.getComputedStyle()
      *
-     * @global {function} window.getComputedStyle
+     * //global window.getComputedStyle
      * @param {string} prop - A style property
      * @returns {mixed}
      */
@@ -368,7 +367,7 @@
      * Getter for node property, intended as the Element node inside this composition.
      * Note that a direct access to the Element node is discouraged.
      *
-     * @method getter
+     * @var {getter}
      * @returns {Element}
      */
 
@@ -380,7 +379,7 @@
     /**
      * Getter for parent property, intended as the parent compo of this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {ensemble.Compo}
      */
 
@@ -392,7 +391,7 @@
     /**
      * Getter for children property, intended as children compo of this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {array}
      */
 
@@ -405,7 +404,7 @@
     /**
      * Getter for first property, intended as the first compo contained inside of this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {ensemble.Compo}
      */
 
@@ -417,7 +416,7 @@
     /**
      * Getter for last property, intended as the last compo contained inside of this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {ensemble.Compo}
      */
 
@@ -429,7 +428,7 @@
     /**
      * Getter for previous property, intended as the previous sibling of this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {ensemble.Compo}
      */
 
@@ -441,7 +440,7 @@
     /**
      * Getter for next property, intended as the next sibling of this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {ensemble.Compo}
      */
 
@@ -453,7 +452,7 @@
     /**
      * Getter for classList property, intended as the classList of the Element node inside this composition.
      *
-     * @method getter
+     * @var {getter}
      * @returns {DOMTokenList}
      */
 
@@ -464,7 +463,6 @@
     /**
      * Check if passed object is an ensemble.Compo instance.
      *
-     * @function Compo.isCompo
      * @static
      * @returns {boolean}
      * @todo backward compatibility
@@ -513,8 +511,7 @@
    * this object can store any kind of properties. 
    *
    * @example
-   * new ensemble.Data('namespace-of-my-foo-component', { compo: ensemble.Compo, foo: 'a text string', foobj: 'an object' });
-   * @lends ensemble.Data
+   * new ensemble.Data('namespace-of-my-foo-component', { compo: ensemble.Compo, foo: 'a text string', fooObj: 'an object' });
    * @class
    */
 
@@ -549,8 +546,7 @@
      * When you create a composition with this method, it will create a Compo composition or simply an Object placeholder.
      * With the defer render you can have it rendered in place, refresh, or freeze.
      *
-     * @constructs
-     * @global {function} ensemble.Compo
+     * //global ensemble.Compo
      * @param {string} tag - Element node tag -or- component name
      * @param {string} name
      * @param {object} props - Properties for Element node -or- component
@@ -591,8 +587,8 @@
     /**
      * Renderizes a composition, passed by reference.
      *
+     * //global ensemble.Compo
      * @async
-     * @global {function} ensemble.Compo
      * @param {mixed} slot - Reference of the element that will be rendered
      */
 
@@ -650,7 +646,6 @@
     /**
      * Check if passed object is an ensemble.Data instance.
      *
-     * @function Data.isData
      * @static
      * @returns {boolean}
      * @todo backward compatibility
@@ -699,7 +694,6 @@
    *
    * @example
    * new ensemble.Event('namespace-of-my-foo-component', 'mousewheel', node).add(func, { capture: true });
-   * @lends ensemble.Event
    * @class
    */
 
@@ -711,8 +705,8 @@
      * @see Element.addEventListener()
      * @see Element.removeElementListener()
      *
+     * //global ensemble.Compo
      * @constructs
-     * @global {function} ensemble.Compo
      * @param {string} ns - Event namespace
      * @param {string} name - The [DOM] Event type name
      * @param {Element} node - A valid Element node -or- component
@@ -761,7 +755,6 @@
     /**
      * Check if passed object is an ensemble.Event instance.
      *
-     * @function Event.isEvent
      * @static
      * @returns {boolean}
      * @todo backward compatibility
@@ -845,7 +838,7 @@
      * When passed the first argument it makes a new Compo instance, 
      * otherwise it returns a reference to the Compo class.
      *
-     * @global {function} ensemble.Compo
+     * //global ensemble.Compo
      * @param {string} ns - Composition namespace
      * @param {string} tag - The [DOM] Element node tag -or- component name
      * @param {string} name
@@ -862,7 +855,7 @@
      * When passed the first argument it makes a new Data instance, 
      * otherwise it returns a reference to the Data class.
      *
-     * @global {function} ensemble.Data
+     * //global ensemble.Data
      * @param {object} obj - A starter Object
      * @returns {mixed}
      */
@@ -878,7 +871,7 @@
      * if you pass an Event as the first argument, a preventDefault and blur will be performed, 
      * otherwise it returns a reference to the Event class.
      *
-     * @global {function} ensemble.Event
+     * //global ensemble.Event
      * @param {object} obj - A starter Object
      * @returns {mixed}
      */
@@ -900,7 +893,7 @@
      * @see Element.querySelectorAll()
      * @see Element.querySelector()
      *
-     * @global {object} document
+     * //global document
      * @param {string} query - A text query
      * @param {Element} node - An Element node where find
      * @param {boolean} all - Find single or multiple elements
@@ -1043,7 +1036,7 @@
      *
      * @see setTimeout()
      *
-     * @global {function} window.setTimeout
+     * //global window.setTimeout
      * @param {function} func - A function callback
      * @param {mixed} node - An Element node -or- an ensemble.Compo composition
      * @param {int} dtime - A default value of time in milliseconds
@@ -1057,8 +1050,8 @@
     /**
      * Calculates a time, based on a time property of the style of an element
      *
-     * @global {function} ensemble.Compo
-     * @global {function} window.getComputedStyle
+     * //global ensemble.Compo
+     * //global window.getComputedStyle
      * @param {mixed} node - An Element node -or- an ensemble.Compo composition
      * @param {string} prop - A style property
      * @returns {int} time - Number of time in milliseconds
@@ -1162,7 +1155,7 @@
     /**
      * The generator creates the container box with almost everything the component needs.
      *
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1208,7 +1201,7 @@
      * In this stage the component is populated with all the content progeny.
      *
      * @param {Element} target - The element that is invoking
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1221,7 +1214,7 @@
      * Processing when the component is resumed.
      *
      * @param {Element} target - The element that is invoking
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1234,7 +1227,7 @@
      * @param {Element} node - A valid Element node
      * @param {boolean} clone - Eventually clones Element nodes
      * @returns {Element} wrap - The wrapped (cloned) Element node
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1252,7 +1245,7 @@
       return wrap;
     }
     /**
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1439,24 +1432,23 @@
    *
    * @class
    * @extends Modal
-   * @constructs
    * @param {Element} element - An optional Element node for lightbox grouping
-   * @param {objects} options - Options object
+   * @param {object} options - Options object
    * @param {string} [options.ns=modal] - The namespace for lightbox
    * @param {string} [options.root=body] - The root Element node
    * @param {string} [options.selector] - A selector to find elements
    * @param {object} [options.contents] - An object of contents
    * @param {boolean} [options.fx=true] - Switch for allow effects
    * @param {boolean} [options.windowed=false] - Switch for framing in a window
-   * @param {boolean} [options.cloning=true] - Allow cloning of passed element(s)
+   * @param {boolean} [options.cloning=true] - Allow cloning of Element nodes
    * @param {boolean} [options.backClose=true] - Switch for closing on tap/click outside the content
    * @param {boolean} [options.keyboard=true] - Switch for keyboard navigation
    * @param {boolean} [options.navigation=true] - Switch for navigation
    * @param {boolean} [options.captioned=true] - Switch for captions
    * @param {boolean} [options.infinite=true] - Switch for carousel alike loop navigation
    * @param {boolean} [options.autoDiscover=true] - Switch for auto-discover type of contents
-   * @param {mixed} [options.autoHide=navigation] - Switch for auto-hide 'navigation' or 'captions', boolean or string value, true for both
-   * @param {mixed} [options.overlayed=false] - Switch for overlayed 'navigation' or 'captions', boolean or string value, true for both
+   * @param {mixed} [options.autoHide=navigation] - Switch for auto-hide "navigation" or "captions", boolean or string value, true for both
+   * @param {mixed} [options.overlayed=false] - Switch for overlayed "navigation" or "captions", boolean or string value, true for both
    * @param {boolean} [options.checkOrigin=true] - Switch for a bland control of origin capted from src url
    * @param {object} [options.close] - Custom parameters for close button
    * @param {object} [options.prev] - Custom parameters for button of the previous arrow
@@ -1522,7 +1514,7 @@
     /**
      * The generator creates the container box with almost everything the component needs.
      *
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1579,7 +1571,7 @@
      * In this stage the component is populated with all the content progeny.
      *
      * @param {Element} target - The element that is invoking
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1617,7 +1609,7 @@
      * Processing when the component is resumed.
      *
      * @param {Element} target - The element that is invoking
-     * @todo
+     * @todo TODO
      */
 
 
@@ -1644,12 +1636,12 @@
     /**
      * The single content.
      *
-     * @global {mixed} window.origin
-     * @global {object} window.location
+     * //global window.origin
+     * //global window.location
      * @param {mixed} src - A URL src -or- an ensemble.Data object
      * @param {boolean} clone - Eventually clones Element nodes
      * @returns {ensemble.Data} data - An ensemble.Data instance
-     * @todo
+     * @todo TODO
      */
 
     /*
@@ -1805,7 +1797,7 @@
      * @param {ensemble.Compo} data.wrap - The main composition of content
      * @param {mixed} data.inner - The inner content, Object placeholder -or- ensemble.Compo
      * @returns {object} props - Properties for composition 
-     * @todo
+     * @todo TODO
      */
 
     /*
@@ -1950,7 +1942,7 @@
      *
      * @param {object} contents - The passed object of contents
      * @returns {array} c - An array of contents
-     * @todo
+     * @todo TODO
      */
 
     /*
@@ -2075,7 +2067,7 @@
      * Adds a content.
      *
      * @param {ensemble.Compo} content
-     * @todo 
+     * @todo TODO
      */
 
 
@@ -2087,7 +2079,7 @@
      * Removes a content.
      *
      * @param {ensemble.Compo} content
-     * @todo 
+     * @todo TODO
      */
 
 
@@ -2099,7 +2091,7 @@
      * Steps to previous slide.
      *
      * @param {Event} e - An Event
-     * @todo 
+     * @todo TODO
      */
 
 
@@ -2111,7 +2103,7 @@
      * Steps to next slide.
      *
      * @param {Event} e - An Event
-     * @todo 
+     * @todo TODO
      */
 
 
@@ -2123,7 +2115,7 @@
      * Slides to previous or next slide.
      *
      * @param {number} step - Step to previous: -1, Step to next: 1
-     * @todo
+     * @todo TODO
      */
 
 
@@ -2179,7 +2171,7 @@
      * Enable and disable the navigation.
      *
      * @param {number} way - Could step both: 0, Could step to next: -1, Could step to previous: 1
-     * @todo
+     * @todo TODO
      */
 
 
@@ -2215,7 +2207,7 @@
      * Inserts or overwrites caption text
      *
      * @param {string} text - Text content
-     * @todo
+     * @todo TODO
      */
 
 
