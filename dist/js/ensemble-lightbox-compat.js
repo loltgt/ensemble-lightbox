@@ -1,4 +1,4 @@
-(function (global, factory) {
+/*! * loltgt/ensemble.Lightbox, loltgt/ensemble.Modal (compat) * * @version 0.0.1 * @link https://github.com/loltgt/ensemble-lightbox * @copyright Copyright (C) Leonardo Laureti * @license MIT License */(function (global, factory) {
   if (typeof define === "function" && define.amd) {
     define(["exports"], factory);
   } else if (typeof exports !== "undefined") {
@@ -13,19 +13,17 @@
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
   'use strict';
   /*!
-   * loltgt ensemble.Compo
+   * loltgt ensemble _Symbol
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
 
   /**
-   * @namespace ensemble
-   * @exports Compo
-   */
-
-  /**
+   * @see Symbol()
+   *
    * @borrows Symbol as _Symbol
    * @todo backward compatibility
    */
@@ -38,20 +36,6 @@
   function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
 
   function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-  function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-  function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-  function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-  function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-  function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-  function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -811,6 +795,14 @@ try {
 
   function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+  function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
   function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
   function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -819,127 +811,74 @@ try {
 
   function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+  function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+  function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+  function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+  function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+  function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+  function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-  var _Symbol$2 = typeof Symbol == 'undefined' ? 0 : Symbol;
-
-  var REJECTED_TAG_NAMES = /html|head|body|meta|link|style|script/i;
-  var REJECTED_TAGS = /(<(html|head|body|meta|link|style|script)*>)/i;
-  var DENIED_PROPS = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
-  /**
-   * Compo is a composition element with shorthands method and utils.
-   * 
-   * It is a wrapper around an Element node [DOM].
-   * It could be used as a base for abstraction of a custom component element.
+  var _Symbol = typeof Symbol == 'undefined' ? 0 : Symbol;
+  /*!
+   * loltgt ensemble _composition
    *
-   * @example
-   * new ensemble.Compo('namespace-of-my-foo-component', 'div', 'foo', { id: 'fooDiv', tabIndex: 1 });
-   * @class
+   * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
+   * @copyright Copyright (C) Leonardo Laureti
+   * @license MIT License
    */
 
-  var Compo = /*#__PURE__*/function () {
-    /**
-     * Constructor method.
-     *
-     * @see document.createElement()
-     * @see document.createElementNS()
-     *
-     * //global document.createElement
-     * @constructs
-     * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
-     * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
-     * @constant {RegExp} DENIED_PROPS - A regular expression for denied properties
-     * @param {string} ns - Composition namespace
-     * @param {string} tag - The [DOM] Element node tag -or- component name
-     * @param {string} name
-     * @param {object} props - Properties for Element node -or- component
-     * @todo tag, name
-     */
-    function Compo(ns, tag, name, props) {
-      _classCallCheck(this, Compo);
 
-      if (!(this instanceof Compo ? this.constructor : void 0)) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
-      }
+  var REJECTED_TAG_NAMES$1 = /html|head|body|meta|link|style|script/i;
+  var REJECTED_TAGS = /(<(html|head|body|meta|link|style|script)*>)/i;
+  /**
+   * Base class for ensemble.Compo and ensemble.Snap composition elements.
+   *
+   * @class
+   * @abstract
+   */
 
-      var _ns = this._ns = '_' + ns;
-
-      var ctag = name ? tag.toString() : 'div';
-
-      if (REJECTED_TAG_NAMES.test(ctag)) {
-        throw new Error("ensemble.Compo error: The tag name provided ('".concat(ctag, "') is not a valid name."));
-      }
-
-      var node = this[_ns] = document.createElement(ctag); //TODO
-
-      this.__Compo = true;
-      this[_ns].__compo = this;
-
-      if (props && _typeof(props) == 'object') {
-        for (var prop in props) {
-          var cprop = prop.toString();
-
-          if (DENIED_PROPS.test(cprop)) {
-            throw new Error("ensemble.Compo error: The property name provided ('".concat(cprop, "')' is not a valid name."));
-          }
-
-          if (cprop.indexOf('on') === 0 && props[cprop]) {
-            node[cprop] = props[cprop].bind(this);
-          } else if (_typeof(props[cprop]) != 'object') {
-            node[cprop] = props[cprop];
-          } else if (cprop === 'children') {
-            if (_typeof(props[cprop]) == 'object' && props[cprop].length) {
-              var _iterator = _createForOfIteratorHelper(props.children),
-                  _step;
-
-              try {
-                for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                  var child = _step.value;
-                  var _tag = child.tag;
-                  var _name2 = child.name;
-                  var _props = child.props;
-                  this.append(new Compo(ns, _tag, _name2, _props));
-                }
-              } catch (err) {
-                _iterator.e(err);
-              } finally {
-                _iterator.f();
-              }
-            }
-          }
-        }
-      } //TODO args coherence
-
-
-      if (name != false && name != true) {
-        var _name = node.className;
-        node.className = ns + '-' + tag;
-
-        if (name) {
-          node.className += ' ' + ns + '-' + name;
-        }
-
-        if (_name) {
-          node.className += ' ' + _name;
-        }
-      }
+  var _composition = /*#__PURE__*/function () {
+    function _composition() {
+      _classCallCheck(this, _composition);
     }
-    /**
-     * Install the composition.
-     *
-     * @see HTMLElement.appendChild()
-     *
-     * @param {Element} root - A valid Element node
-     * @param {function} cb - A function callback
-     * @returns {boolean}
-     */
 
+    _createClass(_composition, [{
+      key: "_renderer",
+      value:
+      /**
+       * Element renderer.
+       *
+       * @todo TODO
+       */
+      function _renderer() {
+        delete this._element;
+        delete this._renderer;
+      }
+      /**
+       * Install the composition.
+       *
+       * @see Node.appendChild()
+       *
+       * @param {Element} root - A valid Element node
+       * @param {function} cb - A function callback
+       * @returns {boolean}
+       */
 
-    _createClass(Compo, [{
+    }, {
       key: "install",
       value: function install(root, cb) {
         typeof cb == 'function' && cb.call(this, this[this._ns]);
@@ -948,7 +887,7 @@ try {
       /**
        * Uninstall the composition.
        *
-       * @see Element.removeChild()
+       * @see Node.removeChild()
        *
        * @param {Element} root - A valid Element node
        * @param {function} cb - A function callback
@@ -964,10 +903,10 @@ try {
       /**
        * Loads the composition replacing a placeholder element.
        *
-       * @see Element.replaceWith()
+       * @see Node.replaceWith()
        *
        * @param {Element} pholder - A valid Element node
-       * @param {function} cb - A function callback
+       * @param {upCallback} cb - A function callback
        * @returns {boolean}
        * @todo backward compatibility
        */
@@ -981,7 +920,7 @@ try {
       /**
        * Appends a compo inside this composition.
        *
-       * @see Element.appendChild()
+       * @see Node.appendChild()
        *
        * @param {ensemble.Compo} compo - An ensemble.Compo composition
        * @returns {boolean}
@@ -996,7 +935,7 @@ try {
       /**
        * Prepends a compo inside this composition.
        *
-       * @see Element.prependChild()
+       * @see Node.prependChild()
        *
        * @param {ensemble.Compo} compo - An ensemble.Compo composition
        * @returns {boolean}
@@ -1011,7 +950,7 @@ try {
       /**
        * Removes a compo from this composition.
        *
-       * @see Element.removeChild()
+       * @see Node.removeChild()
        *
        * @param {ensemble.Compo} compo - An ensemble.Compo composition
        * @returns {boolean}
@@ -1024,33 +963,13 @@ try {
         return !!this[_ns].removeChild(compo[_ns]);
       }
       /**
-       * Replace this composition with another compo.
-       *
-       * @todo TODO
-       * @param {ensemble.Compo} compo - An ensemble.Compo composition
-       */
-
-    }, {
-      key: "replace",
-      value: function replace(compo) {}
-      /**
-       * Clones this composition.
-       * 
-       * @todo TODO
-       * @param {boolean} deep - Clone also all compo inside this composition
-       */
-
-    }, {
-      key: "clone",
-      value: function clone() {
-        var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      }
-      /**
        * Inject an element node inside this composition.
        * Note that any inner element contained will be removed.
        *
-       * @see Element.appendChild()
+       * @see Node.appendChild()
        *
+       * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
+       * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
        * @param {Element} node - A valid Element node
        * @returns {boolean}
        */
@@ -1058,7 +977,7 @@ try {
     }, {
       key: "inject",
       value: function inject(node) {
-        if (node instanceof Element == false || REJECTED_TAG_NAMES.test(node.tagName) || REJECTED_TAGS.test(node.innerHTML)) {
+        if (node instanceof Element == false || REJECTED_TAG_NAMES$1.test(node.tagName) || REJECTED_TAGS.test(node.innerHTML)) {
           throw new Error('ensemble.Compo error: The remote object could not be resolved into a valid node.');
         }
 
@@ -1068,18 +987,210 @@ try {
       /**
        * Empty this composition.
        * Any inner element contained will be removed.
-       *
-       * @see Element.remove()
        */
 
     }, {
       key: "empty",
       value: function empty() {
         while (this.first) {
-          //TODO
-          // backward compatibility
           this.remove(this.first);
         }
+      }
+      /**
+       * Getter for children property, intended as children compo of this composition.
+       *
+       * @var {getter}
+       * @returns {array}
+       */
+
+    }, {
+      key: "children",
+      get: function get() {
+        return Array.prototype.map.call(this[this._ns].children, function (node) {
+          return node.__compo;
+        });
+      }
+      /**
+       * Getter for first property, intended as the first compo contained inside of this composition.
+       *
+       * @var {getter}
+       * @returns {ensemble.Compo}
+       */
+
+    }, {
+      key: "first",
+      get: function get() {
+        var _ns = this._ns;
+        return this[_ns].firstElementChild ? this[_ns].firstElementChild.__compo : null;
+      }
+      /**
+       * Getter for last property, intended as the last compo contained inside of this composition.
+       *
+       * @var {getter}
+       * @returns {ensemble.Compo}
+       */
+
+    }, {
+      key: "last",
+      get: function get() {
+        var _ns = this._ns;
+        return this[_ns].lastElementChild ? this[_ns].lastElementChild.__compo : null;
+      }
+    }]);
+
+    return _composition;
+  }();
+  /*!
+   * loltgt ensemble.Compo
+   *
+   * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
+   * @copyright Copyright (C) Leonardo Laureti
+   * @license MIT License
+   */
+
+
+  var REJECTED_TAG_NAMES = /html|head|body|meta|link|style|script/i;
+  var DENIED_PROPS = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
+  /**
+   * Compo is a composition element with shorthands method and utils.
+   * 
+   * It is a wrapper around an Element node [DOM].
+   * It could be used as base for abstraction of a custom component element.
+   *
+   * @class
+   * @extends _composition
+   * @inheritdoc
+   * @example
+   * new ensemble.Compo('namespace-of-my-foo-component', 'div', 'foo', { id: 'fooDiv', tabIndex: 1 });
+   */
+
+  var Compo = /*#__PURE__*/function (_composition2) {
+    _inherits(Compo, _composition2);
+
+    var _super = _createSuper(Compo);
+
+    /**
+     * Constructor method.
+     *
+     * @constructs
+     * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
+     * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
+     * @constant {RegExp} DENIED_PROPS - A regular expression for denied properties
+     * @param {string} ns - Component namespace
+     * @param {string} [tag='div'] - The [DOM] Element node tag -or- component name
+     * @param {(string|string[])} [name] - The composition name, used for CSS className
+     * @param {object} [props] - Properties for composition
+     * @param {object} [options] - An optional ElementCreationOptions object [DOM]
+     * @param {object} [elementNS] - Options for namespaced Element node [DOM]
+     * @param {string} [elementNS.namespaceURI] - A valid namespace URI
+     * @param {string} [elementNS.qualifiedName] - A valid qualified name
+     * @todo props.dataset
+     */
+    function Compo(ns, tag, name, props, options, elementNS) {
+      var _this;
+
+      _classCallCheck(this, Compo);
+
+      if (!(this instanceof Compo ? this.constructor : void 0)) {
+        throw 'ensemble.Compo error: Bad invocation, must be called with new.';
+      }
+
+      _this = _super.call(this);
+
+      var _ns = _this._ns = '_' + ns;
+
+      var ctag = tag ? tag.toString() : 'div';
+
+      if (REJECTED_TAG_NAMES.test(tag)) {
+        throw new Error("ensemble.Compo error: The tag name provided ('".concat(ctag, "') is not a valid name."));
+      }
+
+      var node = _this[_ns] = _this._element(ns, ctag, name, props, options, elementNS);
+
+      _this.__Compo = true;
+      _this[_ns].__compo = _assertThisInitialized(_this);
+
+      if (props && _typeof(props) == 'object') {
+        for (var prop in props) {
+          var cprop = prop.toString();
+
+          if (DENIED_PROPS.test(cprop)) {
+            throw new Error("ensemble.Compo error: The property name provided ('".concat(cprop, "') is not a valid name."));
+          }
+
+          if (cprop.indexOf('on') === 0 && props[cprop] && typeof props[cprop] == 'function') {
+            node[cprop] = props[cprop].bind(_assertThisInitialized(_this)); //TODO
+            // } else if (cprop == 'dataset' && typeof props[cprop] == 'object') {
+            //   node.dataset = Object.assign(node.dataset, props[cprop]);
+          } else if (_typeof(props[cprop]) != 'object') {
+            node[cprop] = props[cprop];
+          } else if (cprop == 'children') {
+            if (_typeof(props[cprop]) == 'object' && props[cprop].length) {
+              var _iterator = _createForOfIteratorHelper(props.children),
+                  _step;
+
+              try {
+                for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                  var child = _step.value;
+                  var _tag = child.tag;
+                  var _name2 = child.name;
+                  var _props = child.props;
+
+                  _this.append(new Compo(ns, _tag, _name2, _props));
+                }
+              } catch (err) {
+                _iterator.e(err);
+              } finally {
+                _iterator.f();
+              }
+            }
+          }
+        }
+      }
+
+      if (name) {
+        var _name = node.className;
+        node.className = '';
+
+        if (typeof name == 'string') {
+          node.className = ns + '-' + name;
+        } else if (_typeof(name) == 'object') {
+          node.className = name.map(function (a) {
+            return ns + '-' + a;
+          }).join(' ');
+        }
+
+        if (_name) {
+          node.className += ' ' + _name;
+        }
+      }
+
+      _this._renderer();
+
+      return _this;
+    }
+    /**
+     * Element wrapper.
+     *
+     * @see document.createElement()
+     * @see document.createElementNS()
+     *
+     * @param {string} ns - Component namespace
+     * @param {string} tag - The element Node tag -or- component name
+     * @param {string} name - Name for composition, used for CSS className
+     * @param {object} props - Properties for composition
+     * @param {object} [options] - An optional ElementCreationOptions object [DOM]
+     * @param {object} [elementNS] - Options for namespaced Element node [DOM]
+     * @param {string} [elementNS.namespaceURI] - A valid namespace URI
+     * @param {string} [elementNS.qualifiedName] - A valid qualified name
+     */
+
+
+    _createClass(Compo, [{
+      key: "_element",
+      value: function _element(ns, tag, name, props, options, elementNS) {
+        if (elementNS) return document.createElementNS(tag, [].concat(_toConsumableArray(elementNS), _toConsumableArray(options)));else return document.createElement(tag, options);
       }
       /**
        * Check for an attribute of this composition.
@@ -1141,7 +1252,6 @@ try {
        *
        * @see window.getComputedStyle()
        *
-       * //global window.getComputedStyle
        * @param {string} prop - A style property
        * @returns {mixed}
        */
@@ -1189,7 +1299,7 @@ try {
       }
       /**
        * Getter for node property, intended as the Element node inside this composition.
-       * Note that a direct access to the Element node is discouraged.
+       * Note that a direct access to the node is discouraged.
        *
        * @var {getter}
        * @returns {Element}
@@ -1198,7 +1308,7 @@ try {
     }, {
       key: "node",
       get: function get() {
-        console.warn('ensemble.Compo', 'Direct access to the Element node is strongly discouraged.');
+        console.warn('ensemble.Compo', 'Direct access to the node is strongly discouraged.');
         return this[this._ns];
       }
       /**
@@ -1213,46 +1323,6 @@ try {
       get: function get() {
         var _ns = this._ns;
         return this[_ns].parentElement && '__compo' in this[_ns].parentElement ? this[_ns].parentElement.__compo : null;
-      }
-      /**
-       * Getter for children property, intended as children compo of this composition.
-       *
-       * @var {getter}
-       * @returns {array}
-       */
-
-    }, {
-      key: "children",
-      get: function get() {
-        return Array.prototype.map.call(this[this._ns].children, function (node) {
-          return node.__compo;
-        });
-      }
-      /**
-       * Getter for first property, intended as the first compo contained inside of this composition.
-       *
-       * @var {getter}
-       * @returns {ensemble.Compo}
-       */
-
-    }, {
-      key: "first",
-      get: function get() {
-        var _ns = this._ns;
-        return this[_ns].firstElementChild ? this[_ns].firstElementChild.__compo : null;
-      }
-      /**
-       * Getter for last property, intended as the last compo contained inside of this composition.
-       *
-       * @var {getter}
-       * @returns {ensemble.Compo}
-       */
-
-    }, {
-      key: "last",
-      get: function get() {
-        var _ns = this._ns;
-        return this[_ns].lastElementChild ? this[_ns].lastElementChild.__compo : null;
       }
       /**
        * Getter for previous property, intended as the previous sibling of this composition.
@@ -1283,6 +1353,8 @@ try {
       /**
        * Getter for classList property, intended as the classList of the Element node inside this composition.
        *
+       * @see DOMTokenList
+       *
        * @var {getter}
        * @returns {DOMTokenList}
        */
@@ -1301,12 +1373,12 @@ try {
        */
 
     }, {
-      key: _Symbol$2.toStringTag,
+      key: _Symbol.toStringTag,
       get:
       /**
        * Getter for Symbol property, returns the symbolic name for ensemble.Compo class.
        *
-       * @see Symbol.toStringTag
+       * @see Symbol.toStringTag()
        *
        * @override
        * @returns {string}
@@ -1319,36 +1391,30 @@ try {
     }], [{
       key: "isCompo",
       value: function isCompo(obj) {
-        if (_Symbol$2) return _Symbol$2.for(obj) === _Symbol$2.for(Compo.prototype);else return obj && _typeof(obj) == 'object' && '__Compo' in obj;
+        if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Compo.prototype);else return obj && _typeof(obj) == 'object' && '__Compo' in obj;
       }
     }]);
 
     return Compo;
-  }();
+  }(_composition);
   /*!
    * loltgt ensemble.Data
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
 
-  /**
-   * @borrows Symbol as _Symbol
-   * @todo backward compatibility
-   */
-
-
-  var _Symbol$1 = typeof Symbol == 'undefined' ? 0 : Symbol;
   /**
    * Data is a multi-purpose utility object.
    * 
    * It could be used as a wrapper around a Compo composition, 
    * this object can store any kind of properties. 
    *
+   * @class
    * @example
    * new ensemble.Data('namespace-of-my-foo-component', { compo: ensemble.Compo, foo: 'a text string', fooObj: 'an object' });
-   * @class
    */
 
 
@@ -1364,7 +1430,7 @@ try {
       _classCallCheck(this, Data);
 
       if (!(this instanceof Data ? this.constructor : void 0)) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
+        throw 'ensemble.Data error: Bad invocation, must be called with new.';
       }
 
       if (obj && _typeof(obj) == 'object') {
@@ -1384,7 +1450,6 @@ try {
      * When you create a composition with this method, it will create a Compo composition or simply an Object placeholder.
      * With the defer render you can have it rendered in place, refresh, or freeze.
      *
-     * //global ensemble.Compo
      * @param {string} tag - Element node tag -or- component name
      * @param {string} name
      * @param {object} props - Properties for Element node -or- component
@@ -1430,7 +1495,6 @@ try {
       /**
        * Renderizes a composition, passed by reference.
        *
-       * //global ensemble.Compo
        * @async
        * @param {mixed} slot - Reference of the element that will be rendered
        */
@@ -1561,7 +1625,7 @@ try {
        */
 
     }, {
-      key: _Symbol$1.toStringTag,
+      key: _Symbol.toStringTag,
       get:
       /**
        * Getter for Symbol property, returns the symbolic name for ensemble.Data class.
@@ -1579,7 +1643,7 @@ try {
     }], [{
       key: "isData",
       value: function isData(obj) {
-        if (_Symbol$1) return _Symbol$1.for(obj) === _Symbol$1.for(Data.prototype);else return obj && _typeof(obj) == 'object' && '__Data' in obj;
+        if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Data.prototype);else return obj && _typeof(obj) == 'object' && '__Data' in obj;
       }
     }]);
 
@@ -1589,25 +1653,19 @@ try {
    * loltgt ensemble.Event
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
 
   /**
-   * @borrows Symbol as _Symbol
-   * @todo backward compatibility
-   */
-
-
-  var _Symbol = typeof Symbol == 'undefined' ? 0 : Symbol;
-  /**
    * Event is an event manager.
    * 
    * It is a wrapper around the native Event [DOM].
    *
+   * @class
    * @example
    * new ensemble.Event('namespace-of-my-foo-component', 'mousewheel', node).add(func, { capture: true });
-   * @class
    */
 
 
@@ -1618,7 +1676,6 @@ try {
      * @see Element.addEventListener()
      * @see Element.removeElementListener()
      *
-     * //global ensemble.Compo
      * @constructs
      * @param {string} ns - Event namespace
      * @param {string} name - The [DOM] Event type name
@@ -1628,13 +1685,12 @@ try {
       _classCallCheck(this, Event);
 
       if (!(this instanceof Event ? this.constructor : void 0)) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
+        throw 'ensemble.Event error: Bad invocation, must be called with new.';
       }
 
       var _ns = this._ns = '_' + ns;
 
-      node = (Compo.isCompo(node) ? node.node : node) || document; //TODO
-
+      node = (Compo.isCompo(node) ? node.node : node) || document;
       this.__Event = true;
       this[_ns] = {
         name: name,
@@ -1709,6 +1765,7 @@ try {
    * loltgt ensemble.base
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble-stack-d1
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
@@ -1716,23 +1773,45 @@ try {
   /**
    * A base class for ensemble components.
    *
-   * @abstract
    * @class
+   * @abstract
+   * @param {Element} [element] - A valid element, could be used within the extending class
+   * @param {object} options - Options object
+   * @example
+   * new base([, element], options)
    */
 
 
   var base = /*#__PURE__*/function () {
     /**
      * Constructor method.
-     *
-     * @constructs
      */
     function base() {
       _classCallCheck(this, base);
 
-      if (!(this instanceof base ? this.constructor : void 0)) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
+      var tname = 'ensemble' + ((this instanceof base ? this.constructor : void 0) && (this instanceof base ? this.constructor : void 0).name ? '.' + (this instanceof base ? this.constructor : void 0).name : '');
+      var element, options;
+
+      if (arguments.length > 1) {
+        element = arguments[0];
+        options = arguments[1];
+      } else {
+        options = arguments[0];
       }
+
+      if (options && _typeof(options) != 'object') {
+        throw new TypeError("".concat(tname, " error: The passed argument 'options' is not of type Object."));
+      }
+
+      if (element && _typeof(element) != 'object') {
+        throw new TypeError("".concat(tname, " error: The passed argument 'element' is not of type Object."));
+      }
+
+      this._bindings();
+
+      this.options = this.defaults(this._defaults(), options);
+      Object.freeze(this.options);
+      this.element = element;
     }
     /**
      * Creates an options Object from a defaults object of pre-defined properties.
@@ -1751,7 +1830,7 @@ try {
         var j = {};
 
         for (var k in _defaults) {
-          if (_defaults[k] != null && _typeof(_defaults[k]) === 'object') {
+          if (_defaults[k] != null && _typeof(_defaults[k]) == 'object') {
             j[k] = _extends(_defaults[k], options[k]);
           } else {
             j[k] = typeof options[k] != 'undefined' ? options[k] : _defaults[k];
@@ -1766,17 +1845,16 @@ try {
        * When passed the first argument it makes a new Compo instance, 
        * otherwise it returns a reference to the Compo class.
        *
-       * //global ensemble.Compo
        * @param {string} ns - Composition namespace
-       * @param {string} tag - The [DOM] Element node tag -or- component name
-       * @param {string} name
-       * @returns {mixed}
+       * @param {string} [tag='div'] - The [DOM] Element node tag -or- component name, empty for ensemble.Compo class reference
+       * @param {mixed} [name] - The composition name, used for CSS className
+       * @returns {mixed} Instance of ensemble.Data -or- ensemble.Data class reference
        */
 
     }, {
       key: "compo",
       value: function compo(tag, name, props) {
-        return tag ? new Compo(this.options.ns, tag, name, props) : Compo;
+        return tag != undefined ? new Compo(this.options.ns, tag, name, props) : Compo;
       }
       /**
        * Shorthand method for ensemble.Data class.
@@ -1784,15 +1862,14 @@ try {
        * When passed the first argument it makes a new Data instance, 
        * otherwise it returns a reference to the Data class.
        *
-       * //global ensemble.Data
-       * @param {object} obj - A starter Object
-       * @returns {mixed}
+       * @param {object} obj - A starter Object, empty for ensemble.Data class reference
+       * @returns {mixed} Instance of ensemble.Data -or- ensemble.Data class reference
        */
 
     }, {
       key: "data",
       value: function data(obj) {
-        return obj ? new Data(this.options.ns, obj) : Data;
+        return obj != undefined ? new Data(this.options.ns, obj) : Data;
       }
       /**
        * Shorthand method for ensemble.Event class.
@@ -1801,8 +1878,7 @@ try {
        * if you pass an Event as the first argument, a preventDefault and blur will be performed, 
        * otherwise it returns a reference to the Event class.
        *
-       * //global ensemble.Event
-       * @param {object} obj - A starter Object
+       * @param {object} obj - A starter Object, empty for ensemble.Event class reference
        * @returns {mixed}
        */
 
@@ -1819,7 +1895,7 @@ try {
 
         return event;
       }(function (event, node) {
-        if (typeof event === 'string') {
+        if (typeof event == 'string') {
           return new Event(this.options.ns, event, node);
         } else if (event) {
           event.preventDefault();
@@ -1834,7 +1910,6 @@ try {
        * @see Element.querySelectorAll()
        * @see Element.querySelector()
        *
-       * //global document
        * @param {string} query - A text query
        * @param {Element} node - An Element node where find
        * @param {boolean} all - Find single or multiple elements
@@ -1987,9 +2062,8 @@ try {
       /**
        * Provides a delay and executes a callback function
        *
-       * @see setTimeout()
+       * @see window.setTimeout()
        *
-       * //global window.setTimeout
        * @param {function} func - A function callback
        * @param {mixed} node - An Element node -or- an ensemble.Compo composition
        * @param {int} dtime - A default value of time in milliseconds
@@ -2004,8 +2078,8 @@ try {
       /**
        * Calculates a time, based on a time property of the style of an element
        *
-       * //global ensemble.Compo
-       * //global window.getComputedStyle
+       * @see window.getComputedStyle()
+       *
        * @param {mixed} node - An Element node -or- an ensemble.Compo composition
        * @param {string} prop - A style property
        * @returns {int} time - Number of time in milliseconds
@@ -2031,6 +2105,7 @@ try {
    * loltgt ensemble.Modal
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble-modal
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
@@ -2040,10 +2115,12 @@ try {
    *
    * @class
    * @extends base
-   * @param {Element} element - A valid Element node to display in the modal dialog
-   * @param {objects} options - Options object
+   * @inheritdoc
+   * @param {Element} [element] - A valid Element node to display in the modal dialog
+   * @param {object} options - Options object
    * @param {string} [options.ns=modal] - The namespace for modal
    * @param {string} [options.root=body] - The root Element node
+   * @param {(string|string[])} [options.className=modal] - The component CSS class name
    * @param {boolean} [options.fx=true] - Switch for allow effects
    * @param {boolean} [options.windowed=false] - Switch for framing in a window
    * @param {boolean} [options.cloning=true] - Allow cloning of passed element(s)
@@ -2055,32 +2132,30 @@ try {
    * @param {function} [options.onShow] - onShow callback, fires when show modal, after it openes
    * @param {function} [options.onHide] - onHide callback, fires when hide modal, before it closes
    * @param {function} [options.onContent] - onContent callback, fires when a content will be shown
+   * @example
+   * var modal = new ensemble.Modal(document.getElementById('inline-content-to-display'), {});
+   * modal.open();
+   * modal.close();
+   * @todo arguments
    */
 
 
   var Modal = /*#__PURE__*/function (_base) {
     _inherits(Modal, _base);
 
-    var _super = _createSuper(Modal);
+    var _super2 = _createSuper(Modal);
 
     /**
      * Constructor method.
      */
-    function Modal(element) {
-      var _this;
-
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+    function Modal() {
       _classCallCheck(this, Modal);
 
-      _this = _super.call(this);
+      if (!(this instanceof Modal ? this.constructor : void 0)) {
+        throw 'ensemble.Modal error: Bad invocation, must be called with new.';
+      }
 
-      _this._bindings();
-
-      _this.options = _this.defaults(_this._defaults(), options);
-      Object.freeze(_this.options);
-      _this.element = element;
-      return _this;
+      return _super2.apply(this, arguments);
     }
     /**
      * The generator creates the container box with almost everything the component needs.
@@ -2101,6 +2176,7 @@ try {
         return {
           ns: 'modal',
           root: 'body',
+          className: 'modal',
           fx: true,
           windowed: false,
           cloning: true,
@@ -2137,8 +2213,8 @@ try {
         var data = this.box = this.data({
           onclick: false
         });
-        var box = this.box.wrap = this.compo('dialog', true, {
-          className: opts.ns,
+        var box = this.box.wrap = this.compo('dialog', false, {
+          className: _typeof(opts.className) == 'object' ? opts.className.join(' ') : opts.className,
           hidden: true,
           ariaModal: true,
           role: 'dialog',
@@ -2148,8 +2224,8 @@ try {
         }); //TODO
         // data.cnt
 
-        var cnt = this.cnt = this.compo('content');
-        var close = this.compo('button', 'close', opts.close);
+        var cnt = this.cnt = this.compo(false, 'content');
+        var close = this.compo('button', ['button', 'close'], opts.close);
         box.append(cnt);
 
         if (opts.windowed) {
@@ -2181,6 +2257,7 @@ try {
       key: "populate",
       value: function populate(target) {
         console.log('ensemble.Modal', 'populate()', target);
+        if (!this.element) return;
         var content = this.content(this.element);
         this.cnt.append(content);
       }
@@ -2209,7 +2286,7 @@ try {
       key: "content",
       value: function content(node, clone) {
         var opts = this.options;
-        var wrap = this.compo('object');
+        var wrap = this.compo(false, 'object');
         clone = typeof clone != 'undefined' ? clone : opts.cloning;
         var inner = clone ? this.cloneNode(node, true) : node;
         opts.onContent.call(this, this, wrap, inner);
@@ -2353,19 +2430,19 @@ try {
           return;
         }
 
-        var inner = target.firstElementChild,
-            inner_w = inner.offsetWidth,
-            inner_h = inner.offsetHeight;
-        var target_t = target.offsetTop,
-            target_l = target.offsetLeft,
-            target_w = target.offsetWidth,
-            target_h = target.offsetHeight;
-        var x = event.x,
-            y = event.y;
-        var crop_t = (target_h - inner_h) / 2,
-            crop_l = (target_w - inner_w) / 2,
-            crop_b = crop_t + inner_h,
-            crop_r = crop_l + inner_w;
+        var inner = target.firstElementChild;
+        var inner_w = inner.offsetWidth;
+        var inner_h = inner.offsetHeight;
+        var target_t = target.offsetTop;
+        var target_l = target.offsetLeft;
+        var target_w = target.offsetWidth;
+        var target_h = target.offsetHeight;
+        var x = event.x;
+        var y = event.y;
+        var crop_t = (target_h - inner_h) / 2;
+        var crop_l = (target_w - inner_w) / 2;
+        var crop_b = crop_t + inner_h;
+        var crop_r = crop_l + inner_w;
         console.log('ensemble.Modal', 'backx()', 'coords', {
           x: x,
           y: y
@@ -2398,7 +2475,7 @@ try {
         this.event(e);
         var kcode = e.keyCode || 0; // Escape
 
-        if (kcode === 27) this.close(e);
+        if (kcode == 27) this.close(e);
       }
     }]);
 
@@ -2408,6 +2485,7 @@ try {
    * loltgt ensemble.Lightbox
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble-lightbox
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
@@ -2417,10 +2495,12 @@ try {
    *
    * @class
    * @extends Modal
-   * @param {Element} element - An optional Element node for lightbox grouping
+   * @inheritdoc
+   * @param {Element} [element] - An optional Element node for lightbox grouping
    * @param {object} options - Options object
    * @param {string} [options.ns=modal] - The namespace for lightbox
    * @param {string} [options.root=body] - The root Element node
+   * @param {(string|string[])} [options.className=[modal, modal-lightbox]] - The component CSS class name
    * @param {string} [options.selector] - A selector to find elements
    * @param {object} [options.contents] - An object of contents
    * @param {boolean} [options.fx=true] - Switch for allow effects
@@ -2446,6 +2526,11 @@ try {
    * @param {function} [options.onStep] - onStep callback, fires when step between slides
    * @param {function} [options.onSlide] - onSlide callback, fires when slide
    * @param {function} [options.onCaption] - onCaption callback, fires when a caption will be shown
+   * @example
+   * var lightbox = new ensemble.Lightbox({ contents: [ { type: 'image', src: '../img/docusaurus.png' } ] });
+   * lightbox.open();
+   * lightbox.close();
+   * @todo arguments
    */
 
 
@@ -2454,13 +2539,26 @@ try {
   var Lightbox = /*#__PURE__*/function (_Modal) {
     _inherits(Lightbox, _Modal);
 
-    var _super2 = _createSuper(Lightbox);
+    var _super3 = _createSuper(Lightbox);
 
+    /**
+     * Constructor method.
+     */
     function Lightbox() {
       _classCallCheck(this, Lightbox);
 
-      return _super2.apply(this, arguments);
+      if (!(this instanceof Lightbox ? this.constructor : void 0)) {
+        throw 'ensemble.Lightbox error: Bad invocation, must be called with new.';
+      }
+
+      return _super3.apply(this, arguments);
     }
+    /**
+     * The generator creates the container box with almost everything the component needs.
+     *
+     * @todo TODO
+     */
+
 
     _createClass(Lightbox, [{
       key: "_defaults",
@@ -2472,6 +2570,7 @@ try {
        */
       function _defaults() {
         return _extends(_get(_getPrototypeOf(Lightbox.prototype), "_defaults", this).call(this), {
+          className: ['modal', 'modal-lightbox'],
           selector: '',
           contents: null,
           navigation: true,
@@ -2510,12 +2609,6 @@ try {
         this.prev = this.binds(this.prev);
         this.next = this.binds(this.next);
       }
-      /**
-       * The generator creates the container box with almost everything the component needs.
-       *
-       * @todo TODO
-       */
-
     }, {
       key: "generator",
       value: function generator() {
@@ -2524,22 +2617,21 @@ try {
         var box = this.box.wrap;
         var cnt = this.cnt;
         var opts = this.options;
-        var gallery = this.gallery = this.compo('gallery');
+        var gallery = this.gallery = this.compo(false, 'gallery');
         cnt.append(gallery);
-        box.classList.add(opts.ns + '-lightbox');
 
         if (opts.navigation) {
           var nav = this.nav = this.data(true);
-          var wrap = nav.wrap = this.compo('nav');
-          var prev = nav.prev = this.compo('button', 'prev', opts.prev);
-          var next = nav.next = this.compo('button', 'next', opts.next);
+          var wrap = nav.wrap = this.compo(false, 'nav');
+          var prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
+          var next = nav.next = this.compo('button', ['button', 'next'], opts.next);
           wrap.append(prev);
           wrap.append(next);
         }
 
         if (opts.captioned) {
           var captions = this.captions = this.data(true);
-          captions.wrap = this.compo('captions');
+          captions.wrap = this.compo(false, 'captions');
         }
 
         if (opts.overlayed) {
@@ -2584,7 +2676,7 @@ try {
 
         if (opts.contents && _typeof(opts.contents) == 'object') {
           contents = opts.contents;
-        } else if (opts.selector) {
+        } else if (opts.selector && this.element) {
           contents = this.selector(opts.selector, this.element, true);
         }
 
@@ -2659,12 +2751,14 @@ try {
       /**
        * The single content.
        *
-       * //global window.origin
-       * //global window.location
+       * @see window.origin
+       * @see window.location
+       * @see URL()
+       *
        * @param {mixed} src - A URL src -or- an ensemble.Data object
        * @param {boolean} clone - Eventually clones Element nodes
        * @returns {ensemble.Data} data - An ensemble.Data instance
-       * @todo TODO
+       * @todo backward compatibility
        */
 
       /*
@@ -2691,7 +2785,7 @@ try {
       key: "content",
       value: function content(src, clone) {
         var opts = this.options;
-        var wrap = this.compo('object');
+        var wrap = this.compo(false, 'object');
         wrap.hide();
         var data;
 
@@ -2770,7 +2864,8 @@ try {
           }
         }
 
-        if (ctype === 'element') {
+        if (ctype == 'element') {
+          //TODO type undef
           clone = typeof clone != 'undefined' ? clone : opts.cloning;
           data.node = clone ? this.cloneNode(data.node, true) : data.node;
         }
@@ -3097,6 +3192,7 @@ try {
             for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
               var obj = _step9.value;
 
+              //TODO nodeName
               if (_typeof(obj) == 'object' && 'nodeName' in obj) {
                 var data = this.data(true);
                 var sds = obj.dataset;
@@ -3280,7 +3376,8 @@ try {
         } else {
           nav.wrap.hide();
           return;
-        }
+        } //TODO type undef
+
 
         if (!this.options.infinite && typeof way != 'undefined') {
           switch (way) {
@@ -3327,7 +3424,7 @@ try {
 
             if (this.hasAttr(ref, 'title')) {
               text = this.getAttr(ref, 'title');
-            } else if (current.type === 'image') {
+            } else if (current.type == 'image') {
               var img = this.selector('img', ref);
               text = img.alt;
             }
@@ -3343,7 +3440,7 @@ try {
           try {
             for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
               var line = _step10.value;
-              var caption = this.compo('p', true, {
+              var caption = this.compo('p', false, {
                 innerText: line
               });
               captions.wrap.append(caption);

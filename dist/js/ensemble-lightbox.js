@@ -1,4 +1,4 @@
-(function (global, factory) {
+/*! * loltgt/ensemble.Lightbox, loltgt/ensemble.Modal * * @version 0.0.1 * @link https://github.com/loltgt/ensemble-lightbox * @copyright Copyright (C) Leonardo Laureti * @license MIT License */(function (global, factory) {
   if (typeof define === "function" && define.amd) {
     define(["exports"], factory);
   } else if (typeof exports !== "undefined") {
@@ -13,19 +13,17 @@
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
   'use strict';
   /*!
-   * loltgt ensemble.Compo
+   * loltgt ensemble _Symbol
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
 
   /**
-   * @namespace ensemble
-   * @exports Compo
-   */
-
-  /**
+   * @see Symbol()
+   *
    * @borrows Symbol as _Symbol
    * @todo backward compatibility
    */
@@ -35,101 +33,40 @@
   });
   _exports.Modal = _exports.Lightbox = void 0;
 
-  const _Symbol$2 = typeof Symbol == 'undefined' ? 0 : Symbol;
-
-  const REJECTED_TAG_NAMES = /html|head|body|meta|link|style|script/i;
-  const REJECTED_TAGS = /(<(html|head|body|meta|link|style|script)*>)/i;
-  const DENIED_PROPS = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
-  /**
-   * Compo is a composition element with shorthands method and utils.
-   * 
-   * It is a wrapper around an Element node [DOM].
-   * It could be used as a base for abstraction of a custom component element.
+  const _Symbol = typeof Symbol == 'undefined' ? 0 : Symbol;
+  /*!
+   * loltgt ensemble _composition
    *
-   * @example
-   * new ensemble.Compo('namespace-of-my-foo-component', 'div', 'foo', { id: 'fooDiv', tabIndex: 1 });
-   * @class
+   * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
+   * @copyright Copyright (C) Leonardo Laureti
+   * @license MIT License
    */
 
-  class Compo {
+
+  const REJECTED_TAG_NAMES$1 = /html|head|body|meta|link|style|script/i;
+  const REJECTED_TAGS = /(<(html|head|body|meta|link|style|script)*>)/i;
+  /**
+   * Base class for ensemble.Compo and ensemble.Snap composition elements.
+   *
+   * @class
+   * @abstract
+   */
+
+  class _composition {
     /**
-     * Constructor method.
+     * Element renderer.
      *
-     * @see document.createElement()
-     * @see document.createElementNS()
-     *
-     * //global document.createElement
-     * @constructs
-     * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
-     * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
-     * @constant {RegExp} DENIED_PROPS - A regular expression for denied properties
-     * @param {string} ns - Composition namespace
-     * @param {string} tag - The [DOM] Element node tag -or- component name
-     * @param {string} name
-     * @param {object} props - Properties for Element node -or- component
-     * @todo tag, name
+     * @todo TODO
      */
-    constructor(ns, tag, name, props) {
-      if (!new.target) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
-      }
-
-      const _ns = this._ns = '_' + ns;
-
-      const ctag = name ? tag.toString() : 'div';
-
-      if (REJECTED_TAG_NAMES.test(ctag)) {
-        throw new Error(`ensemble.Compo error: The tag name provided (\'${ctag}\') is not a valid name.`);
-      }
-
-      const node = this[_ns] = document.createElement(ctag); //TODO
-
-      this.__Compo = true;
-      this[_ns].__compo = this;
-
-      if (props && typeof props == 'object') {
-        for (const prop in props) {
-          const cprop = prop.toString();
-
-          if (DENIED_PROPS.test(cprop)) {
-            throw new Error(`ensemble.Compo error: The property name provided (\'${cprop}\')' is not a valid name.`);
-          }
-
-          if (cprop.indexOf('on') === 0 && props[cprop]) {
-            node[cprop] = props[cprop].bind(this);
-          } else if (typeof props[cprop] != 'object') {
-            node[cprop] = props[cprop];
-          } else if (cprop === 'children') {
-            if (typeof props[cprop] == 'object' && props[cprop].length) {
-              for (const child of props.children) {
-                const tag = child.tag;
-                const name = child.name;
-                const props = child.props;
-                this.append(new Compo(ns, tag, name, props));
-              }
-            }
-          }
-        }
-      } //TODO args coherence
-
-
-      if (name != false && name != true) {
-        const _name = node.className;
-        node.className = ns + '-' + tag;
-
-        if (name) {
-          node.className += ' ' + ns + '-' + name;
-        }
-
-        if (_name) {
-          node.className += ' ' + _name;
-        }
-      }
+    _renderer() {
+      delete this._element;
+      delete this._renderer;
     }
     /**
      * Install the composition.
      *
-     * @see HTMLElement.appendChild()
+     * @see Node.appendChild()
      *
      * @param {Element} root - A valid Element node
      * @param {function} cb - A function callback
@@ -144,7 +81,7 @@
     /**
      * Uninstall the composition.
      *
-     * @see Element.removeChild()
+     * @see Node.removeChild()
      *
      * @param {Element} root - A valid Element node
      * @param {function} cb - A function callback
@@ -159,10 +96,10 @@
     /**
      * Loads the composition replacing a placeholder element.
      *
-     * @see Element.replaceWith()
+     * @see Node.replaceWith()
      *
      * @param {Element} pholder - A valid Element node
-     * @param {function} cb - A function callback
+     * @param {upCallback} cb - A function callback
      * @returns {boolean}
      * @todo backward compatibility
      */
@@ -175,7 +112,7 @@
     /**
      * Appends a compo inside this composition.
      *
-     * @see Element.appendChild()
+     * @see Node.appendChild()
      *
      * @param {ensemble.Compo} compo - An ensemble.Compo composition
      * @returns {boolean}
@@ -189,7 +126,7 @@
     /**
      * Prepends a compo inside this composition.
      *
-     * @see Element.prependChild()
+     * @see Node.prependChild()
      *
      * @param {ensemble.Compo} compo - An ensemble.Compo composition
      * @returns {boolean}
@@ -203,7 +140,7 @@
     /**
      * Removes a compo from this composition.
      *
-     * @see Element.removeChild()
+     * @see Node.removeChild()
      *
      * @param {ensemble.Compo} compo - An ensemble.Compo composition
      * @returns {boolean}
@@ -215,36 +152,20 @@
       return !!this[_ns].removeChild(compo[_ns]);
     }
     /**
-     * Replace this composition with another compo.
-     *
-     * @todo TODO
-     * @param {ensemble.Compo} compo - An ensemble.Compo composition
-     */
-
-
-    replace(compo) {}
-    /**
-     * Clones this composition.
-     * 
-     * @todo TODO
-     * @param {boolean} deep - Clone also all compo inside this composition
-     */
-
-
-    clone(deep = false) {}
-    /**
      * Inject an element node inside this composition.
      * Note that any inner element contained will be removed.
      *
-     * @see Element.appendChild()
+     * @see Node.appendChild()
      *
+     * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
+     * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
      * @param {Element} node - A valid Element node
      * @returns {boolean}
      */
 
 
     inject(node) {
-      if (node instanceof Element == false || REJECTED_TAG_NAMES.test(node.tagName) || REJECTED_TAGS.test(node.innerHTML)) {
+      if (node instanceof Element == false || REJECTED_TAG_NAMES$1.test(node.tagName) || REJECTED_TAGS.test(node.innerHTML)) {
         throw new Error('ensemble.Compo error: The remote object could not be resolved into a valid node.');
       }
 
@@ -254,17 +175,179 @@
     /**
      * Empty this composition.
      * Any inner element contained will be removed.
-     *
-     * @see Element.remove()
      */
 
 
     empty() {
       while (this.first) {
-        //TODO
-        // backward compatibility
         this.remove(this.first);
       }
+    }
+    /**
+     * Getter for children property, intended as children compo of this composition.
+     *
+     * @var {getter}
+     * @returns {array}
+     */
+
+
+    get children() {
+      return Array.prototype.map.call(this[this._ns].children, node => {
+        return node.__compo;
+      });
+    }
+    /**
+     * Getter for first property, intended as the first compo contained inside of this composition.
+     *
+     * @var {getter}
+     * @returns {ensemble.Compo}
+     */
+
+
+    get first() {
+      const _ns = this._ns;
+      return this[_ns].firstElementChild ? this[_ns].firstElementChild.__compo : null;
+    }
+    /**
+     * Getter for last property, intended as the last compo contained inside of this composition.
+     *
+     * @var {getter}
+     * @returns {ensemble.Compo}
+     */
+
+
+    get last() {
+      const _ns = this._ns;
+      return this[_ns].lastElementChild ? this[_ns].lastElementChild.__compo : null;
+    }
+
+  }
+  /*!
+   * loltgt ensemble.Compo
+   *
+   * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
+   * @copyright Copyright (C) Leonardo Laureti
+   * @license MIT License
+   */
+
+
+  const REJECTED_TAG_NAMES = /html|head|body|meta|link|style|script/i;
+  const DENIED_PROPS = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
+  /**
+   * Compo is a composition element with shorthands method and utils.
+   * 
+   * It is a wrapper around an Element node [DOM].
+   * It could be used as base for abstraction of a custom component element.
+   *
+   * @class
+   * @extends _composition
+   * @inheritdoc
+   * @example
+   * new ensemble.Compo('namespace-of-my-foo-component', 'div', 'foo', { id: 'fooDiv', tabIndex: 1 });
+   */
+
+  class Compo extends _composition {
+    /**
+     * Constructor method.
+     *
+     * @constructs
+     * @constant {RegExp} REJECTED_TAG_NAMES - A regular expression for rejected tag names
+     * @constant {RegExp} REJECTED_TAGS - A regular expression for rejected tag
+     * @constant {RegExp} DENIED_PROPS - A regular expression for denied properties
+     * @param {string} ns - Component namespace
+     * @param {string} [tag='div'] - The [DOM] Element node tag -or- component name
+     * @param {(string|string[])} [name] - The composition name, used for CSS className
+     * @param {object} [props] - Properties for composition
+     * @param {object} [options] - An optional ElementCreationOptions object [DOM]
+     * @param {object} [elementNS] - Options for namespaced Element node [DOM]
+     * @param {string} [elementNS.namespaceURI] - A valid namespace URI
+     * @param {string} [elementNS.qualifiedName] - A valid qualified name
+     * @todo props.dataset
+     */
+    constructor(ns, tag, name, props, options, elementNS) {
+      if (!new.target) {
+        throw 'ensemble.Compo error: Bad invocation, must be called with new.';
+      }
+
+      super();
+
+      const _ns = this._ns = '_' + ns;
+
+      const ctag = tag ? tag.toString() : 'div';
+
+      if (REJECTED_TAG_NAMES.test(tag)) {
+        throw new Error(`ensemble.Compo error: The tag name provided ('${ctag}') is not a valid name.`);
+      }
+
+      const node = this[_ns] = this._element(ns, ctag, name, props, options, elementNS);
+
+      this.__Compo = true;
+      this[_ns].__compo = this;
+
+      if (props && typeof props == 'object') {
+        for (const prop in props) {
+          const cprop = prop.toString();
+
+          if (DENIED_PROPS.test(cprop)) {
+            throw new Error(`ensemble.Compo error: The property name provided ('${cprop}') is not a valid name.`);
+          }
+
+          if (cprop.indexOf('on') === 0 && props[cprop] && typeof props[cprop] == 'function') {
+            node[cprop] = props[cprop].bind(this); //TODO
+            // } else if (cprop == 'dataset' && typeof props[cprop] == 'object') {
+            //   node.dataset = Object.assign(node.dataset, props[cprop]);
+          } else if (typeof props[cprop] != 'object') {
+            node[cprop] = props[cprop];
+          } else if (cprop == 'children') {
+            if (typeof props[cprop] == 'object' && props[cprop].length) {
+              for (const child of props.children) {
+                const tag = child.tag;
+                const name = child.name;
+                const props = child.props;
+                this.append(new Compo(ns, tag, name, props));
+              }
+            }
+          }
+        }
+      }
+
+      if (name) {
+        const _name = node.className;
+        node.className = '';
+
+        if (typeof name == 'string') {
+          node.className = ns + '-' + name;
+        } else if (typeof name == 'object') {
+          node.className = name.map(a => ns + '-' + a).join(' ');
+        }
+
+        if (_name) {
+          node.className += ' ' + _name;
+        }
+      }
+
+      this._renderer();
+    }
+    /**
+     * Element wrapper.
+     *
+     * @see document.createElement()
+     * @see document.createElementNS()
+     *
+     * @param {string} ns - Component namespace
+     * @param {string} tag - The element Node tag -or- component name
+     * @param {string} name - Name for composition, used for CSS className
+     * @param {object} props - Properties for composition
+     * @param {object} [options] - An optional ElementCreationOptions object [DOM]
+     * @param {object} [elementNS] - Options for namespaced Element node [DOM]
+     * @param {string} [elementNS.namespaceURI] - A valid namespace URI
+     * @param {string} [elementNS.qualifiedName] - A valid qualified name
+     */
+
+
+    _element(ns, tag, name, props, options, elementNS) {
+      if (elementNS) return document.createElementNS(tag, [...elementNS, ...options]);else return document.createElement(tag, options);
     }
     /**
      * Check for an attribute of this composition.
@@ -322,7 +405,6 @@
      *
      * @see window.getComputedStyle()
      *
-     * //global window.getComputedStyle
      * @param {string} prop - A style property
      * @returns {mixed}
      */
@@ -365,7 +447,7 @@
     }
     /**
      * Getter for node property, intended as the Element node inside this composition.
-     * Note that a direct access to the Element node is discouraged.
+     * Note that a direct access to the node is discouraged.
      *
      * @var {getter}
      * @returns {Element}
@@ -373,7 +455,7 @@
 
 
     get node() {
-      console.warn('ensemble.Compo', 'Direct access to the Element node is strongly discouraged.');
+      console.warn('ensemble.Compo', 'Direct access to the node is strongly discouraged.');
       return this[this._ns];
     }
     /**
@@ -387,43 +469,6 @@
     get parent() {
       const _ns = this._ns;
       return this[_ns].parentElement && '__compo' in this[_ns].parentElement ? this[_ns].parentElement.__compo : null;
-    }
-    /**
-     * Getter for children property, intended as children compo of this composition.
-     *
-     * @var {getter}
-     * @returns {array}
-     */
-
-
-    get children() {
-      return Array.prototype.map.call(this[this._ns].children, node => {
-        return node.__compo;
-      });
-    }
-    /**
-     * Getter for first property, intended as the first compo contained inside of this composition.
-     *
-     * @var {getter}
-     * @returns {ensemble.Compo}
-     */
-
-
-    get first() {
-      const _ns = this._ns;
-      return this[_ns].firstElementChild ? this[_ns].firstElementChild.__compo : null;
-    }
-    /**
-     * Getter for last property, intended as the last compo contained inside of this composition.
-     *
-     * @var {getter}
-     * @returns {ensemble.Compo}
-     */
-
-
-    get last() {
-      const _ns = this._ns;
-      return this[_ns].lastElementChild ? this[_ns].lastElementChild.__compo : null;
     }
     /**
      * Getter for previous property, intended as the previous sibling of this composition.
@@ -452,6 +497,8 @@
     /**
      * Getter for classList property, intended as the classList of the Element node inside this composition.
      *
+     * @see DOMTokenList
+     *
      * @var {getter}
      * @returns {DOMTokenList}
      */
@@ -470,12 +517,12 @@
 
 
     static isCompo(obj) {
-      if (_Symbol$2) return _Symbol$2.for(obj) === _Symbol$2.for(Compo.prototype);else return obj && typeof obj == 'object' && '__Compo' in obj;
+      if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Compo.prototype);else return obj && typeof obj == 'object' && '__Compo' in obj;
     }
     /**
      * Getter for Symbol property, returns the symbolic name for ensemble.Compo class.
      *
-     * @see Symbol.toStringTag
+     * @see Symbol.toStringTag()
      *
      * @override
      * @returns {string}
@@ -484,7 +531,7 @@
      */
 
 
-    get [_Symbol$2.toStringTag]() {
+    get [_Symbol.toStringTag]() {
       return 'ensemble.Compo';
     }
 
@@ -493,26 +540,20 @@
    * loltgt ensemble.Data
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
 
-  /**
-   * @borrows Symbol as _Symbol
-   * @todo backward compatibility
-   */
-
-
-  const _Symbol$1 = typeof Symbol == 'undefined' ? 0 : Symbol;
   /**
    * Data is a multi-purpose utility object.
    * 
    * It could be used as a wrapper around a Compo composition, 
    * this object can store any kind of properties. 
    *
+   * @class
    * @example
    * new ensemble.Data('namespace-of-my-foo-component', { compo: ensemble.Compo, foo: 'a text string', fooObj: 'an object' });
-   * @class
    */
 
 
@@ -526,7 +567,7 @@
      */
     constructor(ns, obj) {
       if (!new.target) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
+        throw 'ensemble.Data error: Bad invocation, must be called with new.';
       }
 
       if (obj && typeof obj == 'object') {
@@ -546,7 +587,6 @@
      * When you create a composition with this method, it will create a Compo composition or simply an Object placeholder.
      * With the defer render you can have it rendered in place, refresh, or freeze.
      *
-     * //global ensemble.Compo
      * @param {string} tag - Element node tag -or- component name
      * @param {string} name
      * @param {object} props - Properties for Element node -or- component
@@ -587,7 +627,6 @@
     /**
      * Renderizes a composition, passed by reference.
      *
-     * //global ensemble.Compo
      * @async
      * @param {mixed} slot - Reference of the element that will be rendered
      */
@@ -653,7 +692,7 @@
 
 
     static isData(obj) {
-      if (_Symbol$1) return _Symbol$1.for(obj) === _Symbol$1.for(Data.prototype);else return obj && typeof obj == 'object' && '__Data' in obj;
+      if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Data.prototype);else return obj && typeof obj == 'object' && '__Data' in obj;
     }
     /**
      * Getter for Symbol property, returns the symbolic name for ensemble.Data class.
@@ -667,7 +706,7 @@
      */
 
 
-    get [_Symbol$1.toStringTag]() {
+    get [_Symbol.toStringTag]() {
       return 'ensemble.Data';
     }
 
@@ -676,25 +715,19 @@
    * loltgt ensemble.Event
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
 
   /**
-   * @borrows Symbol as _Symbol
-   * @todo backward compatibility
-   */
-
-
-  const _Symbol = typeof Symbol == 'undefined' ? 0 : Symbol;
-  /**
    * Event is an event manager.
    * 
    * It is a wrapper around the native Event [DOM].
    *
+   * @class
    * @example
    * new ensemble.Event('namespace-of-my-foo-component', 'mousewheel', node).add(func, { capture: true });
-   * @class
    */
 
 
@@ -705,7 +738,6 @@
      * @see Element.addEventListener()
      * @see Element.removeElementListener()
      *
-     * //global ensemble.Compo
      * @constructs
      * @param {string} ns - Event namespace
      * @param {string} name - The [DOM] Event type name
@@ -713,13 +745,12 @@
      */
     constructor(ns, name, node) {
       if (!new.target) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
+        throw 'ensemble.Event error: Bad invocation, must be called with new.';
       }
 
       const _ns = this._ns = '_' + ns;
 
-      node = (Compo.isCompo(node) ? node.node : node) || document; //TODO
-
+      node = (Compo.isCompo(node) ? node.node : node) || document;
       this.__Event = true;
       this[_ns] = {
         name,
@@ -785,6 +816,7 @@
    * loltgt ensemble.base
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble-stack-d1
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
@@ -792,21 +824,43 @@
   /**
    * A base class for ensemble components.
    *
-   * @abstract
    * @class
+   * @abstract
+   * @param {Element} [element] - A valid element, could be used within the extending class
+   * @param {object} options - Options object
+   * @example
+   * new base([, element], options)
    */
 
 
   class base {
     /**
      * Constructor method.
-     *
-     * @constructs
      */
     constructor() {
-      if (!new.target) {
-        throw 'ensemble error: Bad invocation, must be called with new.';
+      const tname = 'ensemble' + (new.target && new.target.name ? '.' + new.target.name : '');
+      let element, options;
+
+      if (arguments.length > 1) {
+        element = arguments[0];
+        options = arguments[1];
+      } else {
+        options = arguments[0];
       }
+
+      if (options && typeof options != 'object') {
+        throw new TypeError(`${tname} error: The passed argument 'options' is not of type Object.`);
+      }
+
+      if (element && typeof element != 'object') {
+        throw new TypeError(`${tname} error: The passed argument 'element' is not of type Object.`);
+      }
+
+      this._bindings();
+
+      this.options = this.defaults(this._defaults(), options);
+      Object.freeze(this.options);
+      this.element = element;
     }
     /**
      * Creates an options Object from a defaults object of pre-defined properties.
@@ -823,7 +877,7 @@
       const j = {};
 
       for (const k in defaults) {
-        if (defaults[k] != null && typeof defaults[k] === 'object') {
+        if (defaults[k] != null && typeof defaults[k] == 'object') {
           j[k] = Object.assign(defaults[k], options[k]);
         } else {
           j[k] = typeof options[k] != 'undefined' ? options[k] : defaults[k];
@@ -838,16 +892,15 @@
      * When passed the first argument it makes a new Compo instance, 
      * otherwise it returns a reference to the Compo class.
      *
-     * //global ensemble.Compo
      * @param {string} ns - Composition namespace
-     * @param {string} tag - The [DOM] Element node tag -or- component name
-     * @param {string} name
-     * @returns {mixed}
+     * @param {string} [tag='div'] - The [DOM] Element node tag -or- component name, empty for ensemble.Compo class reference
+     * @param {mixed} [name] - The composition name, used for CSS className
+     * @returns {mixed} Instance of ensemble.Data -or- ensemble.Data class reference
      */
 
 
     compo(tag, name, props) {
-      return tag ? new Compo(this.options.ns, tag, name, props) : Compo;
+      return tag != undefined ? new Compo(this.options.ns, tag, name, props) : Compo;
     }
     /**
      * Shorthand method for ensemble.Data class.
@@ -855,14 +908,13 @@
      * When passed the first argument it makes a new Data instance, 
      * otherwise it returns a reference to the Data class.
      *
-     * //global ensemble.Data
-     * @param {object} obj - A starter Object
-     * @returns {mixed}
+     * @param {object} obj - A starter Object, empty for ensemble.Data class reference
+     * @returns {mixed} Instance of ensemble.Data -or- ensemble.Data class reference
      */
 
 
     data(obj) {
-      return obj ? new Data(this.options.ns, obj) : Data;
+      return obj != undefined ? new Data(this.options.ns, obj) : Data;
     }
     /**
      * Shorthand method for ensemble.Event class.
@@ -871,14 +923,13 @@
      * if you pass an Event as the first argument, a preventDefault and blur will be performed, 
      * otherwise it returns a reference to the Event class.
      *
-     * //global ensemble.Event
-     * @param {object} obj - A starter Object
+     * @param {object} obj - A starter Object, empty for ensemble.Event class reference
      * @returns {mixed}
      */
 
 
     event(event, node) {
-      if (typeof event === 'string') {
+      if (typeof event == 'string') {
         return new Event(this.options.ns, event, node);
       } else if (event) {
         event.preventDefault();
@@ -893,7 +944,6 @@
      * @see Element.querySelectorAll()
      * @see Element.querySelector()
      *
-     * //global document
      * @param {string} query - A text query
      * @param {Element} node - An Element node where find
      * @param {boolean} all - Find single or multiple elements
@@ -1034,9 +1084,8 @@
     /**
      * Provides a delay and executes a callback function
      *
-     * @see setTimeout()
+     * @see window.setTimeout()
      *
-     * //global window.setTimeout
      * @param {function} func - A function callback
      * @param {mixed} node - An Element node -or- an ensemble.Compo composition
      * @param {int} dtime - A default value of time in milliseconds
@@ -1050,8 +1099,8 @@
     /**
      * Calculates a time, based on a time property of the style of an element
      *
-     * //global ensemble.Compo
-     * //global window.getComputedStyle
+     * @see window.getComputedStyle()
+     *
      * @param {mixed} node - An Element node -or- an ensemble.Compo composition
      * @param {string} prop - A style property
      * @returns {int} time - Number of time in milliseconds
@@ -1073,6 +1122,7 @@
    * loltgt ensemble.Modal
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble-modal
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
@@ -1082,10 +1132,12 @@
    *
    * @class
    * @extends base
-   * @param {Element} element - A valid Element node to display in the modal dialog
-   * @param {objects} options - Options object
+   * @inheritdoc
+   * @param {Element} [element] - A valid Element node to display in the modal dialog
+   * @param {object} options - Options object
    * @param {string} [options.ns=modal] - The namespace for modal
    * @param {string} [options.root=body] - The root Element node
+   * @param {(string|string[])} [options.className=modal] - The component CSS class name
    * @param {boolean} [options.fx=true] - Switch for allow effects
    * @param {boolean} [options.windowed=false] - Switch for framing in a window
    * @param {boolean} [options.cloning=true] - Allow cloning of passed element(s)
@@ -1097,6 +1149,11 @@
    * @param {function} [options.onShow] - onShow callback, fires when show modal, after it openes
    * @param {function} [options.onHide] - onHide callback, fires when hide modal, before it closes
    * @param {function} [options.onContent] - onContent callback, fires when a content will be shown
+   * @example
+   * var modal = new ensemble.Modal(document.getElementById('inline-content-to-display'), {});
+   * modal.open();
+   * modal.close();
+   * @todo arguments
    */
 
 
@@ -1110,6 +1167,7 @@
       return {
         ns: 'modal',
         root: 'body',
+        className: 'modal',
         fx: true,
         windowed: false,
         cloning: true,
@@ -1143,14 +1201,12 @@
      */
 
 
-    constructor(element, options = {}) {
-      super();
+    constructor() {
+      if (!new.target) {
+        throw 'ensemble.Modal error: Bad invocation, must be called with new.';
+      }
 
-      this._bindings();
-
-      this.options = this.defaults(this._defaults(), options);
-      Object.freeze(this.options);
-      this.element = element;
+      super(...arguments);
     }
     /**
      * The generator creates the container box with almost everything the component needs.
@@ -1164,8 +1220,8 @@
       const data = this.box = this.data({
         onclick: false
       });
-      const box = this.box.wrap = this.compo('dialog', true, {
-        className: opts.ns,
+      const box = this.box.wrap = this.compo('dialog', false, {
+        className: typeof opts.className == 'object' ? opts.className.join(' ') : opts.className,
         hidden: true,
         ariaModal: true,
         role: 'dialog',
@@ -1175,8 +1231,8 @@
       }); //TODO
       // data.cnt
 
-      const cnt = this.cnt = this.compo('content');
-      const close = this.compo('button', 'close', opts.close);
+      const cnt = this.cnt = this.compo(false, 'content');
+      const close = this.compo('button', ['button', 'close'], opts.close);
       box.append(cnt);
 
       if (opts.windowed) {
@@ -1207,6 +1263,7 @@
 
     populate(target) {
       console.log('ensemble.Modal', 'populate()', target);
+      if (!this.element) return;
       const content = this.content(this.element);
       this.cnt.append(content);
     }
@@ -1233,7 +1290,7 @@
 
     content(node, clone) {
       const opts = this.options;
-      const wrap = this.compo('object');
+      const wrap = this.compo(false, 'object');
       clone = typeof clone != 'undefined' ? clone : opts.cloning;
       let inner = clone ? this.cloneNode(node, true) : node;
       opts.onContent.call(this, this, wrap, inner);
@@ -1371,19 +1428,19 @@
         return;
       }
 
-      const inner = target.firstElementChild,
-            inner_w = inner.offsetWidth,
-            inner_h = inner.offsetHeight;
-      const target_t = target.offsetTop,
-            target_l = target.offsetLeft,
-            target_w = target.offsetWidth,
-            target_h = target.offsetHeight;
-      const x = event.x,
-            y = event.y;
-      const crop_t = (target_h - inner_h) / 2,
-            crop_l = (target_w - inner_w) / 2,
-            crop_b = crop_t + inner_h,
-            crop_r = crop_l + inner_w;
+      const inner = target.firstElementChild;
+      const inner_w = inner.offsetWidth;
+      const inner_h = inner.offsetHeight;
+      const target_t = target.offsetTop;
+      const target_l = target.offsetLeft;
+      const target_w = target.offsetWidth;
+      const target_h = target.offsetHeight;
+      const x = event.x;
+      const y = event.y;
+      const crop_t = (target_h - inner_h) / 2;
+      const crop_l = (target_w - inner_w) / 2;
+      const crop_b = crop_t + inner_h;
+      const crop_r = crop_l + inner_w;
       console.log('ensemble.Modal', 'backx()', 'coords', {
         x,
         y
@@ -1415,7 +1472,7 @@
       this.event(e);
       const kcode = e.keyCode || 0; // Escape
 
-      if (kcode === 27) this.close(e);
+      if (kcode == 27) this.close(e);
     }
 
   }
@@ -1423,6 +1480,7 @@
    * loltgt ensemble.Lightbox
    *
    * @version 0.0.1
+   * @link https://github.com/loltgt/ensemble-lightbox
    * @copyright Copyright (C) Leonardo Laureti
    * @license MIT License
    */
@@ -1432,10 +1490,12 @@
    *
    * @class
    * @extends Modal
-   * @param {Element} element - An optional Element node for lightbox grouping
+   * @inheritdoc
+   * @param {Element} [element] - An optional Element node for lightbox grouping
    * @param {object} options - Options object
    * @param {string} [options.ns=modal] - The namespace for lightbox
    * @param {string} [options.root=body] - The root Element node
+   * @param {(string|string[])} [options.className=[modal, modal-lightbox]] - The component CSS class name
    * @param {string} [options.selector] - A selector to find elements
    * @param {object} [options.contents] - An object of contents
    * @param {boolean} [options.fx=true] - Switch for allow effects
@@ -1461,6 +1521,11 @@
    * @param {function} [options.onStep] - onStep callback, fires when step between slides
    * @param {function} [options.onSlide] - onSlide callback, fires when slide
    * @param {function} [options.onCaption] - onCaption callback, fires when a caption will be shown
+   * @example
+   * var lightbox = new ensemble.Lightbox({ contents: [ { type: 'image', src: '../img/docusaurus.png' } ] });
+   * lightbox.open();
+   * lightbox.close();
+   * @todo arguments
    */
 
 
@@ -1474,6 +1539,7 @@
      */
     _defaults() {
       return Object.assign(super._defaults(), {
+        className: ['modal', 'modal-lightbox'],
         selector: '',
         contents: null,
         navigation: true,
@@ -1512,6 +1578,18 @@
       this.next = this.binds(this.next);
     }
     /**
+     * Constructor method.
+     */
+
+
+    constructor() {
+      if (!new.target) {
+        throw 'ensemble.Lightbox error: Bad invocation, must be called with new.';
+      }
+
+      super(...arguments);
+    }
+    /**
      * The generator creates the container box with almost everything the component needs.
      *
      * @todo TODO
@@ -1523,22 +1601,21 @@
       const box = this.box.wrap;
       const cnt = this.cnt;
       const opts = this.options;
-      const gallery = this.gallery = this.compo('gallery');
+      const gallery = this.gallery = this.compo(false, 'gallery');
       cnt.append(gallery);
-      box.classList.add(opts.ns + '-lightbox');
 
       if (opts.navigation) {
         var nav = this.nav = this.data(true);
-        const wrap = nav.wrap = this.compo('nav');
-        const prev = nav.prev = this.compo('button', 'prev', opts.prev);
-        const next = nav.next = this.compo('button', 'next', opts.next);
+        const wrap = nav.wrap = this.compo(false, 'nav');
+        const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
+        const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
         wrap.append(prev);
         wrap.append(next);
       }
 
       if (opts.captioned) {
         var captions = this.captions = this.data(true);
-        captions.wrap = this.compo('captions');
+        captions.wrap = this.compo(false, 'captions');
       }
 
       if (opts.overlayed) {
@@ -1582,7 +1659,7 @@
 
       if (opts.contents && typeof opts.contents == 'object') {
         contents = opts.contents;
-      } else if (opts.selector) {
+      } else if (opts.selector && this.element) {
         contents = this.selector(opts.selector, this.element, true);
       }
 
@@ -1636,12 +1713,14 @@
     /**
      * The single content.
      *
-     * //global window.origin
-     * //global window.location
+     * @see window.origin
+     * @see window.location
+     * @see URL()
+     *
      * @param {mixed} src - A URL src -or- an ensemble.Data object
      * @param {boolean} clone - Eventually clones Element nodes
      * @returns {ensemble.Data} data - An ensemble.Data instance
-     * @todo TODO
+     * @todo backward compatibility
      */
 
     /*
@@ -1667,7 +1746,7 @@
 
     content(src, clone) {
       const opts = this.options;
-      const wrap = this.compo('object');
+      const wrap = this.compo(false, 'object');
       wrap.hide();
       var data;
 
@@ -1746,7 +1825,8 @@
         }
       }
 
-      if (ctype === 'element') {
+      if (ctype == 'element') {
+        //TODO type undef
         clone = typeof clone != 'undefined' ? clone : opts.cloning;
         data.node = clone ? this.cloneNode(data.node, true) : data.node;
       }
@@ -2013,6 +2093,7 @@
 
       if (contents && typeof contents == 'object' && contents.length) {
         for (const obj of contents) {
+          //TODO nodeName
           if (typeof obj == 'object' && 'nodeName' in obj) {
             const data = this.data(true);
             const sds = obj.dataset;
@@ -2183,7 +2264,8 @@
       } else {
         nav.wrap.hide();
         return;
-      }
+      } //TODO type undef
+
 
       if (!this.options.infinite && typeof way != 'undefined') {
         switch (way) {
@@ -2229,7 +2311,7 @@
 
           if (this.hasAttr(ref, 'title')) {
             text = this.getAttr(ref, 'title');
-          } else if (current.type === 'image') {
+          } else if (current.type == 'image') {
             const img = this.selector('img', ref);
             text = img.alt;
           }
@@ -2240,7 +2322,7 @@
         text = text.split(/\n\n|\r\n\r\n/);
 
         for (const line of text) {
-          const caption = this.compo('p', true, {
+          const caption = this.compo('p', false, {
             innerText: line
           });
           captions.wrap.append(caption);

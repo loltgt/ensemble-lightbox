@@ -2,6 +2,7 @@
  * loltgt ensemble.Lightbox
  *
  * @version 0.0.1
+ * @link https://github.com/loltgt/ensemble-lightbox
  * @copyright Copyright (C) Leonardo Laureti
  * @license MIT License
  */
@@ -22,10 +23,12 @@ import { Modal } from '../../../ensemble-modal/src/js/Modal.js';
  *
  * @class
  * @extends Modal
- * @param {Element} element - An optional Element node for lightbox grouping
+ * @inheritdoc
+ * @param {Element} [element] - An optional Element node for lightbox grouping
  * @param {object} options - Options object
  * @param {string} [options.ns=modal] - The namespace for lightbox
  * @param {string} [options.root=body] - The root Element node
+ * @param {(string|string[])} [options.className=[modal, modal-lightbox]] - The component CSS class name
  * @param {string} [options.selector] - A selector to find elements
  * @param {object} [options.contents] - An object of contents
  * @param {boolean} [options.fx=true] - Switch for allow effects
@@ -51,6 +54,11 @@ import { Modal } from '../../../ensemble-modal/src/js/Modal.js';
  * @param {function} [options.onStep] - onStep callback, fires when step between slides
  * @param {function} [options.onSlide] - onSlide callback, fires when slide
  * @param {function} [options.onCaption] - onCaption callback, fires when a caption will be shown
+ * @example
+ * var lightbox = new ensemble.Lightbox({ contents: [ { type: 'image', src: '../img/docusaurus.png' } ] });
+ * lightbox.open();
+ * lightbox.close();
+ * @todo arguments
  */
 class Lightbox extends Modal {
 
@@ -61,6 +69,7 @@ class Lightbox extends Modal {
    */
   _defaults() {
     return Object.assign(super._defaults(), {
+      className: ['modal', 'modal-lightbox'],
       selector: '',
       contents: null,
       navigation: true,
@@ -99,6 +108,17 @@ class Lightbox extends Modal {
   }
 
   /**
+   * Constructor method.
+   */
+  constructor() {
+    if (! new.target) {
+      throw 'ensemble.Lightbox error: Bad invocation, must be called with new.';
+    }
+
+    super(...arguments);
+  }
+
+  /**
    * The generator creates the container box with almost everything the component needs.
    *
    * @todo TODO
@@ -110,16 +130,14 @@ class Lightbox extends Modal {
     const cnt = this.cnt;
     const opts = this.options;
 
-    const gallery = this.gallery = this.compo('gallery');
+    const gallery = this.gallery = this.compo(false, 'gallery');
     cnt.append(gallery);
-
-    box.classList.add(opts.ns + '-lightbox');
 
     if (opts.navigation) {
       var nav = this.nav = this.data(true);
-      const wrap = nav.wrap = this.compo('nav');
-      const prev = nav.prev = this.compo('button', 'prev', opts.prev);
-      const next = nav.next = this.compo('button', 'next', opts.next);
+      const wrap = nav.wrap = this.compo(false, 'nav');
+      const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
+      const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
 
       wrap.append(prev);
       wrap.append(next);
@@ -127,7 +145,7 @@ class Lightbox extends Modal {
 
     if (opts.captioned) {
       var captions = this.captions = this.data(true);
-      captions.wrap = this.compo('captions');
+      captions.wrap = this.compo(false, 'captions');
     }
     if (opts.overlayed) {
       const overlay = opts.overlayed.toString().match(/captions|navigation/);
@@ -170,7 +188,7 @@ class Lightbox extends Modal {
 
     if (opts.contents && typeof opts.contents == 'object') {
       contents = opts.contents;
-    } else if (opts.selector) {
+    } else if (opts.selector && this.element) {
       contents = this.selector(opts.selector, this.element, true);
     }
     contents = this.contents = this.prepare(contents);
@@ -226,12 +244,14 @@ class Lightbox extends Modal {
   /**
    * The single content.
    *
-   * //global window.origin
-   * //global window.location
+   * @see window.origin
+   * @see window.location
+   * @see URL()
+   *
    * @param {mixed} src - A URL src -or- an ensemble.Data object
    * @param {boolean} clone - Eventually clones Element nodes
    * @returns {ensemble.Data} data - An ensemble.Data instance
-   * @todo TODO
+   * @todo backward compatibility
    */
   /*
     this.add( this.content() )
@@ -261,7 +281,7 @@ class Lightbox extends Modal {
   */
   content(src, clone) {
     const opts = this.options;
-    const wrap = this.compo('object');
+    const wrap = this.compo(false, 'object');
     wrap.hide();
 
     var data;
@@ -336,7 +356,8 @@ class Lightbox extends Modal {
         ctype = 'iframe';
       }
     }
-    if (ctype === 'element') {
+    if (ctype == 'element') {
+      //TODO type undef
       clone = typeof clone != 'undefined' ? clone : opts.cloning;
       data.node = clone ? this.cloneNode(data.node, true) : data.node;
     }
@@ -588,6 +609,7 @@ class Lightbox extends Modal {
 
     if (contents && typeof contents == 'object' && contents.length) {
       for (const obj of contents) {
+        //TODO nodeName
         if (typeof obj == 'object' && 'nodeName' in obj) {
           const data = this.data(true);
           const sds = obj.dataset;
@@ -765,6 +787,7 @@ class Lightbox extends Modal {
       return;
     }
 
+    //TODO type undef
     if (! this.options.infinite && typeof way != 'undefined') {
       switch (way) {
         case -1:
@@ -807,7 +830,7 @@ class Lightbox extends Modal {
 
         if (this.hasAttr(ref, 'title')) {
           text = this.getAttr(ref, 'title');
-        } else if (current.type === 'image') {
+        } else if (current.type == 'image') {
           const img = this.selector('img', ref);
           text = img.alt;
         }
@@ -818,7 +841,7 @@ class Lightbox extends Modal {
       text = text.split(/\n\n|\r\n\r\n/);
 
       for (const line of text) {
-        const caption = this.compo('p', true, { innerText: line });
+        const caption = this.compo('p', false, { innerText: line });
         captions.wrap.append(caption);
       }
     }

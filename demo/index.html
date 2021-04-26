@@ -122,7 +122,8 @@ for (const o of g1.querySelectorAll('img')) {
 
 
 const modal_element = document.querySelector('.content');
-const modal = new ensemble.Modal(modal_element);
+//TODO arguments
+const modal = new ensemble.Modal(modal_element, {});
 const modal_button = document.getElementById('button-modal');
 modal_button.addEventListener('click', modal.open, true);
 
@@ -202,9 +203,8 @@ const lightbox_contents = [
   }
 
 ];
-const lightbox_element = null;
 const lightbox_button = document.getElementById('button-lightbox');
-const lightbox = new ensemble.Lightbox(lightbox_element, { backClose: false, contents: lightbox_contents });
+const lightbox = new ensemble.Lightbox({ backClose: false, contents: lightbox_contents });
 lightbox_button.addEventListener('click', lightbox.open, true);
 </script>
 </body>

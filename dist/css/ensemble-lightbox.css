@@ -1,17 +1,5 @@
-/*!
- * loltgt ensemble.Lightbox
- *
- * @version 0.0.1
- * @copyright Copyright (C) Leonardo Laureti
- * @license MIT License
- */
-/*!
- * loltgt ensemble.Modal
- *
- * @version 0.0.1
- * @copyright Copyright (C) Leonardo Laureti
- * @license MIT License
- */
+/*! * loltgt/ensemble.Lightbox, loltgt/ensemble.Modal * * @version 0.0.1 * @link https://github.com/loltgt/ensemble-lightbox * @copyright Copyright (C) Leonardo Laureti * @license MIT License */
+
 .modal, .modal-content, .modal-button, .modal-object, .modal-nav, .modal-captions {
   margin: 0;
   padding: 0;
@@ -185,7 +173,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  /*padding: 10vh 0 0;*/ }
+   }
 
 .modal-nav {
   display: block;
@@ -291,8 +279,6 @@
   .modal-pdf {
     max-width: 80vw;
     max-height: 100%; }
-  /*.modal-pdf iframe {
-    padding: 0;
-  }*/
+  
   .modal-captions {
     font-size: 1rem; } }
