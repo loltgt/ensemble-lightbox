@@ -1,7 +1,7 @@
 /*!
  * loltgt ensemble.Lightbox
  *
- * @version 0.0.1
+ * @version 0.0.2
  * @link https://github.com/loltgt/ensemble-lightbox
  * @copyright Copyright (C) Leonardo Laureti
  * @license MIT License
