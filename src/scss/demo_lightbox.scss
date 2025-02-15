@@ -1,0 +1,98 @@
+/**
+ * ensemble demo Lightbox
+ *
+ * @version 0.0.4
+ * @copyright Copyright (C) Leonardo Laureti
+ * @license MIT License
+ */
+
+@import "demo_common";
+@import "demo_button";
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: .5rem;
+
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+figure {
+  display: flex;
+  margin: 0;
+  min-height: 9em;
+  max-height: 15vh;
+  user-select: none;
+
+  @media (min-width: 992px) {
+    min-height: 7em;
+    max-height: 13vh;
+    aspect-ratio: 5/3;
+  }
+}
+figure a {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+
+  &:after, &:before {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  &:before {
+    content: "";
+    display: block;
+    background: #355555;
+    z-index: -1;
+  }
+  &:after {
+    content: "iframe";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, .75);
+    text-transform: uppercase;
+  }
+}
+figure img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+
+figure a[href$=".jpg"]:after, figure a[href$=".jpeg"]:after { content: "jpeg"; }
+figure a[href$=".png"]:after { content: "png"; }
+figure a[href$=".gif"]:after { content: "gif"; }
+figure a[href$=".pdf"]:after { content: "pdf"; }
+figure a[href^="data:image/svg+xml"]:after { content: "inline svg"; }
+figure a[href$=".webp"]:after { content: "webp"; }
+figure a[href$=".avif"]:after { content: "avif"; }
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5rem;
+  color: #222;
+  background: #eee;
+  border-radius: 3rem;
+}
+.modal .content {
+  min-width: 50vh;
+  min-height: 25vh;
+}
+

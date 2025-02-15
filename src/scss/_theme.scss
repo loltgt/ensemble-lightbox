@@ -2,19 +2,16 @@
 $ensemble_compat: false !default;
 
 
-
 // Container
 
 $ensemble-lightbox_foreground: #fff;
 $ensemble-lightbox_background: rgba(5, 5, 5, .83);
 
 
-
 // Image
 
 $ensemble-lightbox_image_padding: 0;
 $ensemble-lightbox_image_prevent_dnd: true;
-
 
 
 // Captions
@@ -30,19 +27,15 @@ $ensemble-lightbox_captions_foreground: #fff;
 $ensemble-lightbox_captions_background: rgba(0, 0, 0, .78);
 
 
-
 // Fx
 
 $ensemble-lightbox_fx_object_transition: opacity 100ms ease;
 $ensemble-lightbox_fx_captions_transition: opacity 200ms ease-out;
 
 
-
 // Responsive
 
-
 // 992 – md
-
 $ensemble-lightbox_md__image_padding: 10vh;
 $ensemble-lightbox_md__captions_font_size: 1rem;
 

@@ -1,15 +1,16 @@
 /*!
- * loltgt ensemble.Lightbox
+ * ensemble Lightbox
  *
- * @version 0.0.2
+ * @version 0.0.4
  * @link https://github.com/loltgt/ensemble-lightbox
  * @copyright Copyright (C) Leonardo Laureti
  * @license MIT License
  */
 
+@use "sass:math";
 @import "theme";
 
-@import "../../../ensemble-modal/src/scss/modal";
+@import "modal";
 
 
 .modal-object, .modal-nav, .modal-captions, .modal-button {
@@ -38,10 +39,14 @@
   content: "";
   display: block;
   position: absolute;
+@if $ensemble_compat {
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+} @else {
+  inset: 0;
+}
   width: 100%;
   height: 100%;
 }
@@ -92,32 +97,38 @@
 }
 .modal-pdf iframe {
   position: absolute;
+@if $ensemble_compat {
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  /*padding: 10vh 0 0;*/
+} @else {
+  inset: 0;
+}
 }
 
 .modal-nav {
   display: block;
+@if $ensemble_compat {
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+} @else {
+  inset: 0;
+}
 }
 .modal-captions {
   bottom: 0;
   width: 100%;
 @if $ensemble_compat {
-  font-size: floor($ensemble-lightbox_captions_font-size / 1rem * 16px);
+  font-size: math.floor(math.div($ensemble-lightbox_captions_font-size, 1rem) * 16px);
 }
   min-height: $ensemble-lightbox_captions_height;
   padding: $ensemble-lightbox_captions_padding;
   font-size: $ensemble-lightbox_captions_font-size;
   line-height: $ensemble-lightbox_captions_line-height;
   text-align: $ensemble-lightbox_captions_text-align;
-
   color: $ensemble-lightbox_captions_foreground;
   background: $ensemble-lightbox_captions_background;
 }
@@ -137,10 +148,18 @@
   margin-top: -2em;
 }
 .modal-prev {
+@if $ensemble_compat {
   left: 0;
+} @else {
+  inset: 0 auto;
+}
 }
 .modal-next {
+@if $ensemble_compat {
   right: 0;
+} @else {
+  inset: auto 0;
+}
 }
 
 
@@ -214,6 +233,7 @@
 }
 
 
+//TODO
 @media (min-width: 992px) {
   .modal-image {
     border-width: $ensemble-lightbox_md__image_padding;
@@ -241,13 +261,10 @@
     max-width: 80vw;
     max-height: 100%;
   }
-  /*.modal-pdf iframe {
-    padding: 0;
-  }*/
 
   .modal-captions {
 @if $ensemble_compat {
-    font-size: floor($ensemble-lightbox_md__captions_font_size / 1rem * 16px);
+    font-size: math.floor(math.div($ensemble-lightbox_md__captions_font_size, 1rem) * 16px);
 }
     font-size: $ensemble-lightbox_md__captions_font_size;
   }

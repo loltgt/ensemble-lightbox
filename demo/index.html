@@ -3,16 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>loltgt ensemble.Lightbox test</title>
+<title>ensemble Lightbox demo</title>
 <link rel="stylesheet" href="../../ensemble-lightbox/dist/css/ensemble-lightbox.css">
 <link rel="stylesheet" href="demo-ensemble-lightbox.css">
 </head>
 <body>
 <main>
-<h1>loltgt ensemble.Lightbox test</h1>
-
-<p><strong>beta stage</strong>.</p>
-
+<h1>ensemble Lightbox demo</h1>
 
 <section>
 <h2>ensemble.Lightbox</h2>
@@ -63,7 +60,6 @@
 </figure>
 </div>
 
-
 <h3>Test <span>webp</span> and <span>avif</span> images with <span>infinite: false</span></h3>
 
 <div class="grid">
@@ -80,30 +76,28 @@
 </figure>
 </div>
 
-
-<h3>Test with data contents passed with options.</h3>
+<h3>Test with contents passed with options.</h3>
 
 <div>
     <button id="button-lightbox">Open lightbox</button>
 </div>
 </section>
 
-
 <section>
 <h2>ensemble.Modal</h2>
 
 <span class="content">Show this content in a modal.</span>
 
-<button id="button-modal">Open in modal</button>
+<button id="button-modal">Open modal</button>
 </section>
 </main>
 
-
-<!-- <script src="../../ensemble/Compo.js"></script> -->
-<!-- <script src="../../ensemble/Data.js"></script> -->
-<!-- <script src="../../ensemble/Event.js"></script> -->
-<!-- <script src="../../ensemble-stack-d1/base.js"></script> -->
-<!-- <script src="../../ensemble-modal/dist/js/ensemble-modal.min.js"></script> -->
+<!-- <script src="../../ensemble/src/js/Compo.js"></script> -->
+<!-- <script src="../../ensemble/src/js/Data.js"></script> -->
+<!-- <script src="../../ensemble/src/js/Event.js"></script> -->
+<!-- <script src="../../ensemble/src/js/base.js"></script> -->
+<!-- <script src="../../ensemble-modal/src/js/Modal.js"></script> -->
+<!-- <script src="../../ensemble-lightbox/src/js/Lightbox.js"></script> -->
 <script src="../../ensemble-lightbox/dist/js/ensemble-lightbox.min.js"></script>
 <script>
 const g1 = document.querySelector('.grid:nth-child(n+3)');
@@ -122,7 +116,7 @@ for (const o of g1.querySelectorAll('img')) {
 
 
 const modal_element = document.querySelector('.content');
-//TODO arguments
+
 const modal = new ensemble.Modal(modal_element, {});
 const modal_button = document.getElementById('button-modal');
 modal_button.addEventListener('click', modal.open, true);
@@ -145,13 +139,14 @@ for (const lightbox_group of lightbox_grid) {
 }
 
 const lightbox_contents = [
-
-  //TODO
   {
     type: 'element',
-    node: (function() { var el = document.createElement('div'); el.innerText = 'Test for a custom element.'; return el; }())
+    node: (function() {
+      var el = document.createElement('div');
+      el.innerText = 'Test for a custom element.';
+      return el;
+    }())
   },
-
   {
     type: 'video',
     loop: true,
@@ -201,8 +196,8 @@ const lightbox_contents = [
     src: 'audio-test.wav',
     autoplay: true
   }
-
 ];
+
 const lightbox_button = document.getElementById('button-lightbox');
 const lightbox = new ensemble.Lightbox({ backClose: false, contents: lightbox_contents });
 lightbox_button.addEventListener('click', lightbox.open, true);

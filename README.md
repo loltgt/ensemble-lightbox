@@ -1,12 +1,25 @@
 # ensemble Lightbox
 
-ensemble.Lightbox JavaScript class from loltgt.
+ensemble.Lightbox JavaScript class from loltgt
 
- 
-**beta stage**
 
- 
+## Usage
+
+Simple usage example:
+```
+var lightbox = new ensemble.Lightbox({
+  contents: [
+    {
+      type: 'image',
+      src: 'image.png'
+    }
+  ]
+});
+
+lightbox.open();
+```
+
 
 ## License
 
-[MIT License](LICENSE).
+[MIT License](LICENSE)
