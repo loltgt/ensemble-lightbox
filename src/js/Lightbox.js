@@ -15,7 +15,7 @@
  * @exports Modal
  */
 
-import { Modal } from '@loltgt/ensemble-modal';
+import { Modal } from "@loltgt/ensemble-modal";
 
 
 /**
@@ -27,33 +27,33 @@ import { Modal } from '@loltgt/ensemble-modal';
  * @param {Element} [element] An optional Element node for lightbox grouping
  * @param {object} options Options object
  * @param {string} [options.ns=modal] The namespace for lightbox
- * @param {string} [options.root=body] The root Element node
- * @param {(string|string[])} [options.className=[modal, modal-lightbox]] The component CSS class name
+ * @param {string} [options.root=body] A root Element node
+ * @param {string[]} [options.className=[modal, modal-lightbox]] The component CSS class name
  * @param {string} [options.selector] A selector to find elements
- * @param {object} [options.contents] An object of contents
- * @param {boolean} [options.fx=true] Allow effects
+ * @param {object} [options.contents] An object with contents
+ * @param {boolean} [options.effects=true] Allow effects
  * @param {boolean} [options.windowed=false] Allow framing in a window
- * @param {boolean} [options.cloning=true] Allow cloning of Element nodes
- * @param {boolean} [options.backClose=true] Allow closing on tap/click outside the content
+ * @param {boolean} [options.clone=true] Allow clone of Element nodes
+ * @param {boolean} [options.backdrop=true] Allow close on tap or click from outside the modal
  * @param {boolean} [options.keyboard=true] Allow keyboard navigation
  * @param {boolean} [options.navigation=true] Allow navigation
- * @param {boolean} [options.captioned=true] Allow captions
+ * @param {boolean} [options.captions=true] Allow captions
  * @param {boolean} [options.infinite=true] Allow carousel alike loop navigation
  * @param {boolean} [options.autoDiscover=true] Allow auto-discover type of contents
- * @param {mixed} [options.autoHide=navigation] Allow auto-hide "navigation" or "captions", boolean or string value, true for both
- * @param {mixed} [options.overlayed=false] Allow overlayed "navigation" or "captions", boolean or string value, true for both
- * @param {boolean} [options.checkOrigin=true] Allow for a bland control of origin capted from src url
+ * @param {mixed} [options.autoHide=navigation] Allow auto-hide navigation or captions, boolean or string value, "true" for both
+ * @param {mixed} [options.overlay=false] Allow overlay on navigation or captions, boolean or string value, "true" for both
+ * @param {boolean} [options.checkOrigin=true] Allow check origin for URLs
  * @param {object} [options.close] Parameters for close button
- * @param {object} [options.prev] Parameters for button of the previous arrow
- * @param {object} [options.next] Parameters for button of the next arrow
- * @param {function} [options.onOpen] onOpen callback, fires when open lightbox
- * @param {function} [options.onClose] onOpen callback, fires when close lightbox
- * @param {function} [options.onShow] onShow callback, fires when show lightbox, after it openes
- * @param {function} [options.onHide] onHide callback, fires when hide lightbox, before it closes
- * @param {function} [options.onContent] onContent callback, fires when a content will be shown
- * @param {function} [options.onStep] onStep callback, fires when step between slides
- * @param {function} [options.onSlide] onSlide callback, fires when slide
- * @param {function} [options.onCaption] onCaption callback, fires when a caption will be shown
+ * @param {object} [options.prev] Parameters for button of previous arrow
+ * @param {object} [options.next] Parameters for button of next arrow
+ * @param {function} [options.onOpen] onOpen callback, on modal open
+ * @param {function} [options.onClose] onOpen callback, on modal close
+ * @param {function} [options.onShow] onShow callback, on modal show, after openes
+ * @param {function} [options.onHide] onHide callback, on modal hide, before closes
+ * @param {function} [options.onContent] onContent callback, on content shown
+ * @param {function} [options.onStep] onStep callback, on slide step
+ * @param {function} [options.onSlide] onSlide callback, on slide
+ * @param {function} [options.onCaption] onCaption callback, on caption shown
  * @todo L10n and a11y
  * @example
  * var lightbox = new ensemble.Lightbox({contents: [{type: 'image', src: 'image.png'}]});
@@ -72,11 +72,11 @@ class Lightbox extends Modal {
       selector: '',
       contents: null,
       navigation: true,
-      captioned: true,
+      caption: true,
       infinite: true,
       autoDiscover: true,
       autoHide: 'navigation',
-      overlayed: false,
+      overlay: false,
       checkOrigin: true,
       prev: {
         onclick: this.prev,
@@ -108,6 +108,8 @@ class Lightbox extends Modal {
 
   /**
    * Constructor method
+   *
+   * @constructs
    */
   constructor() {
     if (! new.target) {
@@ -124,11 +126,11 @@ class Lightbox extends Modal {
     super.generator();
 
     const modal = this.modal.wrap;
-    const cnt = this.cnt;
+    const frame = this.frame;
     const opts = this.options;
 
     const gallery = this.gallery = this.compo(false, 'gallery');
-    cnt.append(gallery);
+    frame.append(gallery);
 
     if (opts.navigation) {
       var nav = this.nav = this.data(true);
@@ -140,16 +142,16 @@ class Lightbox extends Modal {
       wrap.append(next);
     }
 
-    if (opts.captioned) {
+    if (opts.captions) {
       var captions = this.captions = this.data(true);
       captions.wrap = this.compo(false, 'captions');
     }
-    if (opts.overlayed) {
-      const overlay = opts.overlayed.toString().match(/captions|navigation/);
-      modal.classList.add(opts.ns + '-overlayed');
+    if (opts.overlay) {
+      const overlay = opts.overlay.toString().match(/captions|navigation/);
+      modal.classList.add(opts.ns + '-overlay');
 
       if (overlay) {
-        modal.classList.add(opts.ns + '-overlayed-' + overlayed[0]);
+        modal.classList.add(opts.ns + '-overlay-' + overlay[0]);
       }
     }
     if (opts.autoHide) {
@@ -162,11 +164,11 @@ class Lightbox extends Modal {
     }
 
     if (opts.windowed) {
-      opts.navigation && cnt.append(nav.wrap);
-      opts.captioned && cnt.append(captions.wrap);
+      opts.navigation && frame.append(nav.wrap);
+      opts.captions && frame.append(captions.wrap);
     } else {
       opts.navigation && modal.append(nav.wrap);
-      opts.captioned && modal.append(captions.wrap);
+      opts.captions && modal.append(captions.wrap);
     }
   }
 
@@ -178,14 +180,13 @@ class Lightbox extends Modal {
   populate(target) {
     console.log('populate', target);
 
-    const opts = this.options;
-
+    const opts = this.options, el = this.element;
     let contents;
 
     if (opts.contents && typeof opts.contents == 'object') {
       contents = opts.contents;
-    } else if (opts.selector && this.element) {
-      contents = this.selector(opts.selector, this.element, true);
+    } else if (opts.selector && el) {
+      contents = this.selector(opts.selector, el, true);
     }
     contents = this.contents = this.prepare(contents);
 
@@ -205,7 +206,7 @@ class Lightbox extends Modal {
     this.slide(0);
 
     opts.navigation && this.navigation();
-    opts.captioned && this.caption();
+    opts.captions && this.caption();
   }
 
   /**
@@ -233,7 +234,7 @@ class Lightbox extends Modal {
     this.slide(0);
 
     opts.navigation && this.navigation();
-    opts.captioned && this.caption();
+    opts.captions && this.caption();
   }
 
   /**
@@ -243,9 +244,9 @@ class Lightbox extends Modal {
    * @see window.location
    * @see URL()
    *
-   * @param {mixed} src A URL src or an ensemble.Data object
-   * @param {boolean} clone Clones Element nodes
-   * @returns {ensemble.Data} data An ensemble.Data instance
+   * @param {mixed} src A URL source or an ensemble Data object
+   * @param {boolean} clone Clones the whole Element node tree
+   * @returns {Data} data An ensemble Data instance
    */
   content(src, clone) {
     const opts = this.options;
@@ -324,8 +325,7 @@ class Lightbox extends Modal {
       }
     }
     if (mtype == 'element') {
-      //TODO type undefined
-      clone = typeof clone != 'undefined' ? clone : opts.cloning;
+      clone = typeof clone != 'undefined' ? clone : opts.clone;
       data.node = clone ? this.cloneNode(data.node, true) : data.node;
     }
     if (! mfn && srctype != mtype) {
@@ -364,15 +364,15 @@ class Lightbox extends Modal {
   /**
    * Detects and handles inner contents
    *
-   * @param {ensemble.Data} data An ensemble.Data instance
+   * @param {Data} data An ensemble Data instance
    * @param {ref} data.ref A reference to Element found by selector
-   * @param {type} data.type The content type
-   * @param {src} data.src The content source URL
+   * @param {type} data.type Content type
+   * @param {src} data.src Content source URL
    * @param {Element} [data.node] A valid Element node that will be pushed
-   * @param {function} data.fresh The function callback from ensemble.Data, called on load
-   * @param {function} data.stale The function callback from ensemble.Data, called on unload
-   * @param {ensemble.Compo} data.wrap The main composition of content
-   * @param {mixed} data.inner The inner content, Object placeholder or ensemble.Compo
+   * @param {function} data.fresh fresh callback, on content load
+   * @param {function} data.stale stale callback, on content unload
+   * @param {Compo} data.wrap The main composition of content
+   * @param {mixed} data.inner The inner content, Object placeholder or ensemble Compo
    * @returns {object} props Properties for composition 
    */
   inner(data) {
@@ -463,7 +463,7 @@ class Lightbox extends Modal {
   /**
    * The content preparation stage
    *
-   * @param {object} contents The passed object of contents
+   * @param {object} contents Passed object of contents
    * @returns {array} An array of contents
    */
   prepare(contents) {
@@ -525,7 +525,7 @@ class Lightbox extends Modal {
   /**
    * Adds a content
    *
-   * @param {ensemble.Compo} content
+   * @param {Compo} content An ensemble Compo component
    */
   add(content) {
     this.gallery.append(content.wrap);
@@ -536,7 +536,7 @@ class Lightbox extends Modal {
   /**
    * Removes a content
    *
-   * @param {ensemble.Compo} content
+   * @param {eCompo} content An ensemble Compo component
    */
   remove(content) {
     this.gallery.remove(content.wrap);
@@ -569,7 +569,7 @@ class Lightbox extends Modal {
   /**
    * Moves to previous or next slide
    *
-   * @param {number} step Step to: previous = -1, next = 1
+   * @param {int} step Step to: previous = -1, next = 1
    */
   slide(step) {
     const opts = this.options;
@@ -624,13 +624,13 @@ class Lightbox extends Modal {
     this.index = index;
     this.current = contents[index];
 
-    opts.captioned && this.caption();
+    opts.captions && this.caption();
   }
 
   /**
-   * Enables and disables the navigation
+   * Navigation controller
    *
-   * @param {number} stepper Allow steps: 0 = both, next = -1, previous = 1
+   * @param {int} stepper Allow steps: 0 = both, next = -1, previous = 1
    */
   navigation(stepper) {
     const nav = this.nav;
@@ -643,7 +643,6 @@ class Lightbox extends Modal {
       return;
     }
 
-    //TODO type undefined
     if (! this.options.infinite && typeof stepper != 'undefined') {
       switch (stepper) {
         case -1:
@@ -711,9 +710,7 @@ class Lightbox extends Modal {
   keyboard(evt) {
     super.keyboard(evt);
 
-    const kcode = evt.keyCode || 0;
-
-    switch (kcode) {
+    switch (evt.keyCode) {
       // Left
       case 37: this.prev(evt); break;
       // Right

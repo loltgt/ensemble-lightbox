@@ -163,7 +163,7 @@
 }
 
 
-.modal.modal-fx .modal-object[hidden] {
+.modal.modal-effects .modal-object[hidden] {
 @if $ensemble_compat {
   display: block !important;
 }
@@ -171,26 +171,26 @@
   opacity: 0;
   z-index: -1;
 }
-.modal.modal-fx .modal-object {
+.modal.modal-effects .modal-object {
   opacity: 1;
-  transition: $ensemble-lightbox_fx_object_transition;
+  transition: $ensemble-lightbox_effects_object_transition;
 @if $ensemble_compat {
-  -webkit-transition: $ensemble-lightbox_fx_object_transition;
-  -moz-transition: $ensemble-lightbox_fx_object_transition;
-  -ms-transition: $ensemble-lightbox_fx_object_transition;
+  -webkit-transition: $ensemble-lightbox_effects_object_transition;
+  -moz-transition: $ensemble-lightbox_effects_object_transition;
+  -ms-transition: $ensemble-lightbox_effects_object_transition;
 }
 }
-.modal.modal-fx .modal-captions:empty {
+.modal.modal-effects .modal-captions:empty {
   opacity: 0;
 }
-.modal.modal-fx .modal-captions {
+.modal.modal-effects .modal-captions {
   display: block !important;
   opacity: 1;
-  transition: $ensemble-lightbox_fx_captions_transition;
+  transition: $ensemble-lightbox_effects_captions_transition;
 @if $ensemble_compat {
-  -webkit-transition: $ensemble-lightbox_fx_captions_transition;
-  -moz-transition: $ensemble-lightbox_fx_captions_transition;
-  -ms-transition: $ensemble-lightbox_fx_captions_transition;
+  -webkit-transition: $ensemble-lightbox_effects_captions_transition;
+  -moz-transition: $ensemble-lightbox_effects_captions_transition;
+  -ms-transition: $ensemble-lightbox_effects_captions_transition;
 }
 }
 
@@ -220,12 +220,12 @@
   100% { opacity: 0; }
 }
 
-.modal.modal-overlayed .modal-nav,
-.modal.modal-overlayed .modal-captions {
+.modal.modal-overlay .modal-nav,
+.modal.modal-overlay .modal-captions {
   position: absolute;
 }
-.modal.modal-overlayed-navigation .modal-captions,
-.modal.modal-overlayed-captions .modal-nav {
+.modal.modal-overlay-navigation .modal-captions,
+.modal.modal-overlay-captions .modal-nav {
   position: initial;
 @if $ensemble_compat {
   position: relative;
