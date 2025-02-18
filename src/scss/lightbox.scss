@@ -151,14 +151,14 @@
 @if $ensemble_compat {
   left: 0;
 } @else {
-  inset: 0 auto;
+  inset-inline: 0 auto;
 }
 }
 .modal-next {
 @if $ensemble_compat {
   right: 0;
 } @else {
-  inset: auto 0;
+  inset-inline: auto 0;
 }
 }
 

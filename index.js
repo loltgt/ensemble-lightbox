@@ -7,9 +7,9 @@
  * @license MIT License
  */
 
-import { Lightbox } from './src/js/Lightbox.js';
+import { Lightbox, Modal } from './src/js/Lightbox.js';
 
 /**
  * @namespace ensemble
  */
-export { Lightbox };
+export { Lightbox, Modal };

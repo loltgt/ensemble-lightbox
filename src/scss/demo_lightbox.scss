@@ -48,7 +48,7 @@ figure a {
   &:before {
     content: "";
     display: block;
-    background: #099e9e;
+    background: #588;
     z-index: -1;
   }
   &:after {
@@ -56,11 +56,15 @@ figure a {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: .9rem;
-    font-weight: 600;
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 500;
     color: #fff;
     text-transform: uppercase;
-    mix-blend-mode: overlay;
+    opacity: .75;
+  }
+  &:empty:after {
+    color: #cff;
   }
 }
 figure img {
@@ -84,10 +88,10 @@ figure a[href$=".avif"]:after { content: "avif"; }
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 5rem;
+  padding: 3rem 1rem;
+  min-height: 8rem;
   color: #000;
-  background: #d9d9d9;
-  border-radius: 3rem;
+  background: #e9e9e9;
 }
 .modal .content {
   min-width: 50vh;

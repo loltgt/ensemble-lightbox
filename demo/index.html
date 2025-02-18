@@ -9,87 +9,98 @@
 </head>
 <body>
 <main>
-<h1>ensemble Lightbox demo</h1>
+  <h1>ensemble Lightbox demo</h1>
 
-<section>
-<h2>ensemble.Lightbox</h2>
+  <section>
+    <h2>ensemble.Lightbox</h2>
 
-<div class="grid">
-<figure>
-<a href="image-test-28231.jpg">
-    <img src="image-test-28231.jpg" alt="caption from img[alt]">
-</a>
-</figure>
+    <article>
+      <h2>Grouping <em>using selector</em> with option <code>infinite: true</code></h2>
 
-<figure>
-<a href="image-test-109054.jpeg" title="caption from a[title]">
-    <img src="image-test-109054.jpeg">
-</a>
-</figure>
+      <div class="grid">
+        <figure>
+          <a href="image-test-28231.jpg">
+            <img src="image-test-28231.jpg" alt="caption from img[alt]">
+          </a>
+        </figure>
+        <figure>
+          <a href="image-test-109054.jpeg" title="caption from a[title]">
+            <img src="image-test-109054.jpeg">
+          </a>
+        </figure>
+        <figure>
+          <a href="iframe-test-demo-lightbox.html" data-caption="iframe"></a>
+        </figure>
+        <figure>
+          <a href="image-test-821573.png">
+            <img src="image-test-821573.png" alt="caption from img[alt]">
+          </a>
+        </figure>
+        <figure>
+          <a href="image-test-demo-lightbox-image008.jpg">
+            <img src="image-test-demo-lightbox-image008.jpg" data-caption="caption from img[data-caption]">
+          </a>
+        </figure>
+        <figure>
+          <a href="test-pdf-document.pdf" data-caption="pdf"></a>
+        </figure>
+        <figure>
+          <a href="image-test.gif" data-caption="animated gif">
+            <img src="image-test.gif">
+          </a>
+        </figure>
+        <figure>
+          <a href="data:image/svg+xml;base64,PHN2ZyBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjIiIHZpZXdCb3g9IjAgMCA2MDAgNjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Im0wIDBoNjAwdjYwMGgtNjAweiIgZmlsbD0iI2NhYzBjYSIvPjxwYXRoIGQ9Im01OS45OTk5OCA4MGgxOTkuOTk5OTh2MTk5Ljk5OTk4aC0xOTkuOTk5OTh6IiBmaWxsPSIjNTAzYjhkIiBzdHJva2Utd2lkdGg9Ii44MzY4MiIvPjxjaXJjbGUgY3g9IjMwMC4wMDAzOCIgY3k9IjMwNS4wMDAxNCIgZmlsbD0iIzc3M2M4YyIgcj0iMTM1LjAwMDA2IiBzdHJva2Utd2lkdGg9IjEuMjIxNzIiLz48cGF0aCBkPSJtMzM5LjUgMjM1IDE0Mi41IDI4NWgtMjg1eiIgZmlsbD0iIzMwM2U3NyIgdHJhbnNmb3JtPSJtYXRyaXgoMS4yNjMxNiAwIDAgMS4wMTc1NCAtNjguODQyMSAxMC44NzcyKSIvPjwvc3ZnPg==" data-caption="inline svg">
+            <img src="data:image/svg+xml,%3Csvg clip-rule='evenodd' fill-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m0 0h600v600h-600z' fill='%23cac0ca'/%3E%3Cpath d='m59.99998 80h199.99998v199.99998h-199.99998z' fill='%23503b8d' stroke-width='.83682'/%3E%3Ccircle cx='300.00038' cy='305.00014' fill='%23773c8c' r='135.00006' stroke-width='1.22172'/%3E%3Cpath d='m339.5 235 142.5 285h-285z' fill='%23303e77' transform='matrix(1.26316 0 0 1.01754 -68.8421 10.8772)'/%3E%3C/svg%3E">
+          </a>
+        </figure>
+      </div>
+    </article>
 
-<figure>
-<a href="iframe-test-demo-lightbox.html" data-caption="iframe"></a>
-</figure>
+    <article>
+      <h2>Grouping <em>using selector</em> with option <code>infinite: false</code></h2>
 
-<figure>
-<a href="image-test-821573.png">
-    <img src="image-test-821573.png" alt="caption from img[alt]">
-</a>
-</figure>
+      <div class="grid">
+        <figure>
+          <a href="test-webp-image-126293.webp">
+            <img src="test-webp-image-126293.webp" alt="image webp">
+          </a>
+        </figure>
+        <figure>
+          <a href="image-test-28231.jpg">
+            <img src="image-test-28231.jpg" alt="image jpeg">
+          </a>
+        </figure>
+        <!--<figure>
+          <a href="test-avif-image.avif">
+            <img src="test-avif-image.avif" alt="image avif">
+          </a>
+        </figure>-->
+      </div>
+    </article>
 
-<figure>
-<a href="image-test-demo-lightbox-image008.jpg">
-    <img src="image-test-demo-lightbox-image008.jpg" data-caption="caption from img[data-caption]">
-</a>
-</figure>
+    <article>
+      <h2>Contents passed <em>by options</em> with option <code>contents: [{...}, ...]</code></h2>
 
-<figure>
-    <a href="test-pdf-document.pdf" data-caption="pdf"></a>
-</figure>
+      <div>
+        <button id="button-lightbox">Open lightbox</button>
+      </div>
+    </article>
+  </section>
 
-<figure>
-<a href="image-test.gif" data-caption="animated gif">
-    <img src="image-test.gif">
-</a>
-</figure>
+  <section>
+    <h2>ensemble.Modal</h2>
 
-<figure>
-<a href="data:image/svg+xml;base64,PHN2ZyBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjIiIHZpZXdCb3g9IjAgMCA2MDAgNjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Im0wIDBoNjAwdjYwMGgtNjAweiIgZmlsbD0iI2NhYzBjYSIvPjxwYXRoIGQ9Im01OS45OTk5OCA4MGgxOTkuOTk5OTh2MTk5Ljk5OTk4aC0xOTkuOTk5OTh6IiBmaWxsPSIjNTAzYjhkIiBzdHJva2Utd2lkdGg9Ii44MzY4MiIvPjxjaXJjbGUgY3g9IjMwMC4wMDAzOCIgY3k9IjMwNS4wMDAxNCIgZmlsbD0iIzc3M2M4YyIgcj0iMTM1LjAwMDA2IiBzdHJva2Utd2lkdGg9IjEuMjIxNzIiLz48cGF0aCBkPSJtMzM5LjUgMjM1IDE0Mi41IDI4NWgtMjg1eiIgZmlsbD0iIzMwM2U3NyIgdHJhbnNmb3JtPSJtYXRyaXgoMS4yNjMxNiAwIDAgMS4wMTc1NCAtNjguODQyMSAxMC44NzcyKSIvPjwvc3ZnPg==" data-caption="inline svg">
-    <img src="data:image/svg+xml,%3Csvg clip-rule='evenodd' fill-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m0 0h600v600h-600z' fill='%23cac0ca'/%3E%3Cpath d='m59.99998 80h199.99998v199.99998h-199.99998z' fill='%23503b8d' stroke-width='.83682'/%3E%3Ccircle cx='300.00038' cy='305.00014' fill='%23773c8c' r='135.00006' stroke-width='1.22172'/%3E%3Cpath d='m339.5 235 142.5 285h-285z' fill='%23303e77' transform='matrix(1.26316 0 0 1.01754 -68.8421 10.8772)'/%3E%3C/svg%3E">
-</a>
-</figure>
-</div>
+    <article>
+      <h3>Modal with inline content</h3>
 
-<h3>Test <span>webp</span> and <span>avif</span> images with <span>infinite: false</span></h3>
+      <span class="content">Show this content in a modal.</span>
 
-<div class="grid">
-<figure>
-<a href="test-webp-image-126293.webp">
-    <img src="test-webp-image-126293.webp" alt="image webp">
-</a>
-</figure>
-
-<figure>
-<a href="test-avif-image-1510592.avif">
-    <img src="test-avif-image-1510592.avif" alt="image avif">
-</a>
-</figure>
-</div>
-
-<h3>Test with contents passed with options.</h3>
-
-<div>
-    <button id="button-lightbox">Open lightbox</button>
-</div>
-</section>
-
-<section>
-<h2>ensemble.Modal</h2>
-
-<span class="content">Show this content in a modal.</span>
-
-<button id="button-modal">Open modal</button>
-</section>
+      <div>
+        <button id="button-modal">Open modal</button>
+      </div>
+    </article>
+  </section>
 </main>
 
 <!-- <script src="../../ensemble/src/js/Compo.js"></script> -->
@@ -99,108 +110,116 @@
 <!-- <script src="../../ensemble-modal/src/js/Modal.js"></script> -->
 <!-- <script src="../../ensemble-lightbox/src/js/Lightbox.js"></script> -->
 <script src="../../ensemble-lightbox/dist/js/ensemble-lightbox.min.js"></script>
+
+<!-- example: Grouping using selector with option { infinite: true } -->
 <script>
-const g1 = document.querySelector('.grid:nth-child(n+3)');
+  var group = document.querySelector('article:nth-child(2) .grid');
 
-for (const o of g1.querySelectorAll('img')) {
-  const n = new Image();
-  n.onerror = e => {
-    o.parentElement.parentElement.remove();
-
-    if (! g1.children.length) {
-      g1.hidden = g1.previousElementSibling.hidden = true;
+  var lightbox = new ensemble.Lightbox(group,
+    {
+      selector: 'a',
+      infinite: true
     }
-  };
-  n.src = o.src;
-}
+  );
 
-
-const modal_element = document.querySelector('.content');
-
-const modal = new ensemble.Modal(modal_element, {});
-const modal_button = document.getElementById('button-modal');
-modal_button.addEventListener('click', modal.open, true);
-
-
-const lightbox_grid = document.querySelectorAll('.grid');
-
-for (const lightbox_group of lightbox_grid) {
-  var lightbox_options = { selector: 'a' };
-
-  if (lightbox_group === lightbox_grid[1]) {
-    lightbox_options.infinite = false;
-  }
-
-  const lightbox = new ensemble.Lightbox(lightbox_group, lightbox_options);
-
-  for (const a of lightbox_group.querySelectorAll('a')) {
+  for (const a of group.querySelectorAll('a')) {
     a.addEventListener('click', lightbox.open, true);
   }
-}
-
-const lightbox_contents = [
-  {
-    type: 'element',
-    node: (function() {
-      var el = document.createElement('div');
-      el.innerText = 'Test for a custom element.';
-      return el;
-    }())
-  },
-  {
-    type: 'video',
-    loop: true,
-    poster: 'video-test-card.png',
-    sources: [
-      {
-        type: 'video/mp4',
-        src: 'video-test-card.mp4'
-      },
-      {
-        type: 'video/webm',
-        src: 'video-test-card.webm'
-      }
-    ]
-  },
-  {
-    type: 'video',
-    src: 'https://www.youtube.com/embed/mN0zPOpADL4',
-    caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio',
-    allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-    allowfullscreen: true //TODO FIX
-  },
-  {
-    type: 'video',
-    src: 'https://player.vimeo.com/video/325910798',
-    caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio',
-    allow: 'autoplay; fullscreen; picture-in-picture',
-    allowfullscreen: true //TODO FIX
-  },
-  {
-    type: 'audio',
-    src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
-    allowtransparency: true, //TODO FIX
-    allow: 'encrypted-media'
-  },
-  {
-    type: 'iframe',
-    src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ',
-    height: '100%' //TODO FIX
-  },
-  {
-    type: 'iframe',
-    src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
-  },
-  {
-    type: 'audio',
-    src: 'audio-test.wav',
-    autoplay: true
-  }
-];
-
-const lightbox_button = document.getElementById('button-lightbox');
-const lightbox = new ensemble.Lightbox({ backClose: false, contents: lightbox_contents });
-lightbox_button.addEventListener('click', lightbox.open, true);
 </script>
+
+<!-- example: Grouping using selector with option { infinite: false } -->
+<script>
+  var group = document.querySelector('article:nth-child(3) .grid');
+
+  var lightbox = new ensemble.Lightbox(group,
+    {
+      selector: 'a',
+      infinite: false
+    }
+  );
+
+  for (const a of group.querySelectorAll('a')) {
+    a.addEventListener('click', lightbox.open, true);
+  }
+</script>
+
+<!-- example: Contents passed by options with option { contents: [{...}, ...] } -->
+<script>
+  const contents = [
+    {
+      type: 'element',
+      node: (function() {
+        var el = document.createElement('div');
+        el.innerText = 'Test for a custom element.';
+        return el;
+      }())
+    },
+    {
+      type: 'video',
+      loop: true,
+      poster: 'video-test-card.png',
+      sources: [
+        {
+          type: 'video/mp4',
+          src: 'video-test-card.mp4'
+        },
+        {
+          type: 'video/webm',
+          src: 'video-test-card.webm'
+        }
+      ]
+    },
+    {
+      type: 'video',
+      src: 'https://www.youtube.com/embed/mN0zPOpADL4',
+      caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio',
+      allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+      allowfullscreen: true //TODO FIX
+    },
+    {
+      type: 'video',
+      src: 'https://player.vimeo.com/video/325910798',
+      caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio',
+      allow: 'autoplay; fullscreen; picture-in-picture',
+      allowfullscreen: true //TODO FIX
+    },
+    {
+      type: 'audio',
+      src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
+      allowtransparency: true, //TODO FIX
+      allow: 'encrypted-media'
+    },
+    {
+      type: 'iframe',
+      src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ',
+      height: '100%' //TODO FIX
+    },
+    {
+      type: 'iframe',
+      src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
+    },
+    {
+      type: 'audio',
+      src: 'audio-test.wav',
+      autoplay: true
+    }
+  ];
+
+  var button = document.getElementById('button-lightbox');
+  var lightbox = new ensemble.Lightbox({contents});
+
+  button.addEventListener('click', lightbox.open, true);
+</script>
+
+<!-- example: Modal with inline content -->
+<script>
+  var element = document.querySelector('.content');
+
+  var modal = new ensemble.Modal(element, {});
+  var button = document.getElementById('button-modal');
+
+  button.addEventListener('click', modal.open, true);
+</script>
+
 </body>
 </html>

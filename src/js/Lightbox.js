@@ -34,7 +34,7 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {boolean} [options.effects=true] Allow effects
  * @param {boolean} [options.windowed=false] Allow framing in a window
  * @param {boolean} [options.clone=true] Allow clone of Element nodes
- * @param {boolean} [options.backdrop=true] Allow close on tap or click from outside the modal
+ * @param {boolean} [options.backdrop=false] Allow close on tap or click from outside the modal
  * @param {boolean} [options.keyboard=true] Allow keyboard navigation
  * @param {boolean} [options.navigation=true] Allow navigation
  * @param {boolean} [options.captions=true] Allow captions
@@ -71,8 +71,9 @@ class Lightbox extends Modal {
       className: ['modal', 'modal-lightbox'],
       selector: '',
       contents: null,
+      backdrop: false,
       navigation: true,
-      caption: true,
+      captions: true,
       infinite: true,
       autoDiscover: true,
       autoHide: 'navigation',
