@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>ensemble Lightbox demo</title>
-<link rel="stylesheet" href="../../ensemble-lightbox/dist/css/ensemble-lightbox.css">
+<link rel="stylesheet" href="../dist/css/ensemble-lightbox.css">
 <link rel="stylesheet" href="demo-ensemble-lightbox.css">
 </head>
 <body>
@@ -20,32 +20,32 @@
       <div class="grid">
         <figure>
           <a href="image-test-28231.jpg">
-            <img src="image-test-28231.jpg" alt="caption from img[alt]">
+            <img src="image-test-28231.jpg" alt="Caption from img[alt]">
           </a>
         </figure>
         <figure>
-          <a href="image-test-109054.jpeg" title="caption from a[title]">
+          <a href="image-test-109054.jpeg" title="Caption from a[title]">
             <img src="image-test-109054.jpeg">
           </a>
         </figure>
         <figure>
-          <a href="iframe-test-demo-lightbox.html" data-caption="iframe"></a>
+          <a href="iframe-test.html" data-caption="Test iframe"></a>
         </figure>
         <figure>
           <a href="image-test-821573.png">
-            <img src="image-test-821573.png" alt="caption from img[alt]">
+            <img src="image-test-821573.png" alt="Caption from img[alt]">
           </a>
         </figure>
         <figure>
-          <a href="image-test-demo-lightbox-image008.jpg">
-            <img src="image-test-demo-lightbox-image008.jpg" data-caption="caption from img[data-caption]">
+          <a href="image-test-image008.jpg">
+            <img src="image-test-image008.jpg" data-caption="Caption from img[data-caption]">
           </a>
         </figure>
         <figure>
-          <a href="test-pdf-document.pdf" data-caption="pdf"></a>
+          <a href="pdf-test.pdf" data-caption="Test PDF"></a>
         </figure>
         <figure>
-          <a href="image-test.gif" data-caption="animated gif">
+          <a href="image-test.gif" data-caption="Animated GIF image">
             <img src="image-test.gif">
           </a>
         </figure>
@@ -62,18 +62,18 @@
 
       <div class="grid">
         <figure>
-          <a href="test-webp-image-126293.webp">
-            <img src="test-webp-image-126293.webp" alt="image webp">
+          <a href="image-test-126293.webp">
+            <img src="image-test-126293.webp" alt="WEBP image">
           </a>
         </figure>
         <figure>
           <a href="image-test-28231.jpg">
-            <img src="image-test-28231.jpg" alt="image jpeg">
+            <img src="image-test-28231.jpg" alt="JPEG image">
           </a>
         </figure>
         <!--<figure>
-          <a href="test-avif-image.avif">
-            <img src="test-avif-image.avif" alt="image avif">
+          <a href="image-test.avif">
+            <img src="image-test.avif" alt="AVIF image">
           </a>
         </figure>-->
       </div>
@@ -108,8 +108,8 @@
 <!-- <script src="../../ensemble/src/js/Event.js"></script> -->
 <!-- <script src="../../ensemble/src/js/base.js"></script> -->
 <!-- <script src="../../ensemble-modal/src/js/Modal.js"></script> -->
-<!-- <script src="../../ensemble-lightbox/src/js/Lightbox.js"></script> -->
-<script src="../../ensemble-lightbox/dist/js/ensemble-lightbox.min.js"></script>
+<!-- <script src="../src/js/Lightbox.js"></script> -->
+<script src="../dist/js/ensemble-lightbox.min.js"></script>
 
 <!-- example: Grouping using selector with option { infinite: true } -->
 <script>
@@ -150,7 +150,7 @@
       type: 'element',
       node: (function() {
         var el = document.createElement('div');
-        el.innerText = 'Test for a custom element.';
+        el.innerText = 'Custom element test.';
         return el;
       }())
     },

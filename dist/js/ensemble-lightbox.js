@@ -10,42 +10,60 @@
 
   
 
-  
-  const _Symbol = typeof Symbol == 'undefined' ? 0 : Symbol;
 
   
-
-
-  const REJECTED_TAG_NAMES$1 = /html|head|body|meta|link|style|script/i;
-  const REJECTED_TAGS = /(<(html|head|body|meta|link|style|script)*>)/i;
-
-
-  
-  class _composition {
+  class locale {
 
     
-    _render() {
-      delete this._element;
-      delete this._render;
+    constructor(lang) {
+      if (typeof locale[lang] == 'object') {
+        return locale[lang];
+      } else {
+        return locale[0];
+      }
     }
 
     
-    bound(root, cb) {
-      const ns = this.ns, el = this[ns];
+    static defaults() {
+      return Object.fromEntries(['EBADH', 'ETAGN', 'EPROP', 'EMTAG', 'EOPTS', 'EELEM', 'EMETH', 'DOM'].map(a => [a, a]));
+    }
+  }
+  
+  const l10n = locale.defaults();
+
+  
+
+
+
+  const REJECTED_TAGS$1 = 'html|head|body|meta|link|style|script';
+
+
+  
+  class part {
+
+    
+    render() {
+      delete this.element;
+      delete this.render;
+    }
+
+    
+    bind(root, cb) {
+      const el = this[this.ns];
       typeof cb == 'function' && cb.call(this, el);
       return !! root.appendChild(el);
     }
 
     
-    unbound(root, cb) {
-      const ns = this.ns, el = this[ns];
+    unbind(root, cb) {
+      const el = this[this.ns];
       typeof cb == 'function' && cb.call(this, el);
       return !! root.removeChild(el);
     }
 
     
-    overlap(node, cb) {
-      const ns = this.ns, el = this[ns];
+    place(node, cb) {
+      const el = this[this.ns];
       typeof cb == 'function' && cb.call(this, el);
       return !! node.replaceWith(el);
     }
@@ -70,14 +88,13 @@
 
     
     fill(node) {
-      if (node instanceof Element == false || REJECTED_TAG_NAMES$1.test(node.tagName) || REJECTED_TAGS.test(node.innerHTML)) {
-        throw new Error('Object cannot be resolved into a valid node.');
+      if (! node instanceof Element || RegExp(REJECTED_TAGS$1, 'i').test(node.tagName) || RegExp(`(<(${REJECTED_TAGS$1})*>)`, 'i').test(node.innerHTML)) {
+        throw new Error(l10n.EMTAG);
       }
 
-      const ns = this.ns, el = this[ns];
       this.empty();
 
-      return !! el.appendChild(node);
+      return !! this[this.ns].appendChild(node);
     }
 
     
@@ -89,20 +106,19 @@
 
     
     get children() {
-      const ns = this.ns, el = this[ns];
-      return Array.prototype.map.call(el.children, (node) => { return node.__compo; });
+      return Array.prototype.map.call(this[this.ns].children, (node) => { return node._1; });
     }
 
     
     get first() {
-      const ns = this.ns, el = this[ns];
-      return el.firstElementChild ? el.firstElementChild.__compo : null;
+      const el = this[this.ns];
+      return el.firstElementChild ? el.firstElementChild._1 : null;
     }
 
     
     get last() {
-      const ns = this.ns, el = this[ns];
-      return el.lastElementChild ? el.lastElementChild.__compo : null;
+      const el = this[this.ns];
+      return el.lastElementChild ? el.lastElementChild._1 : null;
     }
 
   }
@@ -111,17 +127,17 @@
 
 
 
-  const REJECTED_TAG_NAMES = /html|head|body|meta|link|style|script/i;
-  const DENIED_PROPS = /attributes|classList|innerHTML|outerHTML|nodeName|nodeType/;
+  const REJECTED_TAGS = 'html|head|body|meta|link|style|script';
+  const DENIED_PROPS ='attributes|classList|innerHTML|outerHTML|nodeName|nodeType';
 
 
   
-  class Compo extends _composition {
+  class Compo extends part {
 
     
     constructor(ns, tag, name, props, options, elementNS) {
       if (! new.target) {
-        throw 'Bad invocation. Must be called with `new`.';
+        throw l10n.EBADH;
       }
 
       super();
@@ -129,21 +145,21 @@
       const ns0 = this.ns = '_' + ns;
       const tagName = tag ? tag.toString() : 'div';
 
-      if (REJECTED_TAG_NAMES.test(tagName)) {
-        throw new Error('Provided tag name is not a valid name.');
+      if (RegExp(REJECTED_TAGS, 'i').test(tagName)) {
+        throw new Error(l10n.ETAGN);
       }
 
-      const el = this[ns0] = this._element(ns, tagName, name, props, options, elementNS);
+      const el = this[ns0] = this.element(ns, tagName, name, props, options, elementNS);
 
       this.__Compo = true;
-      this[ns0].__compo = this;
+      this[ns0]._1 = this;
 
       if (props && typeof props == 'object') {
         for (const prop in props) {
           const p = prop.toString();
 
-          if (DENIED_PROPS.test(p)) {
-            throw new Error('Provided property name is not a valid name.');
+          if (RegExp(DENIED_PROPS).test(p)) {
+            throw new Error(l10n.EPROP);
           }
          
           if (p.indexOf('on') === 0 && props[p] && typeof props[p] == 'function') {
@@ -172,7 +188,7 @@
         if (typeof name == 'string') {
           el.className = ns + '-' + name;
         } else if (typeof name == 'object') {
-          el.className = name.map((a) => (ns + '-' + a)).join(' ');
+          el.className = Object.values(name).map((a) => (ns + '-' + a)).join(' ');
         }
 
         if (nodeClass) {
@@ -180,109 +196,93 @@
         }
       }
 
-      this._render();
+      this.render();
     }
 
     
-    _element(ns, tag, name, props, options, elementNS) {
+    element(ns, tag, name, props, options, elementNS) {
       if (elementNS) return document.createElementNS(tag, [...elementNS, ...options]);
       else return document.createElement(tag, options);
     }
 
     
     hasAttr(attr) {
-      const ns = this.ns, el = this[ns];
-      return el.hasAttribute(attr);
+      return this[this.ns].hasAttribute(attr);
     }
 
     
     getAttr(attr) {
-      const ns = this.ns, el = this[ns];
-      return el.getAttribute(attr);
+      return this[this.ns].getAttribute(attr);
     }
 
     
     setAttr(attr, value) {
-      const ns = this.ns, el = this[ns];
-      el.setAttribute(attr, value);
+      this[this.ns].setAttribute(attr, value);
     }
 
     
     delAttr(attr) {
-      const ns = this.ns, el = this[ns];
-      el.removeAttribute(attr);
+      this[this.ns].removeAttribute(attr);
     }
 
     
     getStyle(prop) {
-      const ns = this.ns, el = this[ns];
-      return window.getComputedStyle(el)[prop];
+      return window.getComputedStyle(this[this.ns])[prop];
     }
 
     
     show() {
-      const ns = this.ns, el = this[ns];
-      el.hidden = false;
+      this[this.ns].hidden = false;
     }
 
     
     hide() {
-      const ns = this.ns, el = this[ns];
-      el.hidden = true;
+      this[this.ns].hidden = true;
     }
 
     
     enable() {
-      const ns = this.ns, el = this[ns];
-      el.disabled = false;
+      this[this.ns].disabled = false;
     }
 
     
     disable() {
-      const ns = this.ns, el = this[ns];
-      el.disabled = true;
+      this[this.ns].disabled = true;
     }
 
     
     get node() {
-      console.warn('Direct access to the node is discouraged.');
+      console.warn(l10n.DOM);
 
       return this[this.ns];
     }
 
     
     get parent() {
-      const ns = this.ns, el = this[ns];
-      return el.parentElement && '__compo' in el.parentElement ? el.parentElement.__compo : null;
+      const el = this[this.ns];
+      return el.parentElement && '_1' in el.parentElement ? el.parentElement._1 : null;
     }
 
     
     get previous() {
-      const ns = this.ns, el = this[ns];
-      return el.previousElementSibling ? el.previousElementSibling.__compo : null;
+      const el = this[this.ns];
+      return el.previousElementSibling ? el.previousElementSibling._1 : null;
     }
 
     
     get next() {
-      const ns = this.ns, el = this[ns];
-      return el.nextElementSibling ? el.nextElementSibling.__compo : null;
+      const el = this[this.ns];
+      return el.nextElementSibling ? el.nextElementSibling._1 : null;
     }
 
     
     get classList() {
-      const ns = this.ns, el = this[ns];
-      return el.classList;
+      return this[this.ns].classList;
     }
 
     
     static isCompo(obj) {
-      if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Compo.prototype);
-      else return obj && typeof obj == 'object' && '__Compo' in obj;
-    }
-
-    
-    get [_Symbol.toStringTag]() {
-      return 'ensemble.Compo';
+      return obj instanceof Compo;
     }
 
   }
@@ -297,7 +297,7 @@
     
     constructor(ns, obj) {
       if (! new.target) {
-        throw 'Bad invocation. Must be called with `new`.';
+        throw l10n.EBADH;
       }
 
       if (obj && typeof obj == 'object') {
@@ -306,27 +306,26 @@
 
       const ns0 = this.ns = '_' + ns;
 
-      this.__Data = true;
+      this.__Data = false;
       this[ns0] = {ns};
     }
 
     
-    compo(tag, name, props, defer = false, fresh = false, stale = false) {
-     
-      const ns1 = this.ns, ns = this[ns1].ns;
+    compo(tag, name, props, defer = false, load = false, unload = false) {
+      const ns = this[this.ns].ns;
 
       let compo;
 
       if (defer) {
-        compo = {ns, tag, name, props, fresh, stale};
+        compo = {ns, tag, name, props, load, unload};
       } else {
         compo = new Compo(ns, tag, name, props);
       }
-      if (fresh && typeof fresh == 'function') {
-        compo.fresh = props.onfresh = fresh;
+      if (load && typeof load == 'function') {
+        compo.load = props.onload = load;
       }
-      if (stale && typeof stale == 'function') {
-        compo.stale = props.onstale = stale;
+      if (unload && typeof unload == 'function') {
+        compo.unload = props.onunload = unload;
       }
 
       return compo;
@@ -334,46 +333,41 @@
 
     
     async render(slot) {
-      const ns = this.ns, el = this[ns], self = this;
+      const el = this[this.ns];
+      const self = this;
 
-      if (el[slot] && el[slot].rendered) {
-        el[slot].fresh();
+      if (el[slot] && el[slot]._) {
+        el[slot].load();
       } else {
-        el[slot] = {rendered: true, fresh: self[slot].fresh, stale: self[slot].stale, params: self[slot]};
+        el[slot] = {_: self[slot], load: self[slot].load, unload: self[slot].unload};
         self[slot] = new Compo(self[slot].ns, self[slot].tag, self[slot].name, self[slot].props);
-        el[slot].fresh();
+        el[slot].load();
       }
     }
 
     
-    async stale(slot) {
-      const ns = this.ns, el = this[ns];
+    async unload(slot) {
+      const el = this[this.ns];
 
-      if (el[slot] && el[slot].rendered) {
-        el[slot].stale();
+      if (el[slot] && el[slot]._) {
+        el[slot].unload();
       }
     }
 
     
     async reflow(slot, force) {
-      const ns = this.ns, el = this[ns];
+      const el = this[this.ns];
 
       if (force) {
-        el[slot] = this.compo(el[slot].params.ns, el[slot].params.name, el[slot].params.props);
-      } else if (el[slot] && el[slot].rendered) {
-        el[slot].fresh();
+        el[slot] = this.compo(el[slot]._.ns, el[slot]._.name, el[slot]._.props);
+      } else if (el[slot] && el[slot]._) {
+        el[slot].load();
       }
     }
 
     
     static isData(obj) {
-      if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Data.prototype);
-      else return obj && typeof obj == 'object' && '__Data' in obj;
-    }
-
-    
-    get [_Symbol.toStringTag]() {
-      return 'ensemble.Data';
+      return obj instanceof Data;
     }
 
   }
@@ -388,38 +382,32 @@
     
     constructor(ns, name, node) {
       if (! new.target) {
-        throw 'Bad invocation. Must be called with `new`.';
+        throw l10n.EBADH;
       }
 
       const ns0 = this.ns = '_' + ns;
 
-      node = (Compo.isCompo(node) ? node.node : node) || document;
+      node = (Compo.isCompo(node) ? node[ns] : node) || document;
 
-      this.__Event = true;
+      this.__Event = false;
       this[ns0] = {name, node};
     }
 
     
-    add(handle, options = false) {
-      const ns = this.ns, e = this[ns], node = e.node, name = e.name;
-      node.addEventListener(name, handle, options);
+    add(func, options = false) {
+      const {node, name} = this[this.ns];
+      node.addEventListener(name, func, options);
     }
 
     
-    remove(handle) {
-      const ns = this.ns, e = this[ns], node = e.node, name = e.name;
-      node.removeEventListener(name, handle);
+    remove(func) {
+      const {node, name} = this[this.ns];
+      node.removeEventListener(name, func);
     }
 
     
     static isEvent(obj) {
-      if (_Symbol) return _Symbol.for(obj) === _Symbol.for(Event.prototype);
-      else return obj && typeof obj == 'object' && '__Event' in obj;
-    }
-
-    
-    get [_Symbol.toStringTag]() {
-      return 'ensemble.Event';
+      return obj instanceof Event;
     }
 
   }
@@ -439,32 +427,33 @@
 
     
     constructor() {
+      const args = arguments;
       let element, options;
 
-      if (arguments.length > 1) {
-        element = arguments[0];
-        options = arguments[1];
+      if (args.length > 1) {
+        element = args[0];
+        options = args[1];
       } else {
-        options = arguments[0];
+        options = args[0];
       }
 
       if (options && typeof options != 'object') {
-        throw new TypeError('Passed argument "options" is not an Object.');
+        throw new TypeError(l10n.EOPTS);
       }
       if (element && typeof element != 'object') {
-        throw new TypeError('Passed argument "element" is not an Object.');
+        throw new TypeError(l10n.EELEM);
       }
 
-      this._bindings();
+      this.binds();
 
-      this.options = this.defaults(this._defaults(), options);
+      this.options = this.opts(this.defaults(), options);
       Object.freeze(this.options);
 
       this.element = element;
     }
 
     
-    defaults(defaults, options) {
+    opts(defaults, options) {
       const opts = {};
 
       for (const key in defaults) {
@@ -480,13 +469,13 @@
 
     
     compo(tag, name, props) {
-      const options = this.options, ns = options.ns;
+      const ns = this.options.ns;
       return tag != undefined ? new Compo(ns, tag, name, props) : Compo;
     }
 
     
     data(obj) {
-      const options = this.options, ns = options.ns;
+      const ns = this.options.ns;
       return obj != undefined ? new Data(ns, obj) : Data;
     }
 
@@ -551,7 +540,7 @@
     }
 
     
-    getTime(node, prop = 'transitionDuration') {
+    styleTime(node, prop) {
       let time = Compo.isCompo(node) ? node.getStyle(prop) : window.getComputedStyle(node)[prop];
 
       if (time) {
@@ -562,15 +551,19 @@
     }
 
     
-    binds(method) {
+    wrap(method) {
       const self = this;
+
+      if (this[method] && typeof method != 'function') {
+        throw new TypeError(l10n.EMETH);
+      }
 
       return function(event) { method.call(self, event, this); }
     }
 
     
     delay(func, node, time) {
-      const delay = node ? this.getTime(node) : 0;
+      const delay = node ? this.styleTime(node, 'transitionDuration') : 0;
 
       setTimeout(func, delay || time);
     }
@@ -585,7 +578,7 @@
   class Modal extends base {
 
     
-    _defaults() {
+    defaults() {
       return {
         ns: 'modal',
         root: 'body',
@@ -609,11 +602,11 @@
     }
 
     
-    _bindings() {
-      this.open = this.binds(this.open);
-      this.close = this.binds(this.close);
-      this.backdrop = this.binds(this.backdrop);
-      this.keyboard = this.binds(this.keyboard);
+    binds() {
+      this.open = this.wrap(this.open);
+      this.close = this.wrap(this.close);
+      this.backdrop = this.wrap(this.backdrop);
+      this.keyboard = this.wrap(this.keyboard);
     }
 
     
@@ -633,8 +626,8 @@
         onclick: false
       });
 
-      const modal = this.modal.wrap = this.compo('dialog', false, {
-        className: typeof opts.className == 'object' ? opts.className.join(' ') : opts.className,
+      const modal = this.modal.$ = this.compo('dialog', false, {
+        className: typeof opts.className == 'object' ? Object.values(opts.className).join(' ') : opts.className,
         hidden: true,
        
        
@@ -642,15 +635,15 @@
           data.onclick && typeof data.onclick == 'function' && data.onclick.apply(this, arguments);
         }
       });
-      const frame = this.frame = this.compo(false, 'content');
+      const stage = this.stage = this.compo(false, 'content');
 
       const close = this.compo('button', ['button', 'close'], opts.close);
 
-      modal.append(frame);
+      modal.append(stage);
 
       if (opts.windowed) {
         modal.classList.add(opts.ns + '-windowed');
-        frame.append(close);
+        stage.append(close);
       } else {
         modal.append(close);
       }
@@ -675,7 +668,7 @@
 
       const content = this.content(el);
 
-      this.frame.append(content);
+      this.stage.append(content);
     }
 
     
@@ -686,25 +679,25 @@
     
     content(node, clone) {
       const opts = this.options;
-      const wrap = this.compo(false, 'object');
+      const compo = this.compo(false, 'object');
 
       clone = typeof clone != 'undefined' ? clone : opts.clone;
 
       let inner = clone ? this.cloneNode(node, true) : node;
 
-      opts.onContent.call(this, this, wrap, inner);
+      opts.onContent.call(this, this, compo, inner);
 
       if (inner) {
-        wrap.fill(inner);
+        compo.fill(inner);
       }
 
-      return wrap;
+      return compo;
     }
 
     
     destroy() {
       const root = this.root;
-      const modal = this.modal.wrap;
+      const modal = this.modal.$;
 
       this.removeNode(root, modal);
       this.built = false;
@@ -760,9 +753,9 @@
       const opts = this.options;
       const root = this.root;
       this.modal;
-      const modal = this.modal.wrap;
+      const modal = this.modal.$;
 
-      modal.bound(root);
+      modal.bind(root);
 
       this.delay(function() {
         modal.show();
@@ -776,12 +769,12 @@
       const opts = this.options;
       const root = this.root;
       this.modal;
-      const modal = this.modal.wrap;
+      const modal = this.modal.$;
 
       modal.hide();
 
       this.delay(function() {
-        modal.unbound(root);
+        modal.unbind(root);
 
         opts.onHide.call(self, self, target);
       }, modal, 3e2);
@@ -861,8 +854,8 @@
   class Lightbox extends Modal {
 
     
-    _defaults() {
-      return Object.assign(super._defaults(), {
+    defaults() {
+      return Object.assign(super.defaults(), {
         className: ['modal', 'modal-lightbox'],
         selector: '',
         contents: null,
@@ -891,13 +884,13 @@
     }
 
     
-    _bindings() {
-      super._bindings();
+    binds() {
+      super.binds();
 
-      this.add = this.binds(this.add);
-      this.remove = this.binds(this.remove);
-      this.prev = this.binds(this.prev);
-      this.next = this.binds(this.next);
+      this.add = this.wrap(this.add);
+      this.remove = this.wrap(this.remove);
+      this.prev = this.wrap(this.prev);
+      this.next = this.wrap(this.next);
     }
 
     
@@ -913,26 +906,26 @@
     generator() {
       super.generator();
 
-      const modal = this.modal.wrap;
-      const frame = this.frame;
+      const modal = this.modal.$;
+      const stage = this.stage;
       const opts = this.options;
 
       const gallery = this.gallery = this.compo(false, 'gallery');
-      frame.append(gallery);
+      stage.append(gallery);
 
       if (opts.navigation) {
         var nav = this.nav = this.data(true);
-        const wrap = nav.wrap = this.compo(false, 'nav');
+        const compo = nav.$ = this.compo(false, 'nav');
         const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
         const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
 
-        wrap.append(prev);
-        wrap.append(next);
+        compo.append(prev);
+        compo.append(next);
       }
 
       if (opts.captions) {
         var captions = this.captions = this.data(true);
-        captions.wrap = this.compo(false, 'captions');
+        captions.$ = this.compo(false, 'captions');
       }
       if (opts.overlay) {
         const overlay = opts.overlay.toString().match(/captions|navigation/);
@@ -952,11 +945,11 @@
       }
 
       if (opts.windowed) {
-        opts.navigation && frame.append(nav.wrap);
-        opts.captions && frame.append(captions.wrap);
+        opts.navigation && stage.append(nav.$);
+        opts.captions && stage.append(captions.$);
       } else {
-        opts.navigation && modal.append(nav.wrap);
-        opts.captions && modal.append(captions.wrap);
+        opts.navigation && modal.append(nav.$);
+        opts.captions && modal.append(captions.$);
       }
     }
 
@@ -1001,7 +994,7 @@
       const contents = this.contents;
 
       for (const content of contents) {
-        content.wrap.hide();
+        content.$.hide();
 
         if (target && target === content.ref) {
           this.index = contents.indexOf(content);
@@ -1020,8 +1013,8 @@
     
     content(src, clone) {
       const opts = this.options;
-      const wrap = this.compo(false, 'object');
-      wrap.hide();
+      const compo = this.compo(false, 'object');
+      compo.hide();
 
       var data;
 
@@ -1062,6 +1055,7 @@
         mtype = 'iframe';
         mfn = 'pdf';
       }
+
      
       if (opts.checkOrigin && srcref && xnref && ! bsrc) {
         const a = window.origin != 'null' ? window.origin : window.location.origin;
@@ -1109,24 +1103,24 @@
       opts.onContent.call(this, this, data);
 
       if (mtype) {
-        wrap.classList.add(opts.ns + '-' + mtype);
+        compo.classList.add(opts.ns + '-' + mtype);
       }
       if (mfn) {
-        wrap.classList.add(opts.ns + '-' + mfn);
+        compo.classList.add(opts.ns + '-' + mfn);
       }
 
       const inner = this.inner(data);
 
-      data.fresh = function() {
+      data.load = function() {
         data.node && data.inner.fill(data.node);
-        data.wrap.show();
+        data.$.show();
       };
-      data.stale = function() {
+      data.unload = function() {
         data.node && data.inner.empty();
-        data.wrap.hide();
+        data.$.hide();
       };
-      data.wrap = wrap;
-      data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.fresh, data.stale);
+      data.$ = compo;
+      data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.load, data.unload);
 
       return data;
     }
@@ -1276,14 +1270,14 @@
 
     
     add(content) {
-      this.gallery.append(content.wrap);
+      this.gallery.append(content.$);
 
       this.options.navigation && this.navigation();
     }
 
     
     remove(content) {
-      this.gallery.remove(content.wrap);
+      this.gallery.remove(content.$);
 
       this.options.navigation && this.navigation();
     }
@@ -1325,15 +1319,15 @@
         adjacent = !! sibling ? sibling : child;
         index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len : 0);
 
-        current.stale('inner');
+        current.unload('inner');
       }
 
       if (! opts.infinite) {
         let stepper = 0;
 
-        if (! adjacent.wrap.previous) {
+        if (! adjacent.$.previous) {
           stepper = -1;
-        } else if (! adjacent.wrap.next) {
+        } else if (! adjacent.$.next) {
           stepper = 1;
         }
 
@@ -1345,13 +1339,13 @@
       }
 
       adjacent.render('inner');
-      adjacent.wrap.append(adjacent.inner);
+      adjacent.$.append(adjacent.inner);
 
-      opts.onSlide.call(this, this, current, step, (current.wrap != adjacent.wrap ? adjacent.wrap : null));
+      opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
 
       this.delay(function() {
-        step != 0 && current.wrap.remove(current.inner);
-      }, current.wrap);
+        step != 0 && current.$.remove(current.inner);
+      }, current.$);
 
       this.index = index;
       this.current = contents[index];
@@ -1364,9 +1358,9 @@
       const nav = this.nav;
 
       if (this.contents.length > 1) {
-        nav.wrap.show();
+        nav.$.show();
       } else {
-        nav.wrap.hide();
+        nav.$.hide();
 
         return;
       }
@@ -1394,7 +1388,7 @@
       const captions = this.captions;
       const current = this.current;
 
-      captions.wrap.empty();
+      captions.$.empty();
 
       if (opts.onCaption(this, this, current, text)) {
         return;
@@ -1420,7 +1414,7 @@
 
         for (const line of text) {
           const caption = this.compo('p', false, {innerText: line});
-          captions.wrap.append(caption);
+          captions.$.append(caption);
         }
       }
     }

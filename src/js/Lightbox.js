@@ -19,7 +19,7 @@ import { Modal } from "@loltgt/ensemble-modal";
 
 
 /**
- * Lightbox ensemble Component
+ * Lightbox ensemble component
  *
  * @class
  * @extends Modal
@@ -66,8 +66,8 @@ class Lightbox extends Modal {
    *
    * @returns {object}
    */
-  _defaults() {
-    return Object.assign(super._defaults(), {
+  defaults() {
+    return Object.assign(super.defaults(), {
       className: ['modal', 'modal-lightbox'],
       selector: '',
       contents: null,
@@ -98,13 +98,13 @@ class Lightbox extends Modal {
   /**
    * Methods binding
    */
-  _bindings() {
-    super._bindings();
+  binds() {
+    super.binds();
 
-    this.add = this.binds(this.add);
-    this.remove = this.binds(this.remove);
-    this.prev = this.binds(this.prev);
-    this.next = this.binds(this.next);
+    this.add = this.wrap(this.add);
+    this.remove = this.wrap(this.remove);
+    this.prev = this.wrap(this.prev);
+    this.next = this.wrap(this.next);
   }
 
   /**
@@ -126,26 +126,26 @@ class Lightbox extends Modal {
   generator() {
     super.generator();
 
-    const modal = this.modal.wrap;
-    const frame = this.frame;
+    const modal = this.modal.$;
+    const stage = this.stage;
     const opts = this.options;
 
     const gallery = this.gallery = this.compo(false, 'gallery');
-    frame.append(gallery);
+    stage.append(gallery);
 
     if (opts.navigation) {
       var nav = this.nav = this.data(true);
-      const wrap = nav.wrap = this.compo(false, 'nav');
+      const compo = nav.$ = this.compo(false, 'nav');
       const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
       const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
 
-      wrap.append(prev);
-      wrap.append(next);
+      compo.append(prev);
+      compo.append(next);
     }
 
     if (opts.captions) {
       var captions = this.captions = this.data(true);
-      captions.wrap = this.compo(false, 'captions');
+      captions.$ = this.compo(false, 'captions');
     }
     if (opts.overlay) {
       const overlay = opts.overlay.toString().match(/captions|navigation/);
@@ -165,11 +165,11 @@ class Lightbox extends Modal {
     }
 
     if (opts.windowed) {
-      opts.navigation && frame.append(nav.wrap);
-      opts.captions && frame.append(captions.wrap);
+      opts.navigation && stage.append(nav.$);
+      opts.captions && stage.append(captions.$);
     } else {
-      opts.navigation && modal.append(nav.wrap);
-      opts.captions && modal.append(captions.wrap);
+      opts.navigation && modal.append(nav.$);
+      opts.captions && modal.append(captions.$);
     }
   }
 
@@ -222,7 +222,7 @@ class Lightbox extends Modal {
     const contents = this.contents;
 
     for (const content of contents) {
-      content.wrap.hide();
+      content.$.hide();
 
       if (target && target === content.ref) {
         this.index = contents.indexOf(content);
@@ -251,8 +251,8 @@ class Lightbox extends Modal {
    */
   content(src, clone) {
     const opts = this.options;
-    const wrap = this.compo(false, 'object');
-    wrap.hide();
+    const compo = this.compo(false, 'object');
+    compo.hide();
 
     var data;
 
@@ -293,7 +293,8 @@ class Lightbox extends Modal {
       mtype = 'iframe';
       mfn = 'pdf';
     }
-    //TODO backward compatibility
+
+    //TODO hook
     if (opts.checkOrigin && srcref && xnref && ! bsrc) {
       const a = window.origin != 'null' ? window.origin : window.location.origin;
       const b = new URL(srcref).origin;
@@ -340,24 +341,24 @@ class Lightbox extends Modal {
     opts.onContent.call(this, this, data);
 
     if (mtype) {
-      wrap.classList.add(opts.ns + '-' + mtype);
+      compo.classList.add(opts.ns + '-' + mtype);
     }
     if (mfn) {
-      wrap.classList.add(opts.ns + '-' + mfn);
+      compo.classList.add(opts.ns + '-' + mfn);
     }
 
     const inner = this.inner(data);
 
-    data.fresh = function() {
+    data.load = function() {
       data.node && data.inner.fill(data.node);
-      data.wrap.show();
+      data.$.show();
     };
-    data.stale = function() {
+    data.unload = function() {
       data.node && data.inner.empty();
-      data.wrap.hide();
+      data.$.hide();
     }
-    data.wrap = wrap;
-    data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.fresh, data.stale);
+    data.$ = compo;
+    data.inner = data.compo(inner.tag, inner.name, inner.props, true, data.load, data.unload);
 
     return data;
   }
@@ -370,11 +371,11 @@ class Lightbox extends Modal {
    * @param {type} data.type Content type
    * @param {src} data.src Content source URL
    * @param {Element} [data.node] A valid Element node that will be pushed
-   * @param {function} data.fresh fresh callback, on content load
-   * @param {function} data.stale stale callback, on content unload
-   * @param {Compo} data.wrap The main composition of content
-   * @param {mixed} data.inner The inner content, Object placeholder or ensemble Compo
-   * @returns {object} props Properties for composition 
+   * @param {function} data.load load callback, on content load
+   * @param {function} data.unload unload callback, on content unload
+   * @param {Compo} data.compo The main compo of content
+   * @param {mixed} data.inner The inner content, Object placeholder or compo
+   * @returns {object} props Properties for compo
    */
   inner(data) {
     let tag = data.type;
@@ -526,10 +527,10 @@ class Lightbox extends Modal {
   /**
    * Adds a content
    *
-   * @param {Compo} content An ensemble Compo component
+   * @param {Compo} content A compo
    */
   add(content) {
-    this.gallery.append(content.wrap);
+    this.gallery.append(content.$);
 
     this.options.navigation && this.navigation();
   }
@@ -537,10 +538,10 @@ class Lightbox extends Modal {
   /**
    * Removes a content
    *
-   * @param {eCompo} content An ensemble Compo component
+   * @param {eCompo} content A compo
    */
   remove(content) {
-    this.gallery.remove(content.wrap);
+    this.gallery.remove(content.$);
 
     this.options.navigation && this.navigation();
   }
@@ -594,15 +595,15 @@ class Lightbox extends Modal {
       adjacent = !! sibling ? sibling : child;
       index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len : 0);
 
-      current.stale('inner');
+      current.unload('inner');
     }
 
     if (! opts.infinite) {
       let stepper = 0;
 
-      if (! adjacent.wrap.previous) {
+      if (! adjacent.$.previous) {
         stepper = -1;
-      } else if (! adjacent.wrap.next) {
+      } else if (! adjacent.$.next) {
         stepper = 1;
       }
 
@@ -614,13 +615,13 @@ class Lightbox extends Modal {
     }
 
     adjacent.render('inner');
-    adjacent.wrap.append(adjacent.inner);
+    adjacent.$.append(adjacent.inner);
 
-    opts.onSlide.call(this, this, current, step, (current.wrap != adjacent.wrap ? adjacent.wrap : null));
+    opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
 
     this.delay(function() {
-      step != 0 && current.wrap.remove(current.inner);
-    }, current.wrap);
+      step != 0 && current.$.remove(current.inner);
+    }, current.$);
 
     this.index = index;
     this.current = contents[index];
@@ -637,9 +638,9 @@ class Lightbox extends Modal {
     const nav = this.nav;
 
     if (this.contents.length > 1) {
-      nav.wrap.show();
+      nav.$.show();
     } else {
-      nav.wrap.hide();
+      nav.$.hide();
 
       return;
     }
@@ -671,7 +672,7 @@ class Lightbox extends Modal {
     const captions = this.captions;
     const current = this.current;
 
-    captions.wrap.empty();
+    captions.$.empty();
 
     if (opts.onCaption(this, this, current, text)) {
       return;
@@ -697,7 +698,7 @@ class Lightbox extends Modal {
 
       for (const line of text) {
         const caption = this.compo('p', false, {innerText: line});
-        captions.wrap.append(caption);
+        captions.$.append(caption);
       }
     }
   }
