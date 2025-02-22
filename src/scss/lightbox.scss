@@ -181,7 +181,7 @@
 }
 }
 .modal.modal-effects .modal-captions:empty {
-  opacity: 0;
+  opacity: 0 !important;
 }
 .modal.modal-effects .modal-captions {
   display: block !important;
@@ -233,7 +233,6 @@
 }
 
 
-//TODO
 @media (min-width: 992px) {
   .modal-image {
     border-width: $ensemble-lightbox_md__image_padding;

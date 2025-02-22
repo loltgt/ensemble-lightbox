@@ -109,7 +109,7 @@
 <!-- <script src="../../ensemble/src/js/base.js"></script> -->
 <!-- <script src="../../ensemble-modal/src/js/Modal.js"></script> -->
 <!-- <script src="../src/js/Lightbox.js"></script> -->
-<script src="../dist/js/ensemble-lightbox.min.js"></script>
+<script src="../dist/js/ensemble-lightbox.js"></script>
 
 <!-- example: Grouping using selector with option { infinite: true } -->
 <script>
@@ -215,7 +215,7 @@
 <script>
   var element = document.querySelector('.content');
 
-  var modal = new ensemble.Modal(element, {});
+  var modal = new ensemble.Modal(element);
   var button = document.getElementById('button-modal');
 
   button.addEventListener('click', modal.open, true);
