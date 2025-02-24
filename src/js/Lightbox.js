@@ -31,8 +31,8 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {string[]} [options.className=[modal, modal-lightbox]] The component CSS class name
  * @param {string} [options.selector] A selector to find elements
  * @param {object} [options.contents] An object with contents
+ * @param {boolean} [options.dialog=false] Allow dialog mode
  * @param {boolean} [options.effects=true] Allow effects
- * @param {boolean} [options.windowed=false] Allow framing in a window
  * @param {boolean} [options.clone=true] Allow clone of Element nodes
  * @param {boolean} [options.backdrop=false] Allow close on tap or click from outside the modal
  * @param {boolean} [options.keyboard=true] Allow keyboard navigation
@@ -46,6 +46,7 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {object} [options.close] Parameters for close button
  * @param {object} [options.prev] Parameters for button of previous arrow
  * @param {object} [options.next] Parameters for button of next arrow
+ * @param {object} [options.locale] Localization strings
  * @param {function} [options.onOpen] onOpen callback, on modal open
  * @param {function} [options.onClose] onOpen callback, on modal close
  * @param {function} [options.onShow] onShow callback, on modal show, after openes
@@ -81,17 +82,20 @@ class Lightbox extends Modal {
       checkOrigin: true,
       prev: {
         onclick: this.prev,
-        innerText: '\u003C',
-        ariaLabel: 'Previous'
+        innerText: '\u003C'
       },
       next: {
         onclick: this.next,
-        innerText: '\u003E',
-        ariaLabel: 'Next'
+        innerText: '\u003E'
       },
-      onStep: function() {},
-      onSlide: function() {},
-      onCaption: function() {}
+      locale: {
+        close: 'Close',
+        prev:  'Previous',
+        next: 'Next'
+      },
+      onStep: () => {},
+      onSlide: () => {},
+      onCaption: () => {}
     });
   }
 
@@ -135,6 +139,10 @@ class Lightbox extends Modal {
       const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
       const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
 
+      const {locale} = opts;
+      prev.ariaLabel = locale.prev.toString();
+      next.ariaLabel = locale.next.toString();
+
       compo.append(prev);
       compo.append(next);
     }
@@ -145,22 +153,22 @@ class Lightbox extends Modal {
     }
     if (opts.overlay) {
       const overlay = opts.overlay.toString().match(/captions|navigation/);
-      modal.classList.add(opts.ns + '-overlay');
+      modal.classList.add(`${opts.ns}-overlay`);
 
       if (overlay) {
-        modal.classList.add(opts.ns + '-overlay-' + overlay[0]);
+        modal.classList.add(`${opts.ns}-overlay-${overlay[0]}`);
       }
     }
     if (opts.autoHide) {
       const autohide = opts.autoHide.toString().match(/captions|navigation/);
-      modal.classList.add(opts.ns + '-autohide');
+      modal.classList.add(`${opts.ns}-autohide`);
 
       if (autohide) {
-        modal.classList.add(opts.ns + '-autohide-' + autohide[0]);
+        modal.classList.add(`${opts.ns}-autohide-${autohide[0]}`);
       }
     }
 
-    if (opts.windowed) {
+    if (opts.dialog) {
       opts.navigation && stage.append(nav.$);
       opts.captions && stage.append(captions.$);
     } else {
@@ -175,9 +183,9 @@ class Lightbox extends Modal {
    * @param {Element} target The element is invoking
    */
   populate(target) {
-    console.log('populate', target);
+    console.log('populate', this, target);
 
-    const opts = this.options, el = this.element;
+    const {options: opts, element: el} = this;
     let contents;
 
     if (opts.contents && typeof opts.contents == 'object') {
@@ -212,14 +220,13 @@ class Lightbox extends Modal {
    * @param {Element} target The element is invoking
    */
   resume(target) {
-    console.log('resume', target);
+    console.log('resume', this, target);
 
-    const opts = this.options;
-    const contents = this.contents;
+    const {options: opts, contents, current} = this;
+
+    current.$.remove(current.inner);
 
     for (const content of contents) {
-      content.$.hide();
-
       if (target && target === content.ref) {
         this.index = contents.indexOf(content);
         this.current = content;
@@ -246,7 +253,7 @@ class Lightbox extends Modal {
    * @returns {Data} data An ensemble Data instance
    */
   content(src, clone) {
-    const opts = this.options;
+    const {options: opts} = this;
     const compo = this.compo(false, 'object');
     compo.hide();
 
@@ -301,7 +308,6 @@ class Lightbox extends Modal {
     }
 
     if (srcref && ! mtype) {
-      //TODO href
       if (srcref[0] == '#') {
         const node = this.selector(srcref);
 
@@ -337,19 +343,19 @@ class Lightbox extends Modal {
     opts.onContent.call(this, this, data);
 
     if (mtype) {
-      compo.classList.add(opts.ns + '-' + mtype);
+      compo.classList.add(`${opts.ns}-${mtype}`);
     }
     if (mfn) {
-      compo.classList.add(opts.ns + '-' + mfn);
+      compo.classList.add(`${opts.ns}-${mfn}`);
     }
 
     const inner = this.inner(data);
 
-    data.load = function() {
+    data.load = () => {
       data.node && data.inner.fill(data.node);
       data.$.show();
     };
-    data.unload = function() {
+    data.unload = () => {
       data.node && data.inner.empty();
       data.$.hide();
     }
@@ -375,7 +381,7 @@ class Lightbox extends Modal {
    */
   inner(data) {
     let tag = data.type;
-    let name = true;
+    let name = false;
     let props = {};
 
     for (const prop in data) {
@@ -399,23 +405,20 @@ class Lightbox extends Modal {
 
           if (data.sources && typeof data.source == 'object') {
             for (const source of data.sources) {
-              props.children.push({tag: 'source', name: true, props: source});
+              props.children.push({tag: 'source', name: false, props: source});
             }
           } else if (data.children && data.children.length) {
             for (const child of data.children) {
               const tag = child.tagName.toLowerCase();
 
-              if (tag != 'source' || tag != 'img') {
+              if (tag != 'source' || tag != 'img')
                 continue;
-              }
 
-              props.children.push({tag: tag, name: true, props: child.attributes});
+              props.children.push({tag, name: false, props: child.attributes});
             }
           }
         }
-
-        break;
-
+      break;
       case 'video':
       case 'audio':
         props.controls = data.controls ? data.controls : true;
@@ -423,33 +426,28 @@ class Lightbox extends Modal {
 
         if (data.sources && typeof data.sources == 'object') {
           for (const source of data.sources) {
-            props.children.push({tag: 'source', name: true, props: source});
+            props.children.push({tag: 'source', name: false, props: source});
           }
 
           if (data.subtitles && typeof data.subtitles == 'object') {
             for (const track of data.subtitles) {
-              props.children.push({tag: 'track', name: true, props: track});
+              props.children.push({tag: 'track', name: false, props: track});
             }
           }
         } else if (data.children && data.children.length) {
             for (const child of data.children) {
               const tag = child.tagName.toLowerCase();
 
-              if (tag != 'source' || tag != 'track') {
+              if (tag != 'source' || tag != 'track')
                 continue;
-              }
 
-              props.children.push({tag: tag, name: true, props: child.attributes});
+              props.children.push({tag, name: false, props: child.attributes});
             }
         }
-
-        break;
-
+      break;
       case 'iframe':
         if (! props.src) return null;
-
-        break;
-
+      break;
       default:
         tag = 'div';
         name = 'custom-element';
@@ -469,8 +467,8 @@ class Lightbox extends Modal {
 
     if (contents && typeof contents == 'object' && contents.length) {
       for (const obj of contents) {
-        //TODO nodeName
-        if (typeof obj == 'object' && 'nodeName' in obj) {
+        //TODO nodeType
+        if (typeof obj == 'object' && obj.nodeType) {
           const data = this.data(true);
           const dc = obj.dataset;
 
@@ -570,15 +568,12 @@ class Lightbox extends Modal {
    * @param {int} step Step to: previous = -1, next = 1
    */
   slide(step) {
-    const opts = this.options;
+    const {options: opts, stepper, contents} = this;
 
-    if (! opts.infinite && this.stepper != 0 && this.stepper === step) {
+    if (! opts.infinite && stepper != 0 && stepper === step)
       return;
-    }
 
-    const contents = this.contents;
-    let index = this.index;
-    let current = this.current;
+    let {index, current} = this;
     let adjacent = current;
 
     opts.onStep.call(this, this, current, step);
@@ -615,7 +610,7 @@ class Lightbox extends Modal {
 
     opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
 
-    this.delay(function() {
+    this.delay(() => {
       step != 0 && current.$.remove(current.inner);
     }, current.$);
 
@@ -631,7 +626,7 @@ class Lightbox extends Modal {
    * @param {int} stepper Allow steps: 0 = both, next = -1, previous = 1
    */
   navigation(stepper) {
-    const nav = this.nav;
+    const {options: opts, nav} = this;
 
     if (this.contents.length > 1) {
       nav.$.show();
@@ -641,19 +636,13 @@ class Lightbox extends Modal {
       return;
     }
 
-    if (! this.options.infinite && typeof stepper != 'undefined') {
+    if (! opts.infinite && typeof stepper != 'undefined') {
+      const {prev, next} = nav;
+
       switch (stepper) {
-        case -1:
-          nav.prev.disable();
-          nav.next.enable();
-          break;
-        case 1:
-          nav.prev.enable();
-          nav.next.disable();
-          break;
-        default:
-          nav.prev.enable();
-          nav.next.enable();
+        case -1: prev.disable(), next.enable(); break;
+        case 1: prev.enable(), next.disable(); break;
+        default: prev.enable(), next.enable();
       }
     }
   }
@@ -664,21 +653,18 @@ class Lightbox extends Modal {
    * @param {string} text Text content
    */
   caption(text) {
-    const opts = this.options;
-    const captions = this.captions;
-    const current = this.current;
+    const {options: opts, captions, current} = this;
 
     captions.$.empty();
 
-    if (opts.onCaption(this, this, current, text)) {
+    if (opts.onCaption(this, this, current, text))
       return;
-    }
 
     if (! text) {
       if (current.caption) {
         text = current.caption;
       } else if (opts.selector) {
-        const ref = current.ref;
+        const {ref} = current;
 
         if (this.hasAttr(ref, 'title')) {
           text = this.getAttr(ref, 'title');

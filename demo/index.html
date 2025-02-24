@@ -109,7 +109,7 @@
 <!-- <script src="../../ensemble/src/js/base.js"></script> -->
 <!-- <script src="../../ensemble-modal/src/js/Modal.js"></script> -->
 <!-- <script src="../src/js/Lightbox.js"></script> -->
-<script src="../dist/js/ensemble-lightbox.js"></script>
+<script src="../dist/js/ensemble-lightbox.min.js"></script>
 
 <!-- example: Grouping using selector with option { infinite: true } -->
 <script>
@@ -173,30 +173,29 @@
       type: 'video',
       src: 'https://www.youtube.com/embed/mN0zPOpADL4',
       caption: 'Agent 327: Operation Barbershop\n\nfrom Blender Studio',
-      allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-      allowfullscreen: true //TODO FIX
+      allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
     },
     {
       type: 'video',
       src: 'https://player.vimeo.com/video/325910798',
       caption: 'Spring - Blender Open Movie\n\nfrom Blender Studio',
-      allow: 'autoplay; fullscreen; picture-in-picture',
-      allowfullscreen: true //TODO FIX
+      allow: 'autoplay; fullscreen; picture-in-picture'
     },
     {
       type: 'audio',
       src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
-      allowtransparency: true, //TODO FIX
       allow: 'encrypted-media'
     },
     {
       type: 'iframe',
       src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ',
-      height: '100%' //TODO FIX
+      height: '100%',
+      allowFullscreen: true
     },
     {
       type: 'iframe',
-      src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik'
+      src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik',
+      allowFullscreen: true
     },
     {
       type: 'audio',
@@ -215,7 +214,7 @@
 <script>
   var element = document.querySelector('.content');
 
-  var modal = new ensemble.Modal(element);
+  var modal = new ensemble.Modal(element, {dialog: true});
   var button = document.getElementById('button-modal');
 
   button.addEventListener('click', modal.open, true);
