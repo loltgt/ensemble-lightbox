@@ -148,11 +148,11 @@
   const contents = [
     {
       type: 'element',
-      node: (function() {
+      node: (() => {
         var el = document.createElement('div');
         el.innerText = 'Custom element test.';
         return el;
-      }())
+      })()
     },
     {
       type: 'video',
@@ -186,12 +186,12 @@
       src: 'https://open.spotify.com/embed/album/54Awn36ryf55PkZyOR4iwQ',
       allow: 'encrypted-media'
     },
-    {
+    /*{
       type: 'iframe',
       src: 'https://docs.google.com/forms/d/e/1FAIpQLSeI8_vYyaJgM7SJM4Y9AWfLq-tglWZh6yt7bEXEOJr_L-hV1A/viewform?formkey=dGx0b1ZrTnoyZDgtYXItMWVBdVlQQWc6MQ',
       height: '100%',
       allowFullscreen: true
-    },
+    },*/
     {
       type: 'iframe',
       src: 'https://www.openstreetmap.org/export/embed.html?bbox=-5.888671875%2C34.397844946449865%2C25.532226562500004%2C48.951366470947725&amp;layer=mapnik',
@@ -214,7 +214,7 @@
 <script>
   var element = document.querySelector('.content');
 
-  var modal = new ensemble.Modal(element, {dialog: true});
+  var modal = new ensemble.Modal(element);
   var button = document.getElementById('button-modal');
 
   button.addEventListener('click', modal.open, true);

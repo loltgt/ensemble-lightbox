@@ -34,14 +34,14 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {boolean} [options.dialog=false] Allow dialog mode
  * @param {boolean} [options.effects=true] Allow effects
  * @param {boolean} [options.clone=true] Allow clone of Element nodes
- * @param {boolean} [options.backdrop=false] Allow close on tap or click from outside the modal
+ * @param {boolean} [options.backdrop=false] Allow backdrop, close on tap or click from outside the modal
  * @param {boolean} [options.keyboard=true] Allow keyboard navigation
  * @param {boolean} [options.navigation=true] Allow navigation
  * @param {boolean} [options.captions=true] Allow captions
  * @param {boolean} [options.infinite=true] Allow carousel alike loop navigation
  * @param {boolean} [options.autoDiscover=true] Allow auto-discover type of contents
- * @param {mixed} [options.autoHide=navigation] Allow auto-hide navigation or captions, boolean or string value, "true" for both
- * @param {mixed} [options.overlay=false] Allow overlay on navigation or captions, boolean or string value, "true" for both
+ * @param {boolean|string} [options.autoHide='navigation'] Allow auto-hide "navigation" or "captions", "true" for both
+ * @param {boolean|string} [options.overlay=false] Allow overlay for "navigation" or "captions", "true" for both
  * @param {boolean} [options.checkOrigin=true] Allow check origin for URLs
  * @param {object} [options.close] Parameters for close button
  * @param {object} [options.prev] Parameters for button of previous arrow
@@ -55,7 +55,6 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {function} [options.onStep] onStep callback, on slide step
  * @param {function} [options.onSlide] onSlide callback, on slide
  * @param {function} [options.onCaption] onCaption callback, on caption shown
- * @todo L10n and a11y
  * @example
  * var lightbox = new ensemble.Lightbox({contents: [{type: 'image', src: 'image.png'}]});
  * lightbox.open();
@@ -140,8 +139,8 @@ class Lightbox extends Modal {
       const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
 
       const {locale} = opts;
-      prev.ariaLabel = locale.prev.toString();
-      next.ariaLabel = locale.next.toString();
+      prev.ariaLabel = locale.prev;
+      next.ariaLabel = locale.next;
 
       compo.append(prev);
       compo.append(next);
@@ -297,7 +296,7 @@ class Lightbox extends Modal {
       mfn = 'pdf';
     }
 
-    //TODO hook
+    //TODO hook ?
     if (opts.checkOrigin && srcref && xnref && ! bsrc) {
       const a = window.origin != 'null' ? window.origin : window.location.origin;
       const b = new URL(srcref).origin;
@@ -329,7 +328,7 @@ class Lightbox extends Modal {
       }
     }
     if (mtype == 'element') {
-      clone = typeof clone != 'undefined' ? clone : opts.clone;
+      clone = clone ?? opts.clone;
       data.node = clone ? this.cloneNode(data.node, true) : data.node;
     }
     if (! mfn && srctype != mtype) {
@@ -385,6 +384,7 @@ class Lightbox extends Modal {
     let props = {};
 
     for (const prop in data) {
+      // _ circular
       if (! /ref|src|type|sources|subtitles|children/.test(prop) && prop[0] != '_') {
         props[prop] = data[prop];
       }
@@ -546,9 +546,11 @@ class Lightbox extends Modal {
    * @param {Event} evt An Event
    */
   prev(evt) {
-    this.event(evt);
+    this.event().prevent(evt);
 
     this.slide(-1);
+
+    this.event().blur(evt);
   }
 
   /**
@@ -557,9 +559,11 @@ class Lightbox extends Modal {
    * @param {Event} evt An Event
    */
   next(evt) {
-    this.event(evt);
+    this.event().prevent(evt);
 
     this.slide(1);
+
+    this.event().blur(evt);
   }
 
   /**
@@ -689,16 +693,17 @@ class Lightbox extends Modal {
    * Handles keyboard inputs
    *
    * @param {Event} evt An Event
-   * @todo i18n
    */
   keyboard(evt) {
     super.keyboard(evt);
 
+    const rtl = document.dir != 'ltr';
+
     switch (evt.keyCode) {
       // Left
-      case 37: this.prev(evt); break;
+      case 37: this[! rtl ? 'prev' : 'next'](evt); break;
       // Right
-      case 39: this.next(evt); break;
+      case 39: this[! rtl ? 'next' : 'prev'](evt); break;
     }
   }
 

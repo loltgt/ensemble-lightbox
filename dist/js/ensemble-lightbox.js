@@ -323,6 +323,7 @@
     async render(slot) {
       const el = this[this.ns];
       const self = this;
+     
 
       if (el[slot] && el[slot]._) {
         el[slot].load();
@@ -336,6 +337,7 @@
     
     async unload(slot) {
       const el = this[this.ns];
+     
 
       if (el[slot] && el[slot]._) {
         el[slot].unload();
@@ -345,6 +347,7 @@
     
     async reflow(slot, force) {
       const el = this[this.ns];
+     
 
       if (force) {
         el[slot] = this.compo(el[slot]._.ns, el[slot]._.name, el[slot]._.props);
@@ -390,6 +393,23 @@
     }
 
     
+    static prevent(event) {
+      event.preventDefault();
+    }
+
+    
+    static focus(event, options) {
+      const {currentTarget} = event;
+      currentTarget && currentTarget.focus(options);
+    }
+
+    
+    static blur(event) {
+      const {currentTarget} = event;
+      currentTarget && currentTarget.blur();
+    }
+
+    
     static isEvent(obj) {
       return obj instanceof Event;
     }
@@ -404,12 +424,6 @@
   class base {
 
     
-   
-
-    
-   
-
-    
     constructor() {
       const args = arguments;
       let element, options;
@@ -418,7 +432,7 @@
         element = args[0];
         options = args[1];
      
-      } else if (typeof args[0] == 'object' && args[0].nodeType) {
+      } else if (args[0] && typeof args[0] == 'object' && args[0].nodeType) {
         element = args[0];
       } else {
         options = args[0];
@@ -467,22 +481,14 @@
     }
 
     
-    event(event, node) {
-      if (typeof event == 'string') {
-        return new Event(this.options.ns, event, node);
-      } else if (event) {
-        event.preventDefault();
-       
-        event.target.blur();
-      } else {
-        return Event;
-      }
+    event(name, node) {
+      const ns = this.options.ns;
+      return name != undefined ? new Event(ns, name, node) : Event;
     }
 
     
     selector(query, node, all = false) {
       node = node || document;
-
       return all ? node.querySelectorAll(query) : node.querySelector(query);
     }
 
@@ -497,8 +503,8 @@
     }
 
     
-    removeNode(root, node) {
-      return !! root.removeChild(node);
+    removeNode(parent, node) {
+      return !! parent.removeChild(node);
     }
 
     
@@ -625,7 +631,7 @@
       const close = this.compo('button', ['button', 'close'], opts.close);
 
       const {locale} = opts;
-      close.ariaLabel = locale.close.toString();
+      close.ariaLabel = locale.close;
 
       modal.append(stage);
 
@@ -669,8 +675,7 @@
       const {options: opts} = this;
       const compo = this.compo(false, 'object');
 
-     
-      clone = typeof clone != 'undefined' ? clone : opts.clone;
+      clone = clone ?? opts.clone;
       let inner = clone ? this.cloneNode(node, true) : node;
 
       opts.onContent.call(this, this, compo, inner);
@@ -693,7 +698,7 @@
 
     
     open(evt, target) {
-      this.event(evt);
+      this.event().prevent(evt);
 
       if (this.opened) return;
 
@@ -713,13 +718,15 @@
       if (opts.keyboard) {
         this.event('keydown').add(this.keyboard);
       }
+    
+      this.event().blur(evt);
 
       console.log('open', this, target);
     }
 
     
     close(evt, target) {
-      this.event(evt);
+      this.event().prevent(evt);
 
       if (! this.opened) return;
 
@@ -732,6 +739,8 @@
       if (opts.keyboard) {
         this.event('keydown').remove(this.keyboard);
       }
+    
+      this.event().blur(evt);
 
       console.log('close', this, target);
     }
@@ -768,7 +777,7 @@
 
     
     backdrop(evt) {
-      this.event(evt);
+      this.event().prevent(evt);
 
       const target = evt.target;
       const parent = target.parentElement;
@@ -822,7 +831,7 @@
 
     
     keyboard(evt) {
-      this.event(evt);
+      this.event().prevent(evt);
 
       switch (evt.keyCode) {
        
@@ -905,8 +914,8 @@
         const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
 
         const {locale} = opts;
-        prev.ariaLabel = locale.prev.toString();
-        next.ariaLabel = locale.next.toString();
+        prev.ariaLabel = locale.prev;
+        next.ariaLabel = locale.next;
 
         compo.append(prev);
         compo.append(next);
@@ -1076,7 +1085,7 @@
         }
       }
       if (mtype == 'element') {
-        clone = typeof clone != 'undefined' ? clone : opts.clone;
+        clone = clone ?? opts.clone;
         data.node = clone ? this.cloneNode(data.node, true) : data.node;
       }
       if (! mfn && srctype != mtype) {
@@ -1119,6 +1128,7 @@
       let props = {};
 
       for (const prop in data) {
+       
         if (! /ref|src|type|sources|subtitles|children/.test(prop) && prop[0] != '_') {
           props[prop] = data[prop];
         }
@@ -1263,16 +1273,20 @@
 
     
     prev(evt) {
-      this.event(evt);
+      this.event().prevent(evt);
 
       this.slide(-1);
+
+      this.event().blur(evt);
     }
 
     
     next(evt) {
-      this.event(evt);
+      this.event().prevent(evt);
 
       this.slide(1);
+
+      this.event().blur(evt);
     }
 
     
@@ -1390,11 +1404,13 @@
     keyboard(evt) {
       super.keyboard(evt);
 
+      const rtl = document.dir != 'ltr';
+
       switch (evt.keyCode) {
        
-        case 37: this.prev(evt); break;
+        case 37: this[! rtl ? 'prev' : 'next'](evt); break;
        
-        case 39: this.next(evt); break;
+        case 39: this[! rtl ? 'next' : 'prev'](evt); break;
       }
     }
 
