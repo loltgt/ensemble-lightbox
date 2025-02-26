@@ -12,26 +12,26 @@
 
 .grid {
   display: grid;
+  margin: 1.75em 0 0;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 8px;
 
+  // breakpoint: sm (small 640)
   @media (min-width: 576px) {
     grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
   }
+  // breakpoint: lg (large 1024)
   @media (min-width: 992px) {
     grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
   }
 }
 
 figure {
   display: flex;
   margin: 0;
-  aspect-ratio: 3/2;
-  user-select: none;
-
-  @media (min-width: 992px) {
-    aspect-ratio: 5/3;
-  }
+  aspect-ratio: 4/3;
 }
 figure a {
   position: relative;
@@ -57,7 +57,7 @@ figure a {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 1.75rem;
+    font-size: 133.333%;
     font-weight: 500;
     color: #fff;
     text-transform: uppercase;

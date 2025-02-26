@@ -5,7 +5,7 @@ $ensemble_compat: false !default;
 // Container
 
 $ensemble-lightbox_foreground: #fff;
-$ensemble-lightbox_background: rgba(5, 5, 5, .83);
+$ensemble-lightbox_background: rgba(0, 0, 0, .83);
 
 
 // Image
@@ -24,7 +24,7 @@ $ensemble-lightbox_captions_text-align: center;
 $ensemble-lightbox_captions_paragraph-margin: 0 0 1rem;
 
 $ensemble-lightbox_captions_foreground: #fff;
-$ensemble-lightbox_captions_background: rgba(0, 0, 0, .78);
+$ensemble-lightbox_captions_background: rgba(0, 0, 0, .71);
 
 
 // Effects
@@ -35,7 +35,13 @@ $ensemble-lightbox_effects_captions_transition: opacity 200ms ease-out;
 
 // Responsive
 
-// 992 – md
-$ensemble-lightbox_md__image_padding: 10vh;
-$ensemble-lightbox_md__captions_font_size: 1rem;
+// xs: 0       (extra-small 480)
+// sm: 576px   (small 640)
+// md: 768px   (medium 800)
+// lg: 992px   (large 1024)
+// xl: 1200px  (extra-large 1280)
+
+// lg (large 1024)
+$ensemble-lightbox_lg__image_padding: 10vh;
+$ensemble-lightbox_lg__captions_font_size: 1rem;
 

@@ -7,7 +7,6 @@
  * @license MIT License
  */
 
-@use "sass:math";
 @import "theme";
 
 @import "modal";
@@ -121,9 +120,6 @@
 .modal-captions {
   bottom: 0;
   width: 100%;
-@if $ensemble_compat {
-  font-size: math.floor(math.div($ensemble-lightbox_captions_font-size, 1rem) * 16px);
-}
   min-height: $ensemble-lightbox_captions_height;
   padding: $ensemble-lightbox_captions_padding;
   font-size: $ensemble-lightbox_captions_font-size;
@@ -176,8 +172,6 @@
   transition: $ensemble-lightbox_effects_object_transition;
 @if $ensemble_compat {
   -webkit-transition: $ensemble-lightbox_effects_object_transition;
-  -moz-transition: $ensemble-lightbox_effects_object_transition;
-  -ms-transition: $ensemble-lightbox_effects_object_transition;
 }
 }
 .modal.modal-effects .modal-captions:empty {
@@ -189,8 +183,6 @@
   transition: $ensemble-lightbox_effects_captions_transition;
 @if $ensemble_compat {
   -webkit-transition: $ensemble-lightbox_effects_captions_transition;
-  -moz-transition: $ensemble-lightbox_effects_captions_transition;
-  -ms-transition: $ensemble-lightbox_effects_captions_transition;
 }
 }
 
@@ -226,16 +218,17 @@
 }
 .modal.modal-overlay-navigation .modal-captions,
 .modal.modal-overlay-captions .modal-nav {
-  position: initial;
 @if $ensemble_compat {
   position: relative;
 }
+  position: initial;
 }
 
 
+// breakpoint: lg (large 1024)
 @media (min-width: 992px) {
   .modal-image {
-    border-width: $ensemble-lightbox_md__image_padding;
+    border-width: $ensemble-lightbox_lg__image_padding;
   }
 
   .modal-iframe {
@@ -262,9 +255,6 @@
   }
 
   .modal-captions {
-@if $ensemble_compat {
-    font-size: math.floor(math.div($ensemble-lightbox_md__captions_font_size, 1rem) * 16px);
-}
-    font-size: $ensemble-lightbox_md__captions_font_size;
+    font-size: $ensemble-lightbox_lg__captions_font_size;
   }
 }
