@@ -7,12 +7,6 @@
  */
 
 
-.modal-object, .modal-nav, .modal-captions, .modal, .modal-content, .modal-button {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .modal {
   position: fixed;
   top: 0;
@@ -23,12 +17,18 @@
   flex-direction: column;
   font-size: 1rem;
   font-weight: normal;
+  line-height: 1.5;
   text-align: center;
   border: 0;
   z-index: 1001;
   overflow: hidden;
   color: #000;
-  background: rgba(100, 100, 100, 0.7);
+  background: rgba(102, 102, 102, 0.71);
+}
+.modal, .modal * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .modal-content {
@@ -57,14 +57,19 @@
   position: absolute;
   width: auto;
   padding: 1rem;
+  font-family: monospace;
   font-size: 1.5rem;
+  font-weight: normal;
   line-height: 1;
   border: 0;
   cursor: pointer;
-  user-select: none;
   appearance: none;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.89);
   background: rgba(0, 0, 0, 0);
+}
+.modal-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .modal-button:disabled {
@@ -75,7 +80,7 @@
 
 .modal-button:active, .modal-button:focus {
   color: rgb(255, 255, 255);
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.71);
   outline: 0;
   -webkit-tap-highlight-color: transparent;
 }
@@ -83,7 +88,7 @@
 @media (hover: hover) {
   .modal-button:hover {
     color: rgb(255, 255, 255);
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.71);
   }
 }
 .modal-close {
@@ -114,15 +119,24 @@
   .modal-button {
     font-size: 3rem;
   }
+  .modal-button svg {
+    width: 3rem;
+    height: 3rem;
+  }
 }
 @media (min-width: 992px) {
   .modal-button {
     font-size: 3rem;
   }
+  .modal-button svg {
+    width: 3rem;
+    height: 3rem;
+  }
 }
 .modal-lightbox {
   color: #fff;
   background: rgba(0, 0, 0, 0.83);
+  z-index: 1001;
 }
 
 .modal-gallery {
@@ -210,7 +224,9 @@
   width: 100%;
   min-height: 8.2vh;
   padding: 3vh 1rem;
+  font-family: inherit;
   font-size: 0.9rem;
+  font-weight: normal;
   line-height: 1.5;
   text-align: center;
   color: #fff;
@@ -267,7 +283,7 @@
 .modal.modal-autohide .modal-nav,
 .modal.modal-autohide .modal-captions {
   opacity: 1;
-  animation: forwards 150ms ensemble-lightbox_autoHide linear 3s;
+  animation: forwards 150ms ensemble-modal_autoHide linear 3s;
 }
 
 .modal.modal-autohide:active .modal-nav,
@@ -287,7 +303,7 @@
     animation-delay: 10s;
   }
 }
-@keyframes ensemble-lightbox_autoHide {
+@keyframes ensemble-modal_autoHide {
   0% {
     opacity: 1;
   }

@@ -48,17 +48,17 @@
     }
 
     
-    bind(root, cb) {
+    bind(node, cb) {
       const el = this[this.ns];
       typeof cb == 'function' && cb.call(this, el);
-      return !! root.appendChild(el);
+      return !! node.appendChild(el);
     }
 
     
-    unbind(root, cb) {
+    unbind(node, cb) {
       const el = this[this.ns];
       typeof cb == 'function' && cb.call(this, el);
-      return !! root.removeChild(el);
+      return !! node.removeChild(el);
     }
 
     
@@ -404,9 +404,9 @@
     }
 
     
-    static blur(event) {
+    static blur(event, delay = 1e2) {
       const {currentTarget} = event;
-      currentTarget && currentTarget.blur();
+      setTimeout(() => currentTarget && currentTarget.blur(), delay);
     }
 
     
@@ -503,11 +503,6 @@
     }
 
     
-    removeNode(parent, node) {
-      return !! parent.removeChild(node);
-    }
-
-    
     cloneNode(node, deep = false) {
       return node.cloneNode(deep);
     }
@@ -523,13 +518,35 @@
     }
 
     
-    setAttr(node, attr, value) {
-      node.setAttribute(attr, value);
-    }
+    icon(type, name, prefix, path, hash) {
+      const ns = this.options.ns;
+      const className = prefix ? `${prefix}-${name}` : name;
+      const icon = this.compo('span', 'icon', {className});
 
-    
-    delAttr(node, attr) {
-      node.removeAttribute(attr);
+      if (type != 'font') {
+        if (type == 'symbol' || type == 'path') {
+          const svgNsUri = 'http://www.w3.org/2000/svg';
+          const svg = new Compo(ns, 'svg', false, false, false, svgNsUri);
+          const node = new Compo(ns, type, false, false, false, svgNsUri);
+
+          if (type == 'symbol') {
+            node.setAttr('href', `#${name}`);
+          } else {
+            node.setAttr('d', path);
+          }
+          svg.append(node);
+
+          icon.append(svg);
+       
+        } else if (type == 'svg' && path && hash) {
+          const img = new compo(ns, 'img', false, {
+            'src': `${path}#${hash}`
+          });
+          icon.append(img);
+        }
+      }
+
+      return icon;
     }
 
     
@@ -544,6 +561,13 @@
     }
 
     
+    delay(func, node, time) {
+      const delay = node ? this.styleTime(node, 'transitionDuration') : 0;
+
+      setTimeout(func, delay || time);
+    }
+
+    
     wrap(method) {
       const self = this;
 
@@ -552,13 +576,6 @@
       }
 
       return function(event) { method.call(self, event, this); }
-    }
-
-    
-    delay(func, node, time) {
-      const delay = node ? this.styleTime(node, 'transitionDuration') : 0;
-
-      setTimeout(func, delay || time);
     }
 
   }
@@ -576,14 +593,20 @@
         ns: 'modal',
         root: 'body',
         className: 'modal',
+        icons: {
+          type: 'text',
+          prefix: 'icon',
+          src: ''
+        },
         effects: true,
         dialog: false,
         clone: true,
         backdrop: true,
         keyboard: true,
         close: {
-          onclick: this.close,
-          innerText: '\u00D7'
+          trigger: this.close,
+          text: '\u00D7',
+          icon: 'close'
         },
         locale: {
           close: 'Close'
@@ -628,10 +651,20 @@
       });
       const stage = this.stage = this.compo(false, 'content');
 
-      const close = this.compo('button', ['button', 'close'], opts.close);
+      const {close: closeParams, icons, locale} = opts;
+      const close = this.compo('button', ['button', 'close'], {
+        onclick: closeParams.trigger,
+        innerText: icons.type == 'text' ? closeParams.text : '',
+        ariaLabel: locale.close
+      });
 
-      const {locale} = opts;
-      close.ariaLabel = locale.close;
+      if (icons.type != 'text') {
+        const {type, prefix} = icons;
+        const {icon: name, icon: path} = closeParams;
+        const icon = this.icon(type, name, prefix, path);
+
+        close.append(icon);
+      }
 
       modal.append(stage);
 
@@ -657,7 +690,7 @@
     populate(target) {
       console.log('populate', this, target);
 
-      const {element: el} = this;
+      const el = this.element;
       if (! el) return;
 
       const content = this.content(el);
@@ -672,7 +705,7 @@
 
     
     content(node, clone) {
-      const {options: opts} = this;
+      const opts = this.options;
       const compo = this.compo(false, 'object');
 
       clone = clone ?? opts.clone;
@@ -688,21 +721,12 @@
     }
 
     
-    destroy() {
-      const {root} = this;
-      const modal = this.modal.$;
-
-      this.removeNode(root, modal);
-      this.built = false;
-    }
-
-    
     open(evt, target) {
       this.event().prevent(evt);
 
       if (this.opened) return;
 
-      const {options: opts} = this;
+      const opts = this.options;
 
       if (this.built) {
         this.resume(target);
@@ -730,7 +754,7 @@
 
       if (! this.opened) return;
 
-      const {options: opts} = this;
+      const opts = this.options;
 
       this.opened = false;
       opts.onClose.call(this, this, target, evt);
@@ -801,6 +825,7 @@
         return;
       }
     
+     
       const inner = target.firstElementChild;
       const inner_w = inner.offsetWidth;
       const inner_h = inner.offsetHeight;
@@ -863,12 +888,14 @@
         overlay: false,
         checkOrigin: true,
         prev: {
-          onclick: this.prev,
-          innerText: '\u003C'
+          trigger: this.prev,
+          text: '\u003C',
+          icon: 'prev'
         },
         next: {
-          onclick: this.next,
-          innerText: '\u003E'
+          trigger: this.next,
+          text: '\u003E',
+          icon: 'next',
         },
         locale: {
           close: 'Close',
@@ -910,15 +937,26 @@
       if (opts.navigation) {
         var nav = this.nav = this.data(true);
         const compo = nav.$ = this.compo(false, 'nav');
-        const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
-        const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
+        const {icons, locale} = opts;
 
-        const {locale} = opts;
-        prev.ariaLabel = locale.prev;
-        next.ariaLabel = locale.next;
+        for (let i = 0; i < 2; i++) {
+          const arrow = i ? 'next' : 'prev';
+          const button = nav[arrow] = this.compo('button', ['button', arrow], {
+            onclick: opts[arrow].trigger,
+            innerText: icons.type == 'text' ? opts[arrow].text : '',
+            ariaLabel: locale[arrow]
+          });
+    
+          if (opts.icons != 'text') {
+            const {type, prefix} = icons;
+            const {icon: name, icon: path} = opts[arrow];
+            const icon = this.icon(type, name, prefix, path);
+      
+            button.append(icon);
+          }
 
-        compo.append(prev);
-        compo.append(next);
+          compo.append(button);
+        }
       }
 
       if (opts.captions) {
@@ -1009,7 +1047,7 @@
 
     
     content(src, clone) {
-      const {options: opts} = this;
+      const opts = this.options;
       const compo = this.compo(false, 'object');
       compo.hide();
 
@@ -1070,6 +1108,7 @@
           if (node) {
             data.node = node;
 
+           
             if (/iframe|img|picture|video|audio/i.test(node.nodeName)) {
               if (/img|picture/i.test(node.nodeName)) {
                 mtype = 'image';
@@ -1224,6 +1263,7 @@
               data.src = obj.href;
             } else if (dc.href) {
               data.src = dc.href;
+           
             } else if (/iframe|img|picture|video|audio/i.test(obj.nodeName)) {
               const tag = obj.nodeName.toLowerCase();
 
@@ -1391,7 +1431,7 @@
       }
 
       if (text) {
-        text = text.split(/\n\n|\r\n\r\n/);
+        text = text.split(/\n{2}/);
 
         for (const line of text) {
           const caption = this.compo('p', false, {innerText: line});

@@ -1,36 +1,73 @@
 
+// Compatibility old browsers
+
 $ensemble_compat: false !default;
 
 
-// Container
+// Compound size
 
-$ensemble-lightbox_foreground: #fff;
-$ensemble-lightbox_background: rgba(0, 0, 0, .83);
+// 1rem (16px)  default to document font-size
+// 1em          1 : relative to parent font-size
+// 1rem         1 : relative to document font-size
+
+$ensemble_modal_compound_size: 1rem !default;
+$ensemble_modal_compound_line-height: 1.5 !default;
+
+
+// Modal box
+
+$ensemble-modal_lightbox_color: #fff !default;
+$ensemble-modal_lightbox_background: rgba(0, 0, 0, .83) !default;
+
+$ensemble-modal_lightbox_zindex: 1001 !default;
+
+
+// Button
+
+$ensemble-modal_button_padding: 1rem !default;
+$ensemble-modal_button_border: 0 !default;
+$ensemble-modal_button_font-family: monospace !default; 
+$ensemble-modal_button_font-weight: normal !default;
+$ensemble-modal_button_size: 1.5rem !default;
+
+$ensemble-modal_button_color: rgba(255, 255, 255, .89) !default;
+$ensemble-modal_button_background: rgba(0, 0, 0, 0) !default;
+
+$ensemble-modal_button_focus_color: rgba(255, 255, 255, 1) !default;
+$ensemble-modal_button_focus_background: rgba(0, 0, 0, .71) !default;
+
+$ensemble-modal_button_disabled_background: none !important !default;
+$ensemble-modal_button_disabled_opacity: .1 !default;
 
 
 // Image
 
-$ensemble-lightbox_image_padding: 0;
-$ensemble-lightbox_image_prevent_dnd: true;
+$ensemble-modal_image_padding: 0 !default;
+$ensemble-modal_image_prevent_dnd: true !default;
 
 
 // Captions
 
-$ensemble-lightbox_captions_height: 8.2vh;
-$ensemble-lightbox_captions_padding: 3vh 1rem;
-$ensemble-lightbox_captions_font-size: .9rem;
-$ensemble-lightbox_captions_line-height: 1.5;
-$ensemble-lightbox_captions_text-align: center;
-$ensemble-lightbox_captions_paragraph-margin: 0 0 1rem;
+$ensemble-modal_captions_height: 8.2vh !default;
+$ensemble-modal_captions_padding: 3vh 1rem !default;
+$ensemble-modal_captions_font-family: inherit !default;
+$ensemble-modal_captions_font-size: .9rem !default;
+$ensemble-modal_captions_font-weight: normal !default;
+$ensemble-modal_captions_line-height: 1.5 !default;
+$ensemble-modal_captions_text-align: center !default;
+$ensemble-modal_captions_paragraph-margin: 0 0 1rem !default;
 
-$ensemble-lightbox_captions_foreground: #fff;
-$ensemble-lightbox_captions_background: rgba(0, 0, 0, .71);
+$ensemble-modal_captions_color: #fff !default;
+$ensemble-modal_captions_background: rgba(0, 0, 0, .71) !default;
 
 
 // Effects
 
-$ensemble-lightbox_effects_object_transition: opacity 100ms ease;
-$ensemble-lightbox_effects_captions_transition: opacity 200ms ease-out;
+$ensemble-modal_effects_container_transition: opacity 70ms linear !default;
+$ensemble-modal_effects_button_transition: all 30ms linear !default;
+
+$ensemble-modal_effects_object_transition: opacity 100ms ease !default;
+$ensemble-modal_effects_captions_transition: opacity 200ms ease-out !default;
 
 
 // Responsive
@@ -41,7 +78,12 @@ $ensemble-lightbox_effects_captions_transition: opacity 200ms ease-out;
 // lg: 992px   (large 1024)
 // xl: 1200px  (extra-large 1280)
 
+// sm (small 640)
+$ensemble-modal_sm__button_size: 3rem !default;
+
 // lg (large 1024)
-$ensemble-lightbox_lg__image_padding: 10vh;
-$ensemble-lightbox_lg__captions_font_size: 1rem;
+$ensemble-modal_lg__button_size: 3rem !default;
+
+$ensemble-modal_lg__image_padding: 10vh !default;
+$ensemble-modal_lg__captions_font-size: 1rem !default;
 

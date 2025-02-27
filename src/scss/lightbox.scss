@@ -12,14 +12,10 @@
 @import "modal";
 
 
-.modal-object, .modal-nav, .modal-captions, .modal-button {
-  @extend %ensemble-modal_css_reset;
-}
-
-
 .modal-lightbox {
-  color: $ensemble-lightbox_foreground;
-  background: $ensemble-lightbox_background;
+  color: $ensemble-modal_lightbox_color;
+  background: $ensemble-modal_lightbox_background;
+  z-index: $ensemble-modal_lightbox_zindex;
 }
 
 .modal-gallery {
@@ -31,9 +27,9 @@
 
 .modal-image {
   border: solid transparent;
-  border-width: $ensemble-lightbox_image_padding;
+  border-width: $ensemble-modal_image_padding;
 }
-@if $ensemble-lightbox_image_prevent_dnd != false {
+@if $ensemble-modal_image_prevent_dnd != false {
 .modal-image:after {
   content: "";
   display: block;
@@ -120,19 +116,21 @@
 .modal-captions {
   bottom: 0;
   width: 100%;
-  min-height: $ensemble-lightbox_captions_height;
-  padding: $ensemble-lightbox_captions_padding;
-  font-size: $ensemble-lightbox_captions_font-size;
-  line-height: $ensemble-lightbox_captions_line-height;
-  text-align: $ensemble-lightbox_captions_text-align;
-  color: $ensemble-lightbox_captions_foreground;
-  background: $ensemble-lightbox_captions_background;
+  min-height: $ensemble-modal_captions_height;
+  padding: $ensemble-modal_captions_padding;
+  font-family: $ensemble-modal_captions_font-family;
+  font-size: $ensemble-modal_captions_font-size;
+  font-weight: $ensemble-modal_captions_font-weight;
+  line-height: $ensemble-modal_captions_line-height;
+  text-align: $ensemble-modal_captions_text-align;
+  color: $ensemble-modal_captions_color;
+  background: $ensemble-modal_captions_background;
 }
 .modal-captions:empty {
   display: none;
 }
 .modal-captions p {
-  margin: $ensemble-lightbox_captions_paragraph_margin;
+  margin: $ensemble-modal_captions_paragraph_margin;
 }
 .modal-captions p:last-child {
   margin: 0;
@@ -169,9 +167,9 @@
 }
 .modal.modal-effects .modal-object {
   opacity: 1;
-  transition: $ensemble-lightbox_effects_object_transition;
+  transition: $ensemble-modal_effects_object_transition;
 @if $ensemble_compat {
-  -webkit-transition: $ensemble-lightbox_effects_object_transition;
+  -webkit-transition: $ensemble-modal_effects_object_transition;
 }
 }
 .modal.modal-effects .modal-captions:empty {
@@ -180,16 +178,16 @@
 .modal.modal-effects .modal-captions {
   display: block !important;
   opacity: 1;
-  transition: $ensemble-lightbox_effects_captions_transition;
+  transition: $ensemble-modal_effects_captions_transition;
 @if $ensemble_compat {
-  -webkit-transition: $ensemble-lightbox_effects_captions_transition;
+  -webkit-transition: $ensemble-modal_effects_captions_transition;
 }
 }
 
 .modal.modal-autohide .modal-nav,
 .modal.modal-autohide .modal-captions {
   opacity: 1;
-  animation: forwards 150ms ensemble-lightbox_autoHide linear 3s;
+  animation: forwards 150ms ensemble-modal_autoHide linear 3s;
 }
 .modal.modal-autohide:active .modal-nav,
 .modal.modal-autohide:active .modal-captions {
@@ -207,7 +205,7 @@
   }
 }
 
-@keyframes ensemble-lightbox_autoHide {
+@keyframes ensemble-modal_autoHide {
   0% { opacity: 1; }
   100% { opacity: 0; }
 }
@@ -228,7 +226,7 @@
 // breakpoint: lg (large 1024)
 @media (min-width: 992px) {
   .modal-image {
-    border-width: $ensemble-lightbox_lg__image_padding;
+    border-width: $ensemble-modal_lg__image_padding;
   }
 
   .modal-iframe {
@@ -255,6 +253,6 @@
   }
 
   .modal-captions {
-    font-size: $ensemble-lightbox_lg__captions_font_size;
+    font-size: $ensemble-modal_lg__captions_font-size;
   }
 }

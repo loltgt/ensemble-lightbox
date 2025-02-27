@@ -32,6 +32,10 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {string} [options.selector] A selector to find elements
  * @param {object} [options.contents] An object with contents
  * @param {boolean} [options.dialog=false] Allow dialog mode
+ * @param {object} [options.icons] Set icons model
+ * @param {string} [options.icons.type='text'] Set icons type: text, font, svg, symbol, shape
+ * @param {string} [options.icons.prefix='icon'] Set icons CSS class name prefix, for icons: font
+ * @param {string} [options.icons.src] Set icons SVG image src, for icons: svg
  * @param {boolean} [options.effects=true] Allow effects
  * @param {boolean} [options.clone=true] Allow clone of Element nodes
  * @param {boolean} [options.backdrop=false] Allow backdrop, close on tap or click from outside the modal
@@ -44,8 +48,17 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {boolean|string} [options.overlay=false] Allow overlay for "navigation" or "captions", "true" for both
  * @param {boolean} [options.checkOrigin=true] Allow check origin for URLs
  * @param {object} [options.close] Parameters for close button
- * @param {object} [options.prev] Parameters for button of previous arrow
- * @param {object} [options.next] Parameters for button of next arrow
+ * @param {function} [options.close.trigger] Function trigger, default to self.close
+ * @param {object} [options.close.text] Icon text, for icons: text
+ * @param {object} [options.close.icon] Icon name, symbol href, shape path, URL hash
+ * @param {object} [options.prev] Parameters for previous arrow button
+ * @param {function} [options.prev.trigger] Function trigger, default to self.close
+ * @param {string} [options.prev.text] Icon text, for icons: text
+ * @param {string} [options.prev.icon] Icon name, symbol href, shape path, URL hash
+ * @param {object} [options.next] Parameters for next arrow button
+ * @param {function} [options.next.trigger] Function trigger, default to self.close
+ * @param {string} [options.next.text] Icon text, for icons: text
+ * @param {string} [options.next.icon] Icon name, symbol href, shape path, URL hash
  * @param {object} [options.locale] Localization strings
  * @param {function} [options.onOpen] onOpen callback, on modal open
  * @param {function} [options.onClose] onOpen callback, on modal close
@@ -80,12 +93,14 @@ class Lightbox extends Modal {
       overlay: false,
       checkOrigin: true,
       prev: {
-        onclick: this.prev,
-        innerText: '\u003C'
+        trigger: this.prev,
+        text: '\u003C',
+        icon: 'prev'
       },
       next: {
-        onclick: this.next,
-        innerText: '\u003E'
+        trigger: this.next,
+        text: '\u003E',
+        icon: 'next',
       },
       locale: {
         close: 'Close',
@@ -135,15 +150,26 @@ class Lightbox extends Modal {
     if (opts.navigation) {
       var nav = this.nav = this.data(true);
       const compo = nav.$ = this.compo(false, 'nav');
-      const prev = nav.prev = this.compo('button', ['button', 'prev'], opts.prev);
-      const next = nav.next = this.compo('button', ['button', 'next'], opts.next);
+      const {icons, locale} = opts;
 
-      const {locale} = opts;
-      prev.ariaLabel = locale.prev;
-      next.ariaLabel = locale.next;
+      for (let i = 0; i < 2; i++) {
+        const arrow = i ? 'next' : 'prev';
+        const button = nav[arrow] = this.compo('button', ['button', arrow], {
+          onclick: opts[arrow].trigger,
+          innerText: icons.type == 'text' ? opts[arrow].text : '',
+          ariaLabel: locale[arrow]
+        });
+  
+        if (opts.icons != 'text') {
+          const {type, prefix} = icons;
+          const {icon: name, icon: path} = opts[arrow];
+          const icon = this.icon(type, name, prefix, path);
+    
+          button.append(icon);
+        }
 
-      compo.append(prev);
-      compo.append(next);
+        compo.append(button);
+      }
     }
 
     if (opts.captions) {
@@ -252,7 +278,7 @@ class Lightbox extends Modal {
    * @returns {Data} data An ensemble Data instance
    */
   content(src, clone) {
-    const {options: opts} = this;
+    const opts = this.options;
     const compo = this.compo(false, 'object');
     compo.hide();
 
@@ -313,6 +339,7 @@ class Lightbox extends Modal {
         if (node) {
           data.node = node;
 
+          //TODO nodeName
           if (/iframe|img|picture|video|audio/i.test(node.nodeName)) {
             if (/img|picture/i.test(node.nodeName)) {
               mtype = 'image';
@@ -368,14 +395,14 @@ class Lightbox extends Modal {
    * Detects and handles inner contents
    *
    * @param {Data} data An ensemble Data instance
-   * @param {ref} data.ref A reference to Element found by selector
-   * @param {type} data.type Content type
-   * @param {src} data.src Content source URL
+   * @param {ref} [data.ref] A reference to Element found by selector
+   * @param {type} [data.type] Content type
+   * @param {src} [data.src] Content source URL
    * @param {Element} [data.node] A valid Element node that will be pushed
-   * @param {function} data.load load callback, on content load
-   * @param {function} data.unload unload callback, on content unload
-   * @param {Compo} data.compo The main compo of content
-   * @param {mixed} data.inner The inner content, Object placeholder or compo
+   * @param {function} [data.load] load callback, on content load
+   * @param {function} [data.unload] unload callback, on content unload
+   * @param {Compo} [data.compo] The main compo of content
+   * @param {mixed} [data.inner] The inner content, Object placeholder or compo
    * @returns {object} props Properties for compo
    */
   inner(data) {
@@ -485,6 +512,7 @@ class Lightbox extends Modal {
             data.src = obj.href;
           } else if (dc.href) {
             data.src = dc.href;
+          //TODO nodeName
           } else if (/iframe|img|picture|video|audio/i.test(obj.nodeName)) {
             const tag = obj.nodeName.toLowerCase();
 
@@ -680,7 +708,7 @@ class Lightbox extends Modal {
     }
 
     if (text) {
-      text = text.split(/\n\n|\r\n\r\n/);
+      text = text.split(/\n{2}/);
 
       for (const line of text) {
         const caption = this.compo('p', false, {innerText: line});
