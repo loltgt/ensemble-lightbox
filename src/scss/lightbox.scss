@@ -186,8 +186,8 @@
 
 .modal.modal-autohide .modal-nav,
 .modal.modal-autohide .modal-captions {
-  opacity: 1;
-  animation: forwards 150ms ensemble-modal_autoHide linear 3s;
+  opacity: $ensemble-modal_effects_controls_autohide_visible_opacity;
+  animation: $ensemble-modal_effects_controls_autohide_animation-fill-mode $ensemble-modal_effects_controls_autohide_animation-duration ensemble-modal_autoHide $ensemble-modal_effects_controls_autohide_animation-timing-function $ensemble-modal_effects_controls_autohide_hidden_animation-delay;
 }
 .modal.modal-autohide:active .modal-nav,
 .modal.modal-autohide:active .modal-captions {
@@ -195,19 +195,19 @@
 }
 .modal.modal-autohide-navigation .modal-captions,
 .modal.modal-autohide-captions .modal-nav {
-  opacity: 1 !important;
+  opacity: $ensemble-modal_effects_controls_autohide_visible_opacity !important;
   animation: none !important;
 }
-@media (hover:hover) {
+@media (hover: hover) {
   .modal.modal-autohide:hover .modal-nav,
   .modal.modal-autohide:hover .modal-captions {
-    animation-delay: 10s;
+    animation-delay: $ensemble-modal_effects_controls_autohide_visible_animation-delay;
   }
 }
 
 @keyframes ensemble-modal_autoHide {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+  0% { opacity: $ensemble-modal_effects_controls_autohide_visible_opacity; }
+  100% { opacity: $ensemble-modal_effects_controls_autohide_hidden_opacity; }
 }
 
 .modal.modal-overlay .modal-nav,
@@ -236,10 +236,6 @@
   .modal-video,
   .modal-audio {
     max-height: 77vh;
-@if $ensemble_compat {
-} @else {
-    aspect-ratio: 16/9;
-}
   }
   .modal-video iframe,
   .modal-audio iframe {
