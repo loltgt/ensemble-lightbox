@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>ensemble Lightbox demo</title>
+<link rel="stylesheet" href="demo-ensemble-lightbox.css">
+<script src="demo-ensemble-lightbox.js"></script>
+
+<!-- ensemble lightbox stylesheet -->
+<link rel="stylesheet" href="../dist/css/ensemble-lightbox.css">
+</head>
+<body>
+<main>
+  <h1>ensemble Lightbox demo</h1>
+
+  <section>
+    <h2 class="js-class">ensemble.Lightbox</h2>
+
+    <article class="example" id="example-1">
+      <h2>Grouping <em>using selector</em> with option <code>infinite: true</code></h2>
+
+      <div class="grid">
+        <figure>
+          <a href="pub/image-giraffe.jpg">
+            <img src="pub/image-giraffe.jpg" alt="Giraffe JPEG image">
+          </a>
+        </figure>
+        <figure>
+          <a href="pub/video-jellyfish.webm" title="Jellyfish WEBM video, description from [title] attribute">
+            <img src="pub/thumb-jellyfish.jpg" alt="Jellyfish video thumbnail">
+          </a>
+        </figure>
+        <figure>
+          <a href="pub/iframe.html" data-caption="HTML iframe, description from [data-caption] attribute"></a>
+        </figure>
+        <figure>
+          <a href="pub/document.pdf" data-caption="PDF document"></a>
+        </figure>
+        <figure>
+          <a href="pub/image-tiger.avif" data-caption="Tiger AVIF image">
+            <img src="pub/image-tiger.avif" alt="Tiger AVIF">
+          </a>
+        </figure>
+        <figure>
+          <a href="pub/image-cow.webp" data-caption="Cow WEBP image">
+            <img src="pub/image-cow.webp" alt="Cow WEBP">
+          </a>
+        </figure>
+        <figure>
+          <a href="pub/image-giraffe.png">
+            <img src="pub/image-giraffe.png" alt="Giraffe PNG image">
+          </a>
+        </figure>
+        <figure>
+          <a href="pub/image-lizard.svg" data-caption="Lizard SVG vector image">
+            <img src="pub/image-lizard.svg" alt="Lizard SVG">
+          </a>
+        </figure>
+      </div>
+    </article>
+
+    <article class="example" id="example-2">
+      <h2>Grouping <em>using selector</em> with option <code>infinite: false</code></h2>
+
+      <div class="grid">
+        <figure>
+          <a href="pub/image-ostrich.avif">
+            <img src="pub/image-ostrich.avif" alt="Ostrich AVIF image">
+          </a>
+        </figure>
+        <figure>
+          <a href="pub/image-elephant.webp">
+            <img src="pub/image-elephant.webp" alt="Elephant WEBP image">
+          </a>
+        </figure>
+      </div>
+    </article>
+
+    <article class="example" id="example-3">
+      <h2>Contents passed <em>by options</em> with option <code>contents: [{...}, ...]</code></h2>
+
+      <div>
+        <button id="button-lightbox">Open lightbox</button>
+      </div>
+    </article>
+
+  </section>
+
+  <section>
+    <h2 class="js-class">ensemble.Modal</h2>
+
+    <article class="example" id="example-4">
+      <h3>Modal with inline content</h3>
+
+      <span class="content">Show this content in a modal.</span>
+
+      <div>
+        <button id="button-modal">Open modal</button>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<!-- ensemble lightbox javascript -->
+<script src="../dist/js/ensemble-lightbox.min.js"></script>
+
+
+<!-- example: Grouping using selector with option { infinite: true } -->
+<script>
+  var group = document.querySelector('#example-1 .grid');
+
+  var lightbox = new ensemble.Lightbox(group,
+    {
+      selector: 'a',
+      infinite: true
+    }
+  );
+
+  for (const a of group.querySelectorAll('a')) {
+    a.addEventListener('click', lightbox.open, true);
+  }
+</script>
+
+<!-- example: Grouping using selector with option { infinite: false } -->
+<script>
+  var group = document.querySelector('#example-2 .grid');
+
+  var lightbox = new ensemble.Lightbox(group,
+    {
+      selector: 'a',
+      infinite: false
+    }
+  );
+
+  for (const a of group.querySelectorAll('a')) {
+    a.addEventListener('click', lightbox.open, true);
+  }
+</script>
+
+<!-- example: Contents passed by options with option { contents: [{...}, ...] } -->
+<script>
+  const contents = [
+    {
+      type: 'video',
+      src: 'https://www.youtube.com/embed/3vijLre760w',
+      allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+      caption: 'Iframe with remote content video [YouTube]\n\nRainforests 101 | National Geographic'
+    },
+    {
+      type: 'audio',
+      src: 'https://open.spotify.com/embed/album/3qZ5gGVreYVXc87G9E2th7',
+      allow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture',
+      caption: 'Iframe with remote content audio [Spotify]\n\nLloyd SB - Boida Flare EP'
+    },
+    {
+      type: 'iframe',
+      src: 'https://www.openstreetmap.org/export/embed.html?bbox=-251.36718750000003%2C-60.759159502269895%2C251.36718750000003%2C60.75915950226991&layer=mapnik',
+      caption: 'Iframe with remote content map [Open Street Map]'
+    },
+    {
+      type: 'iframe',
+      src: 'https://docs.google.com/forms/d/e/1FAIpQLSeOGm9xsgfCdqRuaTABu3fkiHk5NdwVSDFgGBlkEJEO4LEvTA/viewform',
+      height: '100%',
+      caption: 'Iframe with remote content document form [Google Forms]'
+    },
+    {
+      type: 'video',
+      poster: 'pub/thumb-jellyfish.jpg',
+      sources: [
+        {
+          type: 'video/webm',
+          src: 'pub/video-jellyfish.webm'
+        },
+        {
+          type: 'video/mp4',
+          src: 'pub/video-jellyfish.mp4'
+        }
+      ],
+      loop: true,
+      caption: 'Video files H.264 and VP9'
+    },
+    {
+      type: 'audio',
+      sources: [
+        {
+          type: 'audio/mpeg',
+          src: 'pub/audio-80.mp3'
+        },
+        {
+          type: 'audio/opus',
+          src: 'pub/audio-80.opus'
+        }
+      ],
+      autoplay: true,
+      loop: true,
+      caption: 'Audio files MP3 and OPUS'
+    },
+    {
+      type: 'element',
+      node: (() => {
+        var el = document.createElement('div');
+        el.innerText = 'Custom element inner text.';
+        return el;
+      })(),
+      caption: 'Custom element'
+    },
+    {
+      type: 'image',
+      src: 'pub/image-quad.gif',
+      style: 'zoom: 2',
+      caption: 'Image file animated GIF'
+    }
+  ];
+
+  var button = document.getElementById('button-lightbox');
+  var lightbox = new ensemble.Lightbox({contents});
+
+  button.addEventListener('click', lightbox.open, true);
+</script>
+
+<!-- example: Modal with inline content -->
+<script>
+  var element = document.querySelector('#example-4 .content');
+
+  var modal = new ensemble.Modal(element);
+  var button = document.getElementById('button-modal');
+
+  button.addEventListener('click', modal.open, true);
+</script>
+
+</body>
+</html>

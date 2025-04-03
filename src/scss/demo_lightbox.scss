@@ -1,0 +1,116 @@
+/**
+ * ensemble demo Lightbox
+ *
+ * @version 0.0.4
+ * @copyright Copyright (C) Leonardo Laureti
+ * @license MIT License
+ */
+
+@import "demo_common";
+@import "demo_button";
+
+
+.grid {
+  display: grid;
+  margin: 1.75em 0 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+
+  // breakpoint: sm (small 640)
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  // breakpoint: lg (large 1024)
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+figure {
+  display: flex;
+  margin: 0;
+  aspect-ratio: 4/3;
+}
+figure a {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+
+  &:after, &:before {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  &:before {
+    content: "";
+    display: block;
+    background: #588;
+    z-index: -1;
+  }
+  &:after {
+    content: "iframe";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 133.333%;
+    font-weight: 500;
+    color: #fff;
+    text-transform: uppercase;
+    opacity: .85;
+    text-shadow: 0 -.5px #000a, 0 .5px #000a, -1px -1px #0003, 1px 1px #0003, -1.5px 0 #0009, 1.5px 0 #0009, -2px -2px #0006, 2px 2px #0006;
+  }
+  &:empty:after {
+    color: #cff;
+  }
+}
+figure img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+
+figure a[href$=".jpg"]:after { content: "jpeg"; }
+figure a[href$=".png"]:after { content: "png"; }
+figure a[href$=".pdf"]:after { content: "pdf"; }
+figure a[href$=".svg"]:after { content: "svg"; }
+figure a[href$=".webp"]:after { content: "webp"; }
+figure a[href$=".avif"]:after { content: "avif"; }
+figure a[href$=".webm"]:after { content: "video"; }
+
+textarea {
+  max-width: 550px;
+  max-height: 300px;
+  width: 80%;
+  height: 50vh;
+  background: #fff;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  min-height: 8rem;
+  color: #000;
+  background: #e9e9e9;
+}
+.modal .content {
+  min-width: 50vh;
+  min-height: 25vh;
+}
+
+div:nth-child(2) + div {
+  margin-block: 1.75em 3.25em;
+}
+div:not(.grid):only-of-type {
+  margin-block: 3.25em 0;
+}
+
