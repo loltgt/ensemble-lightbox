@@ -51,14 +51,16 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {function} [options.close.trigger] Function trigger, default to self.close
  * @param {object} [options.close.text] Icon text, for icons: text
  * @param {object} [options.close.icon] Icon name, symbol href, shape path, URL hash
- * @param {object} [options.prev] Parameters for previous arrow button
+ * @param {object} [options.prev] Parameters for previous button
  * @param {function} [options.prev.trigger] Function trigger, default to self.close
  * @param {string} [options.prev.text] Icon text, for icons: text
  * @param {string} [options.prev.icon] Icon name, symbol href, shape path, URL hash
- * @param {object} [options.next] Parameters for next arrow button
+ * @param {string} [options.prev.viewBox] Icon SVG viewBox
+ * @param {object} [options.next] Parameters for next button
  * @param {function} [options.next.trigger] Function trigger, default to self.close
  * @param {string} [options.next.text] Icon text, for icons: text
  * @param {string} [options.next.icon] Icon name, symbol href, shape path, URL hash
+ * @param {string} [options.next.viewBox] Icon SVG viewBox
  * @param {object} [options.locale] Localization strings
  * @param {function} [options.onOpen] onOpen callback, on modal open
  * @param {function} [options.onClose] onOpen callback, on modal close
@@ -94,13 +96,17 @@ class Lightbox extends Modal {
       checkOrigin: true,
       prev: {
         trigger: this.prev,
-        text: '\u003C',
-        icon: 'prev'
+        //TODO leave text ? viewBox scss
+        // text: '\u003C',
+        icon: 'm5 12 9 10-9-10 9-10-9 10Z',
+        viewBox: '0 0 18 24'
       },
       next: {
         trigger: this.next,
-        text: '\u003E',
-        icon: 'next',
+        //TODO leave text ? viewBox scss
+        // text: '\u003E',
+        icon: 'M14 12 4 22l10-10L4 2l10 10Z',
+        viewBox: '0 0 18 24'
       },
       locale: {
         close: 'Close',
@@ -153,17 +159,17 @@ class Lightbox extends Modal {
       const {icons, locale} = opts;
 
       for (let i = 0; i < 2; i++) {
-        const arrow = i ? 'next' : 'prev';
-        const button = nav[arrow] = this.compo('button', ['button', arrow], {
-          onclick: opts[arrow].trigger,
-          innerText: icons.type == 'text' ? opts[arrow].text : '',
-          ariaLabel: locale[arrow]
+        const path = i ? 'next' : 'prev';
+        const button = nav[path] = this.compo('button', ['button', path], {
+          onclick: opts[path].trigger,
+          innerText: icons.type == 'text' ? opts[path].text : '',
+          ariaLabel: locale[path]
         });
   
         if (opts.icons != 'text') {
-          const {type, prefix} = icons;
-          const {icon: name, icon: path} = opts[arrow];
-          const icon = this.icon(type, name, prefix, path);
+          const {type, prefix, src, viewBox} = icons;
+          const {icon: ref, viewBox: v} = opts[path];
+          const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? path, v ?? viewBox);
     
           button.append(icon);
         }
@@ -269,10 +275,6 @@ class Lightbox extends Modal {
   /**
    * The single content
    *
-   * @see window.origin
-   * @see window.location
-   * @see URL()
-   *
    * @param {mixed} src A URL source or an ensemble Data object
    * @param {boolean} clone Clones the whole Element node tree
    * @returns {Data} data An ensemble Data instance
@@ -322,14 +324,8 @@ class Lightbox extends Modal {
       mfn = 'pdf';
     }
 
-    //TODO hook ?
-    if (opts.checkOrigin && srcref && xnref && ! bsrc) {
-      const a = window.origin != 'null' ? window.origin : window.location.origin;
-      const b = new URL(srcref).origin;
-
-      if (a != b) {
-        mtype = '';
-      }
+    if (opts.checkOrigin && srcref && xnref && ! bsrc && ! this.origin(srcref)) {
+      mtype = '';
     }
 
     if (srcref && ! mtype) {
@@ -339,7 +335,7 @@ class Lightbox extends Modal {
         if (node) {
           data.node = node;
 
-          //TODO nodeName
+          // ref nodeName
           if (/iframe|img|picture|video|audio/i.test(node.nodeName)) {
             if (/img|picture/i.test(node.nodeName)) {
               mtype = 'image';
@@ -487,14 +483,14 @@ class Lightbox extends Modal {
    * The content preparation stage
    *
    * @param {object} contents Passed object of contents
-   * @returns {array} An array of contents
+   * @returns {array} Array of contents
    */
   prepare(contents) {
     const a = [];
 
     if (contents && typeof contents == 'object' && contents.length) {
       for (const obj of contents) {
-        //TODO nodeType
+        // ref nodeType
         if (typeof obj == 'object' && obj.nodeType) {
           const data = this.data(true);
           const dc = obj.dataset;
@@ -512,7 +508,7 @@ class Lightbox extends Modal {
             data.src = obj.href;
           } else if (dc.href) {
             data.src = dc.href;
-          //TODO nodeName
+          // ref nodeName
           } else if (/iframe|img|picture|video|audio/i.test(obj.nodeName)) {
             const tag = obj.nodeName.toLowerCase();
 
