@@ -518,27 +518,30 @@
     }
 
     
-    icon(type, name, prefix, path, hash) {
+    icon(type, name, prefix, path, hash, viewBox) {
       const ns = this.options.ns;
       const className = prefix ? `${prefix}-${name}` : name;
       const icon = this.compo('span', 'icon', {className});
 
       if (type != 'font') {
-        if (type == 'symbol' || type == 'path') {
+       
+        if (type == 'symbol' || type == 'shape') {
           const svgNsUri = 'http://www.w3.org/2000/svg';
           const svg = new Compo(ns, 'svg', false, false, false, svgNsUri);
-          const node = new Compo(ns, type, false, false, false, svgNsUri);
+          const node = new Compo(ns, type == 'symbol' ? 'use' : 'path', false, false, false, svgNsUri);
 
+          if (viewBox) {
+            svg.setAttr('viewBox', viewBox);
+          }
           if (type == 'symbol') {
-            node.setAttr('href', `#${name}`);
+            node.setAttr('href', `#${hash}`);
           } else {
             node.setAttr('d', path);
           }
           svg.append(node);
 
           icon.append(svg);
-       
-        } else if (type == 'svg' && path && hash) {
+        } else if (type == 'svg' && this.origin()) {
           const img = new compo(ns, 'img', false, {
             'src': `${path}#${hash}`
           });
@@ -547,6 +550,14 @@
       }
 
       return icon;
+    }
+
+    
+    origin(b, a) {
+      a = URL.canParse(a) ? a : (window.origin != 'null' ? window.origin : window.location.origin);
+      b = URL.canParse(b) ? new URL(b).origin : a;
+
+      return a && b && a === b;
     }
 
     
@@ -594,9 +605,8 @@
         root: 'body',
         className: 'modal',
         icons: {
-          type: 'text',
-          prefix: 'icon',
-          src: ''
+          type: 'shape',
+          prefix: 'icon'
         },
         effects: true,
         dialog: false,
@@ -605,8 +615,10 @@
         keyboard: true,
         close: {
           trigger: this.close,
-          text: '\u00D7',
-          icon: 'close'
+         
+         
+          icon: 'm20 4-8 8 8 8-8-8-8 8 8-8-8-8 8 8 8-8Z',
+          viewBox: '0 0 24 24'
         },
         locale: {
           close: 'Close'
@@ -651,17 +663,18 @@
       });
       const stage = this.stage = this.compo(false, 'content');
 
+      const path = 'close';
       const {close: closeParams, icons, locale} = opts;
-      const close = this.compo('button', ['button', 'close'], {
+      const close = this.compo('button', ['button', path], {
         onclick: closeParams.trigger,
         innerText: icons.type == 'text' ? closeParams.text : '',
         ariaLabel: locale.close
       });
 
       if (icons.type != 'text') {
-        const {type, prefix} = icons;
-        const {icon: name, icon: path} = closeParams;
-        const icon = this.icon(type, name, prefix, path);
+        const {type, prefix, src, viewBox} = icons;
+        const {icon: ref, viewBox: v} = closeParams;
+        const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? path, v ?? viewBox);
 
         close.append(icon);
       }
@@ -889,13 +902,17 @@
         checkOrigin: true,
         prev: {
           trigger: this.prev,
-          text: '\u003C',
-          icon: 'prev'
+         
+         
+          icon: 'm5 12 9 10-9-10 9-10-9 10Z',
+          viewBox: '0 0 18 24'
         },
         next: {
           trigger: this.next,
-          text: '\u003E',
-          icon: 'next',
+         
+         
+          icon: 'M14 12 4 22l10-10L4 2l10 10Z',
+          viewBox: '0 0 18 24'
         },
         locale: {
           close: 'Close',
@@ -940,17 +957,17 @@
         const {icons, locale} = opts;
 
         for (let i = 0; i < 2; i++) {
-          const arrow = i ? 'next' : 'prev';
-          const button = nav[arrow] = this.compo('button', ['button', arrow], {
-            onclick: opts[arrow].trigger,
-            innerText: icons.type == 'text' ? opts[arrow].text : '',
-            ariaLabel: locale[arrow]
+          const path = i ? 'next' : 'prev';
+          const button = nav[path] = this.compo('button', ['button', path], {
+            onclick: opts[path].trigger,
+            innerText: icons.type == 'text' ? opts[path].text : '',
+            ariaLabel: locale[path]
           });
     
           if (opts.icons != 'text') {
-            const {type, prefix} = icons;
-            const {icon: name, icon: path} = opts[arrow];
-            const icon = this.icon(type, name, prefix, path);
+            const {type, prefix, src, viewBox} = icons;
+            const {icon: ref, viewBox: v} = opts[path];
+            const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? path, v ?? viewBox);
       
             button.append(icon);
           }
@@ -1091,14 +1108,8 @@
         mfn = 'pdf';
       }
 
-     
-      if (opts.checkOrigin && srcref && xnref && ! bsrc) {
-        const a = window.origin != 'null' ? window.origin : window.location.origin;
-        const b = new URL(srcref).origin;
-
-        if (a != b) {
-          mtype = '';
-        }
+      if (opts.checkOrigin && srcref && xnref && ! bsrc && ! this.origin(srcref)) {
+        mtype = '';
       }
 
       if (srcref && ! mtype) {

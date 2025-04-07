@@ -1,13 +1,14 @@
 {
-  "name": "ensemble-lightbox-demo",
+  "name": "ensemble-lightbox--demo",
   "version": "0.0.4",
   "description": "ensemble Lightbox demo content",
   "scripts": {
-    "demo.css": "npx gulp demo.css",
-    "demo.js": "npx gulp demo.js",
+    "demo:css": "npx gulp demo:css",
+    "demo:js": "npx gulp demo:js",
+    "demo:prepublish": "npx gulp demo:prepublish",
     "demo": "npx gulp"
   },
-  "repository": "git+https://github.com/loltgt/ensemble-lightbox.git",
+  "repository": "git+https://github.com/loltgt/ensemble-lightbox.git#demo",
   "author": "Leonardo Laureti",
   "license": "MIT",
   "bugs": {

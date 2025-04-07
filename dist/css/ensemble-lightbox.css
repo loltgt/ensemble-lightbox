@@ -67,9 +67,12 @@
   background: rgba(0, 0, 0, 0);
 }
 .modal-button svg {
+  display: block;
   width: 1.5rem;
   height: 1.5rem;
   fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 2px;
 }
 
 .modal-button:disabled {
@@ -146,41 +149,32 @@
   overflow: hidden;
 }
 
-.modal-image {
-  border: solid transparent;
-  border-width: 0;
-}
-
-.modal-image:after {
-  content: "";
-  display: block;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.modal-image img {
+.modal-image img,
+.modal-video video,
+.modal-audio audio,
+.modal-iframe iframe {
   display: block;
   max-width: 100%;
   max-height: 100%;
-  width: auto;
-  height: auto;
   margin: auto;
   border: 0;
+  outline: 0;
+}
+
+.modal-image img {
+  width: auto;
+  height: auto;
 }
 
 .modal-iframe {
   width: 100%;
   height: 100%;
-  border: 0;
 }
 
 .modal-iframe iframe {
   display: block;
   width: 100%;
   height: 100%;
-  border: 0;
 }
 
 .modal-video,
@@ -190,11 +184,6 @@
   width: 100%;
 }
 
-.modal-video video {
-  width: 100%;
-  outline: 0;
-}
-
 .modal-video iframe,
 .modal-audio iframe {
   max-height: 75vh;
@@ -202,7 +191,6 @@
 
 .modal-video iframe {
   min-height: 33vh;
-  height: auto;
 }
 
 .modal-pdf {
@@ -212,6 +200,15 @@
 .modal-pdf iframe {
   position: absolute;
   inset: 0;
+}
+
+.modal-image:after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .modal-nav {
@@ -245,10 +242,12 @@
   margin: 0;
 }
 
-.modal-prev,
-.modal-next {
+.modal-nav .modal-button {
   top: 50%;
-  margin-top: -2em;
+  margin-top: -0.75rem;
+}
+.modal-nav .modal-button svg {
+  width: 1.125rem;
 }
 
 .modal-prev {
@@ -321,9 +320,23 @@
   position: initial;
 }
 
+@media (min-width: 576px) {
+  .modal-nav .modal-button {
+    margin-top: -1.5rem;
+  }
+  .modal-nav .modal-button svg {
+    width: 2.25rem;
+  }
+}
 @media (min-width: 992px) {
+  .modal-nav .modal-button {
+    margin-top: -1.5rem;
+  }
+  .modal-nav .modal-button svg {
+    width: 2.25rem;
+  }
   .modal-image {
-    border-width: 10vh;
+    padding: 10vh;
   }
   .modal-iframe {
     max-width: 90vw;

@@ -32,6 +32,7 @@ figure {
   display: flex;
   margin: 0;
   aspect-ratio: 4/3;
+  overflow: clip;
 }
 figure a {
   position: relative;
@@ -83,7 +84,7 @@ figure a[href$=".pdf"]:after { content: "pdf"; }
 figure a[href$=".svg"]:after { content: "svg"; }
 figure a[href$=".webp"]:after { content: "webp"; }
 figure a[href$=".avif"]:after { content: "avif"; }
-figure a[href$=".webm"]:after { content: "video"; }
+figure a[href$=".webm"]:after, figure a[href$=".mp4"]:after { content: "video"; }
 
 textarea {
   max-width: 550px;
@@ -107,10 +108,12 @@ textarea {
   min-height: 25vh;
 }
 
-div:nth-child(2) + div {
-  margin-block: 1.75em 3.25em;
-}
-div:not(.grid):only-of-type {
-  margin-block: 3.25em 0;
+main {
+  div:nth-child(2) + div {
+    margin-block: 1.75em 3.25em;
+  }
+  div:not(.grid):only-of-type {
+    margin-block: 3.25em 0;
+  }
 }
 

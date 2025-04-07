@@ -1,5 +1,5 @@
 
-const {src, dest, parallel} = require('gulp');
+const {src, dest, series, parallel} = require('gulp');
 const rename = require('gulp-rename');
 
 const sass = require('gulp-sass')(require('sass'));
@@ -29,7 +29,19 @@ function demo_js() {
   .pipe(dest('demo'));
 }
 
+const demo_prepublish = series([
+  function demo_prepublish() {
+    return src(['LICENSE', 'README.md'], {cwd: '../'})
+      .pipe(dest('.'));
+  },
+  function demo_prepublish() {
+    return src(['dist/**'], {cwd: '../', base: '.'})
+    .pipe(dest('dist'));
+  }
+]);
 
-exports['demo.css'] = demo_css;
-exports['demo.js'] = demo_js;
-exports.default = parallel([demo_css, demo_js]);
+
+exports['demo:css'] = demo_css;
+exports['demo:js'] = demo_js;
+exports['demo:prepublish'] = demo_prepublish;
+exports.default = parallel([demo_css, demo_js, demo_prepublish]);

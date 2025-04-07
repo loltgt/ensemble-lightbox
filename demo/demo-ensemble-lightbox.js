@@ -28,6 +28,16 @@ function ready() {
   d.append(o);
   s.after(d);
 
+  if (/(Mac|iPhone|iPad).+(Version).+(Safari)/.test(navigator.userAgent)) {
+    s = q('#example-1 figure:nth-child(2) a');
+    s.href = s.href.replace('webm', 'mp4');
+    s.title = s.title.replace('WEBM', 'MP4');
+
+    s = contents[4];
+    s.sources.reverse();
+    s.caption = s.caption.replace('H.264', 'VP9').replace('VP9', 'H.264');
+  }
+
   function out() {
     o.value = JSON.stringify({contents: lightbox.options.contents}, '', '  ');
   }
