@@ -400,13 +400,13 @@
     
     static focus(event, options) {
       const {currentTarget} = event;
-      currentTarget && currentTarget.focus(options);
+      currentTarget.focus && currentTarget.focus(options);
     }
 
     
     static blur(event, delay = 1e2) {
       const {currentTarget} = event;
-      setTimeout(() => currentTarget && currentTarget.blur(), delay);
+      setTimeout(() => currentTarget.blur && currentTarget.blur(), delay);
     }
 
     
@@ -893,11 +893,13 @@
         selector: '',
         contents: null,
         backdrop: false,
-        navigation: true,
+        touch: true,
+        mouse: true,
+        arrows: true,
         captions: true,
         infinite: true,
         autoDiscover: true,
-        autoHide: 'navigation',
+        autoHide: 'arrows',
         overlay: false,
         checkOrigin: true,
         prev: {
@@ -948,10 +950,31 @@
       const stage = this.stage;
       const opts = this.options;
 
-      const gallery = this.gallery = this.compo(false, 'gallery');
+      let props = null;
+
+     
+      if (opts.touch || opts.mouse) {
+        const pointers = this.pointers();
+
+        props = {
+          ...opts.touch && {
+            ontouchstart: pointers.hit,
+            ontouchend: pointers.drop,
+            ontouchover: pointers.drop,
+            ontouchcancel: pointers.nil
+          },
+          ...opts.mouse && {
+            onmousedown: pointers.hit,
+            onmouseup: pointers.drop,
+            onmousecancel: pointers.nil
+          }
+        };
+      }
+
+      const gallery = this.gallery = this.compo(false, 'gallery', props);
       stage.append(gallery);
 
-      if (opts.navigation) {
+      if (opts.arrows) {
         var nav = this.nav = this.data(true);
         const compo = nav.$ = this.compo(false, 'nav');
         const {icons, locale} = opts;
@@ -981,7 +1004,7 @@
         captions.$ = this.compo(false, 'captions');
       }
       if (opts.overlay) {
-        const overlay = opts.overlay.toString().match(/captions|navigation/);
+        const overlay = opts.overlay.toString().match(/captions|arrows/);
         modal.classList.add(`${opts.ns}-overlay`);
 
         if (overlay) {
@@ -989,7 +1012,7 @@
         }
       }
       if (opts.autoHide) {
-        const autohide = opts.autoHide.toString().match(/captions|navigation/);
+        const autohide = opts.autoHide.toString().match(/captions|arrows/);
         modal.classList.add(`${opts.ns}-autohide`);
 
         if (autohide) {
@@ -998,10 +1021,10 @@
       }
 
       if (opts.dialog) {
-        opts.navigation && stage.append(nav.$);
+        opts.arrows && stage.append(nav.$);
         opts.captions && stage.append(captions.$);
       } else {
-        opts.navigation && modal.append(nav.$);
+        opts.arrows && modal.append(nav.$);
         opts.captions && modal.append(captions.$);
       }
     }
@@ -1035,7 +1058,7 @@
       this.index = this.index || 0;
       this.slide(0);
 
-      opts.navigation && this.navigation();
+      opts.arrows && this.arrows();
       opts.captions && this.caption();
     }
 
@@ -1058,7 +1081,7 @@
       this.index = this.index || 0;
       this.slide(0);
 
-      opts.navigation && this.navigation();
+      opts.arrows && this.arrows();
       opts.captions && this.caption();
     }
 
@@ -1312,14 +1335,14 @@
     add(content) {
       this.gallery.append(content.$);
 
-      this.options.navigation && this.navigation();
+      this.options.arrows && this.arrows();
     }
 
     
     remove(content) {
       this.gallery.remove(content.$);
 
-      this.options.navigation && this.navigation();
+      this.options.arrows && this.arrows();
     }
 
     
@@ -1374,8 +1397,8 @@
 
         this.stepper = parseInt(stepper);
 
-        if (opts.navigation) {
-          this.navigation(stepper);
+        if (opts.arrows) {
+          this.arrows(stepper);
         }
       }
 
@@ -1395,7 +1418,7 @@
     }
 
     
-    navigation(stepper) {
+    arrows(stepper) {
       const {options: opts, nav} = this;
 
       if (this.contents.length > 1) {
@@ -1452,6 +1475,64 @@
     }
 
     
+    pointers() {
+      const self = this;
+      const rtl = document.dir != 'ltr';
+      const time_thresold = 100;
+      const move_thresold = 45;
+      let t = 0;
+      let x = 0;
+      let y = 0;
+
+      return {
+        hit(evt) {
+          const h = evt.changedTouches;
+          const s = h ? h[0] : evt;
+          t = evt.timeStamp;
+          x = s.screenX;
+          y = s.screenY;
+        },
+        drop(evt) {
+          const h = evt.changedTouches;
+          const s = h ? h[0] : evt;
+          const xx = s.screenX - x;
+          const yy = s.screenY - y;
+          const rx = Math.abs(xx / yy);
+          const ry = Math.abs(yy / xx);
+
+          if (! h) {
+            const diff = evt.timeStamp - t;
+
+            if (diff < time_thresold)
+              return;
+          }
+          {
+            const diff = Math.abs(rx > ry ? xx : yy);
+
+            if (diff < move_thresold)
+              return;
+          }
+
+          if (rx > ry) {
+            if (xx >= 0) {
+              self[! rtl ? 'next' : 'prev'](evt);
+
+              console.log('swipe', ! rtl ? 'next' : 'prev');
+            } else {
+              self[! rtl ? 'prev' : 'next'](evt);
+
+              console.log('swipe', ! rtl ? 'prev' : 'next');
+            }
+          }
+        },
+        nil(evt) {
+          y = x = t = 0;
+        }
+      };
+    }
+
+    
+   
     keyboard(evt) {
       super.keyboard(evt);
 

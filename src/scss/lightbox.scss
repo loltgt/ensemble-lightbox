@@ -201,7 +201,7 @@
 .modal.modal-autohide:active .modal-captions {
   animation: none;
 }
-.modal.modal-autohide-navigation .modal-captions,
+.modal.modal-autohide-arrows .modal-captions,
 .modal.modal-autohide-captions .modal-nav {
   opacity: $ensemble-modal_effects_controls_autohide_visible_opacity !important;
   animation: none !important;
@@ -222,7 +222,7 @@
 .modal.modal-overlay .modal-captions {
   position: absolute;
 }
-.modal.modal-overlay-navigation .modal-captions,
+.modal.modal-overlay-arrows .modal-captions,
 .modal.modal-overlay-captions .modal-nav {
 @if $ensemble_compat {
   position: relative;

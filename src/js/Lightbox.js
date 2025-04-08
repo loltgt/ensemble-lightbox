@@ -40,12 +40,14 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {boolean} [options.clone=true] Allow clone of Element nodes
  * @param {boolean} [options.backdrop=false] Allow backdrop, close on tap or click from outside the modal
  * @param {boolean} [options.keyboard=true] Allow keyboard navigation
- * @param {boolean} [options.navigation=true] Allow navigation
+ * @param {boolean} [options.touch=true] Allow touch navigation
+ * @param {boolean} [options.mouse=true] Allow mouse navigation
+ * @param {boolean} [options.arrows=true] Allow arrows on screen navigation
  * @param {boolean} [options.captions=true] Allow captions
  * @param {boolean} [options.infinite=true] Allow carousel alike loop navigation
  * @param {boolean} [options.autoDiscover=true] Allow auto-discover type of contents
- * @param {boolean|string} [options.autoHide='navigation'] Allow auto-hide "navigation" or "captions", "true" for both
- * @param {boolean|string} [options.overlay=false] Allow overlay for "navigation" or "captions", "true" for both
+ * @param {boolean|string} [options.autoHide='arrows'] Allow auto-hide "arrows" or "captions", "true" for both
+ * @param {boolean|string} [options.overlay=false] Allow overlay for "arrows" or "captions", "true" for both
  * @param {boolean} [options.checkOrigin=true] Allow check origin for URLs
  * @param {object} [options.close] Parameters for close button
  * @param {function} [options.close.trigger] Function trigger, default to self.close
@@ -87,11 +89,13 @@ class Lightbox extends Modal {
       selector: '',
       contents: null,
       backdrop: false,
-      navigation: true,
+      touch: true,
+      mouse: true,
+      arrows: true,
       captions: true,
       infinite: true,
       autoDiscover: true,
-      autoHide: 'navigation',
+      autoHide: 'arrows',
       overlay: false,
       checkOrigin: true,
       prev: {
@@ -150,10 +154,31 @@ class Lightbox extends Modal {
     const stage = this.stage;
     const opts = this.options;
 
-    const gallery = this.gallery = this.compo(false, 'gallery');
+    let props = null;
+
+    //TODO iframe layer
+    if (opts.touch || opts.mouse) {
+      const pointers = this.pointers();
+
+      props = {
+        ...opts.touch && {
+          ontouchstart: pointers.hit,
+          ontouchend: pointers.drop,
+          ontouchover: pointers.drop,
+          ontouchcancel: pointers.nil
+        },
+        ...opts.mouse && {
+          onmousedown: pointers.hit,
+          onmouseup: pointers.drop,
+          onmousecancel: pointers.nil
+        }
+      };
+    }
+
+    const gallery = this.gallery = this.compo(false, 'gallery', props);
     stage.append(gallery);
 
-    if (opts.navigation) {
+    if (opts.arrows) {
       var nav = this.nav = this.data(true);
       const compo = nav.$ = this.compo(false, 'nav');
       const {icons, locale} = opts;
@@ -183,7 +208,7 @@ class Lightbox extends Modal {
       captions.$ = this.compo(false, 'captions');
     }
     if (opts.overlay) {
-      const overlay = opts.overlay.toString().match(/captions|navigation/);
+      const overlay = opts.overlay.toString().match(/captions|arrows/);
       modal.classList.add(`${opts.ns}-overlay`);
 
       if (overlay) {
@@ -191,7 +216,7 @@ class Lightbox extends Modal {
       }
     }
     if (opts.autoHide) {
-      const autohide = opts.autoHide.toString().match(/captions|navigation/);
+      const autohide = opts.autoHide.toString().match(/captions|arrows/);
       modal.classList.add(`${opts.ns}-autohide`);
 
       if (autohide) {
@@ -200,10 +225,10 @@ class Lightbox extends Modal {
     }
 
     if (opts.dialog) {
-      opts.navigation && stage.append(nav.$);
+      opts.arrows && stage.append(nav.$);
       opts.captions && stage.append(captions.$);
     } else {
-      opts.navigation && modal.append(nav.$);
+      opts.arrows && modal.append(nav.$);
       opts.captions && modal.append(captions.$);
     }
   }
@@ -241,7 +266,7 @@ class Lightbox extends Modal {
     this.index = this.index || 0;
     this.slide(0);
 
-    opts.navigation && this.navigation();
+    opts.arrows && this.arrows();
     opts.captions && this.caption();
   }
 
@@ -268,7 +293,7 @@ class Lightbox extends Modal {
     this.index = this.index || 0;
     this.slide(0);
 
-    opts.navigation && this.navigation();
+    opts.arrows && this.arrows();
     opts.captions && this.caption();
   }
 
@@ -550,7 +575,7 @@ class Lightbox extends Modal {
   add(content) {
     this.gallery.append(content.$);
 
-    this.options.navigation && this.navigation();
+    this.options.arrows && this.arrows();
   }
 
   /**
@@ -561,7 +586,7 @@ class Lightbox extends Modal {
   remove(content) {
     this.gallery.remove(content.$);
 
-    this.options.navigation && this.navigation();
+    this.options.arrows && this.arrows();
   }
 
   /**
@@ -628,8 +653,8 @@ class Lightbox extends Modal {
 
       this.stepper = parseInt(stepper);
 
-      if (opts.navigation) {
-        this.navigation(stepper);
+      if (opts.arrows) {
+        this.arrows(stepper);
       }
     }
 
@@ -649,11 +674,11 @@ class Lightbox extends Modal {
   }
 
   /**
-   * Navigation controller
+   * Arrows navigation controller
    *
    * @param {int} stepper Allow steps: 0 = both, next = -1, previous = 1
    */
-  navigation(stepper) {
+  arrows(stepper) {
     const {options: opts, nav} = this;
 
     if (this.contents.length > 1) {
@@ -676,7 +701,7 @@ class Lightbox extends Modal {
   }
 
   /**
-   * Inserts or overwrites caption text
+   * Caption text controller
    *
    * @param {string} text Text content
    */
@@ -714,10 +739,76 @@ class Lightbox extends Modal {
   }
 
   /**
+   * Pointer events
+   *
+   * @see TouchEvent
+   * @see MouseEvent
+   *
+   * @todo
+   * @return {object}
+   */
+  pointers() {
+    const self = this;
+    const rtl = document.dir != 'ltr';
+    const time_thresold = 100;
+    const move_thresold = 45;
+    let t = 0;
+    let x = 0;
+    let y = 0;
+
+    return {
+      hit(evt) {
+        const h = evt.changedTouches;
+        const s = h ? h[0] : evt;
+        t = evt.timeStamp;
+        x = s.screenX;
+        y = s.screenY;
+      },
+      drop(evt) {
+        const h = evt.changedTouches;
+        const s = h ? h[0] : evt;
+        const xx = s.screenX - x;
+        const yy = s.screenY - y;
+        const rx = Math.abs(xx / yy);
+        const ry = Math.abs(yy / xx);
+
+        if (! h) {
+          const diff = evt.timeStamp - t;
+
+          if (diff < time_thresold)
+            return;
+        }
+        {
+          const diff = Math.abs(rx > ry ? xx : yy);
+
+          if (diff < move_thresold)
+            return;
+        }
+
+        if (rx > ry) {
+          if (xx >= 0) {
+            self[! rtl ? 'next' : 'prev'](evt);
+
+            console.log('swipe', ! rtl ? 'next' : 'prev');
+          } else {
+            self[! rtl ? 'prev' : 'next'](evt);
+
+            console.log('swipe', ! rtl ? 'prev' : 'next');
+          }
+        }
+      },
+      nil(evt) {
+        y = x = t = 0;
+      }
+    };
+  }
+
+  /**
    * Handles keyboard inputs
    *
    * @param {Event} evt An Event
    */
+  //TODO FIX prev next currentTarget.blur
   keyboard(evt) {
     super.keyboard(evt);
 
