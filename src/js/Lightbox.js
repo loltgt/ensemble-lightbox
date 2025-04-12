@@ -1,7 +1,7 @@
 /*!
  * ensemble Lightbox
  *
- * @version 0.0.4
+ * @version 0.4.0
  * @link https://github.com/loltgt/ensemble-lightbox
  * @copyright Copyright (C) Leonardo Laureti
  * @license MIT License
@@ -808,7 +808,6 @@ class Lightbox extends Modal {
    *
    * @param {Event} evt An Event
    */
-  //TODO FIX prev next currentTarget.blur
   keyboard(evt) {
     super.keyboard(evt);
 
