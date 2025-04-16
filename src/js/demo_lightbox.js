@@ -39,7 +39,7 @@ function ready() {
   }
 
   function out() {
-    o.value = JSON.stringify({contents: lightbox.options.contents}, '', '  ');
+    o.value = JSON.stringify({contents: lightbox.options.contents}, '', '  ').replace(/"([^"]+)":/g, '$1:').replace('node: {}', 'node: Object.assign(document.createElement("div"), {innerText: "Custom element inner text."})');
   }
   function check() {
     if (lightbox) {
