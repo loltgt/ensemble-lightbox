@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>ensemble Lightbox demo</title>
+<meta name="description" content="ensemble Lightbox demo page showing the modal component in action: selectors, options, local and remote contents and modal inline content">
+<link rel="canonical" href="https://loltgt.github.io/ensemble-lightbox/demo/">
 <link rel="stylesheet" href="demo-ensemble-lightbox.css">
 <script src="demo-ensemble-lightbox.js"></script>
 
@@ -14,11 +16,14 @@
 <main>
   <h1>ensemble Lightbox demo</h1>
 
+  <p>ensemble Lightbox is a lightbox component JavaScript class, based on ensemble from loltgt. This page shows the component in action, using selectors and different options, with local and remote contents and finally a simple modal with inline content.</p>
+  <p>View source from this page to discover options and examples</p>
+
   <section>
-    <h2 class="js-class">ensemble.Lightbox</h2>
+    <h2 class="js-class"><a href="https://github.com/loltgt/ensemble-lightbox/blob/main/src/Lightbox.js" target="_blank">ensemble.Lightbox</a></h2>
 
     <article class="example" id="example-1">
-      <h2>Grouping <em>using selector</em> with option <code>infinite: true</code></h2>
+      <h3>Grouping <em>using selector</em> with option <code>infinite: true</code></h3>
 
       <div class="grid">
         <figure>
@@ -61,7 +66,7 @@
     </article>
 
     <article class="example" id="example-2">
-      <h2>Grouping <em>using selector</em> with option <code>infinite: false</code></h2>
+      <h3>Grouping <em>using selector</em> with option <code>infinite: false</code></h3>
 
       <div class="grid">
         <figure>
@@ -78,7 +83,7 @@
     </article>
 
     <article class="example" id="example-3">
-      <h2>Contents passed <em>by options</em> with option <code>contents: [{...}, ...]</code></h2>
+      <h3>Contents passed <em>by options</em> with option <code>contents: [{...}, ...]</code></h3>
 
       <div>
         <button id="button-lightbox">Open lightbox</button>
@@ -88,7 +93,7 @@
   </section>
 
   <section>
-    <h2 class="js-class">ensemble.Modal</h2>
+    <h2 class="js-class"><a href="https://github.com/loltgt/ensemble-modal/blob/main/src/js/Modal.js" target="_blank">ensemble.Modal</a></h2>
 
     <article class="example" id="example-4">
       <h3>Modal with inline content</h3>
@@ -102,10 +107,12 @@
 
   </section>
 
-  <footer>
-    <p>Demo content licensed under <a href="pub/LICENSE">Apache 2.0 License</a>, full details in <a href="pub/NOTICE">NOTICE file</a>.</p>
-  </footer>
 </main>
+<footer>
+  <p>ensemble.Lightbox and ensemble.Modal are free and licensed under <a href="../LICENSE" target="_blank" onclick="return!(window.origin!='null'&&fetch(this.href).then((r)=>r.blob().then((b)=>window.open(window.URL.createObjectURL(b),'_blank'))))">MIT License</a>.</p>
+  <p>Demo content licensed under <a href="pub/LICENSE" target="_blank" onclick="return!(window.origin!='null'&&fetch(this.href).then((r)=>r.blob().then((b)=>window.open(window.URL.createObjectURL(b),'_blank'))))">Apache 2.0 License</a>, full details in <a href="pub/NOTICE" target="_blank" onclick="return!(window.origin!='null'&&fetch(this.href).then((r)=>r.blob().then((b)=>window.open(window.URL.createObjectURL(b),'_blank'))))">NOTICE file</a>.</p>
+  <a class="repo" href="https://github.com/loltgt/ensemble-lightbox">GitHub repo</a>
+</footer>
 
 <!-- ensemble lightbox javascript -->
 <script src="../dist/js/ensemble-lightbox.js"></script>
@@ -113,33 +120,33 @@
 
 <!-- example: Grouping using selector with option { infinite: true } -->
 <script>
-  var group = document.querySelector('#example-1 .grid');
+  var group = document.querySelector("#example-1 .grid");
 
   var lightbox = new ensemble.Lightbox(group,
     {
-      selector: 'a',
+      selector: "a",
       infinite: true
     }
   );
 
-  for (const a of group.querySelectorAll('a')) {
-    a.addEventListener('click', lightbox.open, true);
+  for (const item of group.querySelectorAll("a")) {
+    item.addEventListener("click", lightbox.open);
   }
 </script>
 
 <!-- example: Grouping using selector with option { infinite: false } -->
 <script>
-  var group = document.querySelector('#example-2 .grid');
+  var group = document.querySelector("#example-2 .grid");
 
   var lightbox = new ensemble.Lightbox(group,
     {
-      selector: 'a',
+      selector: "a",
       infinite: false
     }
   );
 
-  for (const a of group.querySelectorAll('a')) {
-    a.addEventListener('click', lightbox.open, true);
+  for (const item of group.querySelectorAll("a")) {
+    item.addEventListener("click", lightbox.open);
   }
 </script>
 
@@ -147,91 +154,87 @@
 <script>
   const contents = [
     {
-      type: 'video',
-      src: 'https://www.youtube.com/embed/3vijLre760w',
-      allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
-      caption: 'Iframe with remote content video [YouTube]\n\nRainforests 101 | National Geographic'
+      type: "video",
+      src: "https://www.youtube.com/embed/3vijLre760w",
+      allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+      caption: "Iframe with remote content video [YouTube]\n\nRainforests 101 | National Geographic"
     },
     {
-      type: 'audio',
-      src: 'https://open.spotify.com/embed/album/3qZ5gGVreYVXc87G9E2th7',
-      allow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture',
-      caption: 'Iframe with remote content audio [Spotify]\n\nLloyd SB - Boida Flare EP'
+      type: "audio",
+      src: "https://open.spotify.com/embed/album/3qZ5gGVreYVXc87G9E2th7",
+      allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+      caption: "Iframe with remote content audio [Spotify]\n\nLloyd SB - Boida Flare EP"
     },
     {
-      type: 'iframe',
-      src: 'https://www.openstreetmap.org/export/embed.html?bbox=-251.36718750000003%2C-60.759159502269895%2C251.36718750000003%2C60.75915950226991&layer=mapnik',
-      caption: 'Iframe with remote content map [Open Street Map]'
+      type: "iframe",
+      src: "https://www.openstreetmap.org/export/embed.html?bbox=-251.36718750000003%2C-60.759159502269895%2C251.36718750000003%2C60.75915950226991&layer=mapnik",
+      caption: "Iframe with remote content map [Open Street Map]"
     },
     {
-      type: 'iframe',
-      src: 'https://docs.google.com/forms/d/e/1FAIpQLSeOGm9xsgfCdqRuaTABu3fkiHk5NdwVSDFgGBlkEJEO4LEvTA/viewform',
-      height: '100%',
-      caption: 'Iframe with remote content document form [Google Forms]'
+      type: "iframe",
+      src: "https://docs.google.com/forms/d/e/1FAIpQLSeOGm9xsgfCdqRuaTABu3fkiHk5NdwVSDFgGBlkEJEO4LEvTA/viewform",
+      height: "100%",
+      caption: "Iframe with remote content document form [Google Forms]"
     },
     {
-      type: 'video',
-      poster: 'pub/thumb-jellyfish.jpg',
+      type: "video",
+      poster: "pub/thumb-jellyfish.jpg",
       sources: [
         {
-          type: 'video/webm',
-          src: 'pub/video-jellyfish.webm'
+          type: "video/webm",
+          src: "pub/video-jellyfish.webm"
         },
         {
-          type: 'video/mp4',
-          src: 'pub/video-jellyfish.mp4'
+          type: "video/mp4",
+          src: "pub/video-jellyfish.mp4"
         }
       ],
       loop: true,
-      caption: 'Video files VP9 and H.264'
+      caption: "Video files VP9 and H.264"
     },
     {
-      type: 'audio',
+      type: "audio",
       sources: [
         {
-          type: 'audio/mpeg',
-          src: 'pub/audio-loop.mp3'
+          type: "audio/mpeg",
+          src: "pub/audio-loop.mp3"
         },
         {
-          type: 'audio/opus',
-          src: 'pub/audio-loop.opus'
+          type: "audio/opus",
+          src: "pub/audio-loop.opus"
         }
       ],
       autoplay: true,
       loop: true,
-      caption: 'Audio files MP3 and OPUS'
+      caption: "Audio files MP3 and OPUS"
     },
     {
-      type: 'element',
-      node: (() => {
-        var el = document.createElement('div');
-        el.innerText = 'Custom element inner text.';
-        return el;
-      })(),
-      caption: 'Custom element'
+      type: "element",
+      node: Object.assign(document.createElement("div"), {innerText: "Custom element inner text."}),
+      caption: "Custom element"
     },
     {
-      type: 'image',
-      src: 'pub/image-xquad.gif',
-      style: 'zoom: 2',
-      caption: 'Image file animated GIF'
+      type: "image",
+      src: "pub/image-xquad.gif",
+      style: "zoom: 2",
+      caption: "Image file animated GIF"
     }
   ];
 
-  var button = document.getElementById('button-lightbox');
   var lightbox = new ensemble.Lightbox({contents});
 
-  button.addEventListener('click', lightbox.open, true);
+  var button = document.getElementById("button-lightbox");
+  button.addEventListener("click", lightbox.open);
 </script>
 
 <!-- example: Modal with inline content -->
 <script>
-  var element = document.querySelector('#example-4 .content');
+  var element = document.querySelector("#example-4 .content");
 
   var modal = new ensemble.Modal(element);
-  var button = document.getElementById('button-modal');
 
-  button.addEventListener('click', modal.open, true);
+  var button = document.getElementById("button-modal");
+  button.addEventListener("click", modal.open);
 </script>
 
 </body>

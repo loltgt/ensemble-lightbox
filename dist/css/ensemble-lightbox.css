@@ -120,20 +120,20 @@
 
 @media (min-width: 576px) {
   .modal-button {
-    font-size: 3rem;
+    font-size: 2.25rem;
   }
   .modal-button svg {
-    width: 3rem;
-    height: 3rem;
+    width: 2.25rem;
+    height: 2.25rem;
   }
 }
 @media (min-width: 992px) {
   .modal-button {
-    font-size: 3rem;
+    font-size: 2.625rem;
   }
   .modal-button svg {
-    width: 3rem;
-    height: 3rem;
+    width: 2.625rem;
+    height: 2.625rem;
   }
 }
 .modal-lightbox {
@@ -243,9 +243,13 @@
 }
 
 .modal-nav .modal-button {
-  top: 50%;
-  margin-top: -0.75rem;
+  top: 42%;
 }
+
+.modal-nav:last-child .modal-button {
+  top: 45%;
+}
+
 .modal-nav .modal-button svg {
   width: 1.125rem;
 }
@@ -321,19 +325,13 @@
 }
 
 @media (min-width: 576px) {
-  .modal-nav .modal-button {
-    margin-top: -1.5rem;
-  }
   .modal-nav .modal-button svg {
-    width: 2.25rem;
+    width: 1.75rem;
   }
 }
 @media (min-width: 992px) {
-  .modal-nav .modal-button {
-    margin-top: -1.5rem;
-  }
   .modal-nav .modal-button svg {
-    width: 2.25rem;
+    width: 2rem;
   }
   .modal-image {
     padding: 10vh;

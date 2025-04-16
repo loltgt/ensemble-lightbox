@@ -44,7 +44,7 @@ function ready() {
   function check() {
     if (lightbox) {
       lightbox.opened && lightbox.close();
-      r.removeEventListener('click', lightbox.open, true);
+      r.removeEventListener('click', lightbox.open);
 
       delete lightbox;
     }
@@ -54,7 +54,7 @@ function ready() {
     });
 
     m.ariaChecked = m.checked;
-    r.addEventListener('click', lightbox.open, true);
+    r.addEventListener('click', lightbox.open);
     out();
   }
 
