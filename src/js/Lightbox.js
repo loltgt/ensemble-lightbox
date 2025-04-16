@@ -100,15 +100,13 @@ class Lightbox extends Modal {
       checkOrigin: true,
       prev: {
         trigger: this.prev,
-        //TODO leave text ? viewBox scss
-        // text: '\u003C',
+        text: '\u003C',
         icon: 'm5 12 9 10-9-10 9-10-9 10Z',
         viewBox: '0 0 18 24'
       },
       next: {
         trigger: this.next,
-        //TODO leave text ? viewBox scss
-        // text: '\u003E',
+        text: '\u003E',
         icon: 'M14 12 4 22l10-10L4 2l10 10Z',
         viewBox: '0 0 18 24'
       },
@@ -309,7 +307,7 @@ class Lightbox extends Modal {
     const compo = this.compo(false, 'object');
     compo.hide();
 
-    var data;
+    let data;
 
     if (typeof src == 'string') {
       data = this.data({src});

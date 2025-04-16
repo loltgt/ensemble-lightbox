@@ -43,6 +43,15 @@ $ensemble-modal_button_svg_fill: currentColor !default;
 $ensemble-modal_button_svg_stroke: currentColor !default;
 $ensemble-modal_button_svg_stroke-width: 2px !default;
 
+$ensemble-modal_button_close_position_x: 0 !default;
+$ensemble-modal_button_close_position_y: 0 !default;
+
+$ensemble-modal_button_nav_position_x: 0 !default;
+$ensemble-modal_button_nav_position_y: 42% !default;
+$ensemble-modal_button_nav_captioned_position_y: 45% !default;
+
+$ensemble-modal_button_nav_svg_width: 1.125rem !default;
+
 
 // Image
 
@@ -91,10 +100,14 @@ $ensemble-modal_effects_controls_autohide_animation-fill-mode: forwards !default
 // xl: 1200px  (extra-large 1280)
 
 // sm (small 640)
-$ensemble-modal_sm__button_size: 3rem !default;
+$ensemble-modal_sm__button_size: 2.25rem !default;
+
+$ensemble-modal_sm__button_nav_svg_width: 1.75rem !default;
 
 // lg (large 1024)
-$ensemble-modal_lg__button_size: 3rem !default;
+$ensemble-modal_lg__button_size: 2.625rem !default;
+
+$ensemble-modal_lg__button_nav_svg_width: 2rem !default;
 
 $ensemble-modal_lg__image_padding: 10vh !default;
 $ensemble-modal_lg__captions_font-size: 1rem !default;
