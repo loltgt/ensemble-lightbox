@@ -9,19 +9,19 @@ It has a slider, built-in modal dialog and swipe gesture navigation.
 It comes with options and hooks to customize.
 
 
+## Demo
+
+Live demo on this page: [https://loltgt.github.io/ensemble-lightbox/demo/](https://loltgt.github.io/ensemble-lightbox/demo/)
+
+View source from `demo` to discover options and examples.
+
+
 ## Install
 
 Using npm:
 ```shell
 npm install --save-dev loltgt/ensemble-lightbox
 ```
-
-## Demo
-
-Live demo on this page: [https://loltgt.github.io/ensemble-lightbox/demo/](https://loltgt.github.io/ensemble-lightbox/demo/) | source on `demo` branch.
-
-View source from demo page to discover options and examples.
-
 
 ## Usage
 
@@ -50,7 +50,7 @@ const lightbox = new ensemble.Lightbox(
       },
       {
         type: "iframe",
-        src: "https://example.org"
+        src: "https://example.org/"
       }
     ]
   }

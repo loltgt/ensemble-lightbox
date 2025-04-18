@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-Images
+[Images]
 
 Subjects: giraffe (jpg), jellyfish, tiger, cow, ostrich, elephant, giraffe (png)
 
@@ -26,7 +26,7 @@ Images are heavy edited.
 All images are representing natural subjects but the training process is unknown, so use at your own risk.
 
 
-Video
+[Video]
 
 Subject: jellyfish
 
@@ -37,21 +37,21 @@ Video is heavy edited.
 All images are representing natural subjects but the training process is unknown, so use at your own risk.
 
 
-Vector
+[Vector]
 
 Subject: lizard
 
 The lizard image vector is painted.
 
 
-Audio
+[Audio]
 
 Subjects: loop
 
 The audio loop resembles a typical 80s groove.
 
 
-GIF
+[GIF]
 
 Subject: xquad
 
