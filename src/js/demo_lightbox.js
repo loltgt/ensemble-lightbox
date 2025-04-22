@@ -19,6 +19,7 @@ function ready() {
   o.readOnly = true;
   o.rows = 19;
   o.cols = 34;
+  o.ariaLabel = 'Displays option "contents" object';
 
   u.prepend(m);
   d.append(u);

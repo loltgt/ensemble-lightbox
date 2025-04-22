@@ -6,6 +6,8 @@
  * @license MIT License
  */
 
+ @use "sass:string";
+
 @import "demo_common";
 @import "demo_button";
 
@@ -39,6 +41,7 @@ figure a {
   display: block;
   width: 100%;
   text-decoration: none;
+  box-shadow: inset 0 0 .5px string.unquote("transparent");
 
   &:after, &:before {
     position: absolute;
@@ -63,19 +66,29 @@ figure a {
     color: #fff;
     text-transform: uppercase;
     opacity: .85;
-    text-shadow: 0 -.5px #000a, 0 .5px #000a, -1px -1px #0003, 1px 1px #0003, -1.5px 0 #0009, 1.5px 0 #0009, -2px -2px #0006, 2px 2px #0006;
+    text-shadow: 0 -.5px string.unquote("#000a"), 0 .5px string.unquote("#000a"), -1px -1px string.unquote("#0003"), 1px 1px string.unquote("#0003"), -1.5px 0 string.unquote("#0009"), 1.5px 0 string.unquote("#0009"), -2px -2px string.unquote("#0006"), 2px 2px string.unquote("#0006");
   }
   &:empty:after {
     color: #cff;
   }
+
+  &:focus {
+    box-shadow: inset 0 0 .5px 4.5px string.unquote("#02020222");
+  }
+  &:focus-visible {
+    outline: 0;
+    box-shadow: inset 0 0 0 2.5px string.unquote("#00f"), inset 0 0 0 4.5px #cff;
+  }
 }
 figure img {
+  position: relative;
   display: block;
   max-width: 100%;
   width: 100%;
   height: 100%;
   object-fit: cover;
   border: 0;
+  z-index: -1;
 }
 
 figure a[href$=".jpg"]:after { content: "jpeg"; }
