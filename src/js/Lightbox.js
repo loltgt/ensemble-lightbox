@@ -36,6 +36,7 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {string} [options.icons.type='text'] Set icons type: text, font, svg, symbol, shape
  * @param {string} [options.icons.prefix='icon'] Set icons CSS class name prefix, for icons: font
  * @param {string} [options.icons.src] Set icons SVG image src, for icons: svg
+ * @param {boolean} [options.icons.autoDir] Set automatic invert arrow shape direction for ltr and rtl [i18n] 
  * @param {boolean} [options.effects=true] Allow effects
  * @param {boolean} [options.clone=true] Allow clone of Element nodes
  * @param {boolean} [options.backdrop=false] Allow backdrop, close on tap or click from outside the modal
@@ -86,6 +87,11 @@ class Lightbox extends Modal {
   defaults() {
     return Object.assign(super.defaults(), {
       className: ['modal', 'modal-lightbox'],
+      icons: {
+        type: 'shape',
+        prefix: 'icon',
+        autoDir: true
+      },
       selector: '',
       contents: null,
       backdrop: false,
@@ -131,6 +137,7 @@ class Lightbox extends Modal {
     this.remove = this.wrap(this.remove);
     this.prev = this.wrap(this.prev);
     this.next = this.wrap(this.next);
+    this.route = this.wrap(this.route);
   }
 
   /**
@@ -151,6 +158,8 @@ class Lightbox extends Modal {
     const modal = this.modal.$;
     const stage = this.stage;
     const opts = this.options;
+
+    this.layout = this.dir;
 
     let props = null;
 
@@ -178,35 +187,19 @@ class Lightbox extends Modal {
 
     if (opts.arrows) {
       var nav = this.nav = this.data(true);
-      const compo = nav.$ = this.compo(false, 'nav');
-      const {icons, locale} = opts;
-
-      for (let i = 0; i < 2; i++) {
-        const path = i ? 'next' : 'prev';
-        const button = nav[path] = this.compo('button', ['button', path], {
-          onclick: opts[path].trigger,
-          innerText: icons.type == 'text' ? opts[path].text : '',
-          ariaLabel: locale[path]
-        });
-  
-        if (opts.icons != 'text') {
-          const {type, prefix, src, viewBox} = icons;
-          const {icon: ref, viewBox: v} = opts[path];
-          const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? path, v ?? viewBox);
-    
-          button.append(icon);
-        }
-
-        compo.append(button);
-      }
+      nav.$ = this.compo('nav', 'nav');
+      this.navt();
     }
 
     if (opts.captions) {
       var captions = this.captions = this.data(true);
       captions.$ = this.compo(false, 'captions');
     }
+
+    const regexp = /captions|arrows/;
+
     if (opts.overlay) {
-      const overlay = opts.overlay.toString().match(/captions|arrows/);
+      const overlay = opts.overlay.toString().match(regexp);
       modal.classList.add(`${opts.ns}-overlay`);
 
       if (overlay) {
@@ -214,7 +207,7 @@ class Lightbox extends Modal {
       }
     }
     if (opts.autoHide) {
-      const autohide = opts.autoHide.toString().match(/captions|arrows/);
+      const autohide = opts.autoHide.toString().match(regexp);
       modal.classList.add(`${opts.ns}-autohide`);
 
       if (autohide) {
@@ -290,6 +283,9 @@ class Lightbox extends Modal {
     this.current = this.current || contents[0];
     this.index = this.index || 0;
     this.slide(0);
+
+    if (opts.arrows && this.dir != this.layout)
+      this.navt();
 
     opts.arrows && this.arrows();
     opts.captions && this.caption();
@@ -614,6 +610,18 @@ class Lightbox extends Modal {
   }
 
   /**
+   * Steps based on language text direction [i18n]
+   *
+   * @param {Event} evt An Event
+   * @param {int} step Step to: previous = -1, next = 1
+   */
+  route(evt, step) {
+    step = this.dir == 'rtl' ? ! (step > 0) : step > 0;
+
+    this[step ? 'next' : 'prev'](evt);
+  }
+
+  /**
    * Moves to previous or next slide
    *
    * @param {int} step Step to: previous = -1, next = 1
@@ -629,13 +637,16 @@ class Lightbox extends Modal {
 
     opts.onStep.call(this, this, current, step);
 
+    if (contents.length == 0)
+      return;
+
     if (step != 0) {
-      const len = contents.length - 1;
+      const len = contents.length;
       const sibling = step === -1 ? contents[index - 1] : contents[index + 1];
-      const child = step === -1 ? contents[len] : contents[0];
+      const child = step === -1 ? contents[len - 1] : contents[0];
 
       adjacent = !! sibling ? sibling : child;
-      index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len : 0);
+      index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len - 1 : 0);
 
       current.unload('inner');
     }
@@ -651,9 +662,7 @@ class Lightbox extends Modal {
 
       this.stepper = parseInt(stepper);
 
-      if (opts.arrows) {
-        this.arrows(stepper);
-      }
+      opts.arrows && this.arrows(stepper);
     }
 
     adjacent.render('inner');
@@ -661,9 +670,7 @@ class Lightbox extends Modal {
 
     opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
 
-    this.delay(() => {
-      step != 0 && current.$.remove(current.inner);
-    }, current.$);
+    step != 0 && current.$.remove(current.inner);
 
     this.index = index;
     this.current = contents[index];
@@ -737,6 +744,38 @@ class Lightbox extends Modal {
   }
 
   /**
+   * Arrow navigation inner
+   */
+  navt() {
+    const {options: opts, nav} = this;
+    const {icons, locale} = opts;
+    const compo = nav.$;
+
+    compo.empty();
+
+    for (let i = 0; i < 2; i++) {
+      const prev = 'prev', next = 'next';
+      const path = i ? next : prev;
+      const ipath = icons.autoDir && this.dir == 'rtl' ? i ? prev : next : path;
+      const button = nav[path] = this.compo('button', ['button', path], {
+        onclick: opts[path].trigger,
+        innerText: icons.type == 'text' ? opts[ipath].text : '',
+        ariaLabel: locale[path]
+      });
+
+      if (opts.icons != 'text') {
+        const {type, prefix, src, viewBox} = icons;
+        const {icon: ref, viewBox: v} = opts[ipath];
+        const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? ipath, v ?? viewBox);
+  
+        button.append(icon);
+      }
+
+      compo.append(button);
+    }
+  }
+
+  /**
    * Pointer events
    *
    * @see TouchEvent
@@ -747,7 +786,6 @@ class Lightbox extends Modal {
    */
   pointers() {
     const self = this;
-    const rtl = document.dir != 'ltr';
     const time_thresold = 100;
     const move_thresold = 45;
     let t = 0;
@@ -784,15 +822,9 @@ class Lightbox extends Modal {
         }
 
         if (rx > ry) {
-          if (xx >= 0) {
-            self[! rtl ? 'next' : 'prev'](evt);
+          console.log('swipe', evt, xx >= 0 ? -1 : 1);
 
-            console.log('swipe', ! rtl ? 'next' : 'prev');
-          } else {
-            self[! rtl ? 'prev' : 'next'](evt);
-
-            console.log('swipe', ! rtl ? 'prev' : 'next');
-          }
+          self.route(evt, xx >= 0 ? -1 : 1);
         }
       },
       nil(evt) {
@@ -809,14 +841,30 @@ class Lightbox extends Modal {
   keyboard(evt) {
     super.keyboard(evt);
 
-    const rtl = document.dir != 'ltr';
-
     switch (evt.keyCode) {
       // Left
-      case 37: this[! rtl ? 'prev' : 'next'](evt); break;
+      case 37: this.route(evt, -1); break;
       // Right
-      case 39: this[! rtl ? 'next' : 'prev'](evt); break;
+      case 39: this.route(evt, 1); break;
     }
+
+    if (this.options.autoHide) {
+      const modal = this.modal.$;
+      const cssName = 'modal-autohide';
+      modal.classList.remove(cssName);
+      this.delay(() => modal.classList.add(cssName));
+    }
+  }
+
+  /**
+   * Getter for language text direction [i18n]
+   *
+   * @see document.dir
+   *
+   * @returns {string} Text direction
+   */
+  get dir() {
+    return document.dir; // [DOM]
   }
 
 }
