@@ -127,6 +127,7 @@
 
 
 
+ 
   const REJECTED_TAGS = 'html|head|body|meta|link|style|script';
   const DENIED_PROPS ='attributes|classList|innerHTML|outerHTML|nodeName|nodeType';
 
@@ -514,7 +515,6 @@
       const icon = this.compo('span', 'icon', {className});
 
       if (type != 'font') {
-       
         if (type == 'symbol' || type == 'shape') {
           const svgNsUri = 'http://www.w3.org/2000/svg';
           const svg = new Compo(ns, 'svg', false, false, false, svgNsUri);
@@ -576,7 +576,7 @@
         throw new TypeError(l10n.EMETH);
       }
 
-      return function(event) { method.call(self, event, this); }
+      return function() { method.call(self, ...arguments, this); }
     }
 
   }
@@ -644,8 +644,6 @@
       const modal = this.modal.$ = this.compo('dialog', false, {
         className: typeof opts.className == 'object' ? Object.values(opts.className).join(' ') : opts.className,
         hidden: true,
-       
-       
         onclick: function() {
           data.onclick && typeof data.onclick == 'function' && data.onclick.apply(this, arguments);
         }
@@ -775,11 +773,14 @@
     show(target) {
       const {options: opts, root} = this;
       const modal = this.modal.$;
+      const ns = modal.ns, dialog = modal[ns];
       const self = this;
 
       modal.bind(root);
 
       this.delay(() => {
+        dialog.show();
+
         modal.show();
 
         opts.onShow.call(self, self, target);
@@ -790,9 +791,12 @@
     hide(target) {
       const {options: opts, root} = this;
       const modal = this.modal.$;
+      const ns = modal.ns, dialog = modal[ns];
       const self = this;
 
       modal.hide();
+
+      dialog.close();
 
       this.delay(() => {
         modal.unbind(root);
@@ -876,6 +880,11 @@
     defaults() {
       return Object.assign(super.defaults(), {
         className: ['modal', 'modal-lightbox'],
+        icons: {
+          type: 'shape',
+          prefix: 'icon',
+          autoDir: true
+        },
         selector: '',
         contents: null,
         backdrop: false,
@@ -919,6 +928,7 @@
       this.remove = this.wrap(this.remove);
       this.prev = this.wrap(this.prev);
       this.next = this.wrap(this.next);
+      this.route = this.wrap(this.route);
     }
 
     
@@ -933,6 +943,8 @@
       const modal = this.modal.$;
       const stage = this.stage;
       const opts = this.options;
+
+      this.layout = this.dir;
 
       let props = null;
 
@@ -960,35 +972,19 @@
 
       if (opts.arrows) {
         var nav = this.nav = this.data(true);
-        const compo = nav.$ = this.compo(false, 'nav');
-        const {icons, locale} = opts;
-
-        for (let i = 0; i < 2; i++) {
-          const path = i ? 'next' : 'prev';
-          const button = nav[path] = this.compo('button', ['button', path], {
-            onclick: opts[path].trigger,
-            innerText: icons.type == 'text' ? opts[path].text : '',
-            ariaLabel: locale[path]
-          });
-    
-          if (opts.icons != 'text') {
-            const {type, prefix, src, viewBox} = icons;
-            const {icon: ref, viewBox: v} = opts[path];
-            const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? path, v ?? viewBox);
-      
-            button.append(icon);
-          }
-
-          compo.append(button);
-        }
+        nav.$ = this.compo('nav', 'nav');
+        this.navt();
       }
 
       if (opts.captions) {
         var captions = this.captions = this.data(true);
         captions.$ = this.compo(false, 'captions');
       }
+
+      const regexp = /captions|arrows/;
+
       if (opts.overlay) {
-        const overlay = opts.overlay.toString().match(/captions|arrows/);
+        const overlay = opts.overlay.toString().match(regexp);
         modal.classList.add(`${opts.ns}-overlay`);
 
         if (overlay) {
@@ -996,7 +992,7 @@
         }
       }
       if (opts.autoHide) {
-        const autohide = opts.autoHide.toString().match(/captions|arrows/);
+        const autohide = opts.autoHide.toString().match(regexp);
         modal.classList.add(`${opts.ns}-autohide`);
 
         if (autohide) {
@@ -1064,6 +1060,9 @@
       this.current = this.current || contents[0];
       this.index = this.index || 0;
       this.slide(0);
+
+      if (opts.arrows && this.dir != this.layout)
+        this.navt();
 
       opts.arrows && this.arrows();
       opts.captions && this.caption();
@@ -1348,6 +1347,13 @@
     }
 
     
+    route(evt, step) {
+      step = this.dir == 'rtl' ? ! (step > 0) : step > 0;
+
+      this[step ? 'next' : 'prev'](evt);
+    }
+
+    
     slide(step) {
       const {options: opts, stepper, contents} = this;
 
@@ -1359,13 +1365,16 @@
 
       opts.onStep.call(this, this, current, step);
 
+      if (contents.length == 0)
+        return;
+
       if (step != 0) {
-        const len = contents.length - 1;
+        const len = contents.length;
         const sibling = step === -1 ? contents[index - 1] : contents[index + 1];
-        const child = step === -1 ? contents[len] : contents[0];
+        const child = step === -1 ? contents[len - 1] : contents[0];
 
         adjacent = !! sibling ? sibling : child;
-        index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len : 0);
+        index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len - 1 : 0);
 
         current.unload('inner');
       }
@@ -1381,9 +1390,7 @@
 
         this.stepper = parseInt(stepper);
 
-        if (opts.arrows) {
-          this.arrows(stepper);
-        }
+        opts.arrows && this.arrows(stepper);
       }
 
       adjacent.render('inner');
@@ -1391,9 +1398,7 @@
 
       opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
 
-      this.delay(() => {
-        step != 0 && current.$.remove(current.inner);
-      }, current.$);
+      step != 0 && current.$.remove(current.inner);
 
       this.index = index;
       this.current = contents[index];
@@ -1459,9 +1464,38 @@
     }
 
     
+    navt() {
+      const {options: opts, nav} = this;
+      const {icons, locale} = opts;
+      const compo = nav.$;
+
+      compo.empty();
+
+      for (let i = 0; i < 2; i++) {
+        const prev = 'prev', next = 'next';
+        const path = i ? next : prev;
+        const ipath = icons.autoDir && this.dir == 'rtl' ? i ? prev : next : path;
+        const button = nav[path] = this.compo('button', ['button', path], {
+          onclick: opts[path].trigger,
+          innerText: icons.type == 'text' ? opts[ipath].text : '',
+          ariaLabel: locale[path]
+        });
+
+        if (opts.icons != 'text') {
+          const {type, prefix, src, viewBox} = icons;
+          const {icon: ref, viewBox: v} = opts[ipath];
+          const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? ipath, v ?? viewBox);
+    
+          button.append(icon);
+        }
+
+        compo.append(button);
+      }
+    }
+
+    
     pointers() {
       const self = this;
-      const rtl = document.dir != 'ltr';
       const time_thresold = 100;
       const move_thresold = 45;
       let t = 0;
@@ -1498,15 +1532,9 @@
           }
 
           if (rx > ry) {
-            if (xx >= 0) {
-              self[! rtl ? 'next' : 'prev'](evt);
+            console.log('swipe', evt, xx >= 0 ? -1 : 1);
 
-              console.log('swipe', ! rtl ? 'next' : 'prev');
-            } else {
-              self[! rtl ? 'prev' : 'next'](evt);
-
-              console.log('swipe', ! rtl ? 'prev' : 'next');
-            }
+            self.route(evt, xx >= 0 ? -1 : 1);
           }
         },
         nil(evt) {
@@ -1519,14 +1547,24 @@
     keyboard(evt) {
       super.keyboard(evt);
 
-      const rtl = document.dir != 'ltr';
-
       switch (evt.keyCode) {
        
-        case 37: this[! rtl ? 'prev' : 'next'](evt); break;
+        case 37: this.route(evt, -1); break;
        
-        case 39: this[! rtl ? 'next' : 'prev'](evt); break;
+        case 39: this.route(evt, 1); break;
       }
+
+      if (this.options.autoHide) {
+        const modal = this.modal.$;
+        const cssName = 'modal-autohide';
+        modal.classList.remove(cssName);
+        this.delay(() => modal.classList.add(cssName));
+      }
+    }
+
+    
+    get dir() {
+      return document.dir;
     }
 
   }

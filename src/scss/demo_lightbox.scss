@@ -130,3 +130,7 @@ main {
   }
 }
 
+.modal :focus-visible {
+  outline: revert;
+}
+
