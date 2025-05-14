@@ -22,6 +22,18 @@ $ensemble-modal_lightbox_background: rgba(0, 0, 0, .83) !default;
 $ensemble-modal_lightbox_zindex: 1001 !default;
 
 
+// Backdrop
+
+$ensemble-modal_backdrop_color: rgba(102, 102, 102, .71) !default;
+
+
+// Window modal
+
+$ensemble-modal_window_width: calc(100% - 2em - 6px) !default;
+$ensemble-modal_window_height: calc(100% - 2em - 6px) !default;
+$ensemble-modal_window_background: #ccc !default;
+
+
 // Button
 
 $ensemble-modal_button_padding: 1rem !default;

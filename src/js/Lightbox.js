@@ -31,7 +31,9 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {string[]} [options.className=[modal, modal-lightbox]] The component CSS class name
  * @param {string} [options.selector] A selector to find elements
  * @param {object} [options.contents] An object with contents
- * @param {boolean} [options.dialog=false] Allow dialog mode
+ * @param {boolean} [options.dialog=true] Use HTMLDialogElement
+ * @param {boolean} [options.modal=false] Allow modal mode
+ * @param {boolean} [options.window=false] Allow window mode
  * @param {object} [options.icons] Set icons model
  * @param {string} [options.icons.type='text'] Set icons type: text, font, svg, symbol, shape
  * @param {string} [options.icons.prefix='icon'] Set icons CSS class name prefix, for icons: font
@@ -69,12 +71,14 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {function} [options.onClose] onOpen callback, on modal close
  * @param {function} [options.onShow] onShow callback, on modal show, after openes
  * @param {function} [options.onHide] onHide callback, on modal hide, before closes
- * @param {function} [options.onContent] onContent callback, on content shown
+ * @param {function} [options.onContent] onContent callback, on content layout
  * @param {function} [options.onStep] onStep callback, on slide step
  * @param {function} [options.onSlide] onSlide callback, on slide
  * @param {function} [options.onCaption] onCaption callback, on caption shown
+ * @param {function} [options.onInit] onInit callback, on component initialization
+ * @param {function} [options.onResume] onResume callback, on component resuming
  * @example
- * var lightbox = new ensemble.Lightbox({contents: [{type: 'image', src: 'image.png'}]});
+ * const lightbox = new ensemble.Lightbox({contents: [{type: "image", src: "image.png", alt: "Image"}]});
  * lightbox.open();
  */
 class Lightbox extends Modal {
@@ -87,6 +91,7 @@ class Lightbox extends Modal {
   defaults() {
     return Object.assign(super.defaults(), {
       className: ['modal', 'modal-lightbox'],
+      modal: false,
       icons: {
         type: 'shape',
         prefix: 'icon',
@@ -141,7 +146,7 @@ class Lightbox extends Modal {
   }
 
   /**
-   * Constructor method
+   * Constructor
    *
    * @constructs
    */
@@ -150,89 +155,17 @@ class Lightbox extends Modal {
   }
 
   /**
-   * Element generator
-   */
-  generator() {
-    super.generator();
-
-    const modal = this.modal.$;
-    const stage = this.stage;
-    const opts = this.options;
-
-    this.layout = this.dir;
-
-    let props = null;
-
-    //TODO iframe layer
-    if (opts.touch || opts.mouse) {
-      const pointers = this.pointers();
-
-      props = {
-        ...opts.touch && {
-          ontouchstart: pointers.hit,
-          ontouchend: pointers.drop,
-          ontouchover: pointers.drop,
-          ontouchcancel: pointers.nil
-        },
-        ...opts.mouse && {
-          onmousedown: pointers.hit,
-          onmouseup: pointers.drop,
-          onmousecancel: pointers.nil
-        }
-      };
-    }
-
-    const gallery = this.gallery = this.compo(false, 'gallery', props);
-    stage.append(gallery);
-
-    if (opts.arrows) {
-      var nav = this.nav = this.data(true);
-      nav.$ = this.compo('nav', 'nav');
-      this.navt();
-    }
-
-    if (opts.captions) {
-      var captions = this.captions = this.data(true);
-      captions.$ = this.compo(false, 'captions');
-    }
-
-    const regexp = /captions|arrows/;
-
-    if (opts.overlay) {
-      const overlay = opts.overlay.toString().match(regexp);
-      modal.classList.add(`${opts.ns}-overlay`);
-
-      if (overlay) {
-        modal.classList.add(`${opts.ns}-overlay-${overlay[0]}`);
-      }
-    }
-    if (opts.autoHide) {
-      const autohide = opts.autoHide.toString().match(regexp);
-      modal.classList.add(`${opts.ns}-autohide`);
-
-      if (autohide) {
-        modal.classList.add(`${opts.ns}-autohide-${autohide[0]}`);
-      }
-    }
-
-    if (opts.dialog) {
-      opts.arrows && stage.append(nav.$);
-      opts.captions && stage.append(captions.$);
-    } else {
-      opts.arrows && modal.append(nav.$);
-      opts.captions && modal.append(captions.$);
-    }
-  }
-
-  /**
-   * On this stage the component is populated with progeny
+   * Initializes the component
+   *
+   * @emits #options.onInit
    *
    * @param {Element} target The element is invoking
    */
-  populate(target) {
-    console.log('populate', this, target);
-
+  init(target) {
     const {options: opts, element: el} = this;
+
+    this.layout();
+
     let contents;
 
     if (opts.contents && typeof opts.contents == 'object') {
@@ -259,16 +192,24 @@ class Lightbox extends Modal {
 
     opts.arrows && this.arrows();
     opts.captions && this.caption();
+
+    /**
+     * @event #options.onInit
+     * @type {function}
+     * @param {object} this
+     * @param {Element} target
+     */
+    opts.onInit.call(this, this, target);
   }
 
   /**
-   * Processing when the component is resumed
+   * Processing on component resume
+   *
+   * @emits #options.onResume
    *
    * @param {Element} target The element is invoking
    */
   resume(target) {
-    console.log('resume', this, target);
-
     const {options: opts, contents, current} = this;
 
     current.$.remove(current.inner);
@@ -284,31 +225,114 @@ class Lightbox extends Modal {
     this.index = this.index || 0;
     this.slide(0);
 
-    if (opts.arrows && this.dir != this.layout)
-      this.navt();
+    if (opts.arrows && this.dir != this.bidi)
+      this.buttons();
 
     opts.arrows && this.arrows();
     opts.captions && this.caption();
+
+    /**
+     * @event #options.onResume
+     * @type {function}
+     * @param {object} this
+     * @param {Element} target
+     */
+    opts.onResume.call(this, this, target);
   }
 
   /**
-   * The single content
+   * Lead layout
+   */
+  layout() {
+    super.layout();
+
+    const modal = this.modal.$;
+    const {stage, options: opts, nav} = this;
+
+    this.bidi = this.dir;
+
+    let props = null;
+
+    //TODO iframe layer
+    if (opts.touch || opts.mouse) {
+      const pointers = this.pointers();
+
+      props = {
+        ...opts.touch && {
+          ontouchstart: pointers.hit,
+          ontouchend: pointers.drop,
+          ontouchover: pointers.drop,
+          ontouchcancel: pointers.nil
+        },
+        ...opts.mouse && {
+          onmousedown: pointers.hit,
+          onmouseup: pointers.drop,
+          onmousecancel: pointers.nil
+        }
+      };
+    }
+
+    const content = this.$ = this.compo(false, 'content', props);
+    stage.append(content);
+
+    if (opts.arrows) {
+      nav.$ = this.compo('nav', 'nav');
+      this.buttons();
+    }
+
+    if (opts.captions) {
+      var captions = this.captions = this.data(true);
+      captions.$ = this.compo(false, 'captions');
+    }
+
+    const regexp = /captions|arrows/;
+
+    if (opts.overlay) {
+      const overlay = opts.overlay.toString().match(regexp);
+      modal.classList.add(`${opts.ns}-overlay`);
+
+      if (overlay) {
+        modal.classList.add(`${opts.ns}-overlay-${overlay[0]}`);
+      }
+    }
+    if (opts.autoHide) {
+      const autohide = opts.autoHide.toString().match(regexp);
+      modal.classList.add(`${opts.ns}-autohide`);
+
+      if (autohide) {
+        modal.classList.add(`${opts.ns}-autohide-${autohide[0]}`);
+      }
+    }
+
+    if (opts.window) {
+      opts.arrows && stage.append(nav.$);
+      opts.captions && stage.append(captions.$);
+    } else {
+      opts.arrows && modal.append(nav.$);
+      opts.captions && modal.append(captions.$);
+    }
+  }
+
+  /**
+   * The content
    *
-   * @param {mixed} src A URL source or an ensemble Data object
+   * @emits #options.onContent
+   *
+   * @param {mixed} source A URL or an ensemble Data object
    * @param {boolean} clone Clones the whole Element node tree
    * @returns {Data} data An ensemble Data instance
    */
-  content(src, clone) {
+  content(source, clone) {
     const opts = this.options;
     const compo = this.compo(false, 'object');
     compo.hide();
 
     let data;
 
-    if (typeof src == 'string') {
-      data = this.data({src});
+    if (typeof source == 'string') {
+      data = this.data({source});
     } else {
-      data = src;
+      data = source;
     }
 
     const srcref = data.src;
@@ -381,6 +405,12 @@ class Lightbox extends Modal {
     data.type = mtype;
     data.src = srcref;
 
+    /**
+     * @event #options.onContent
+     * @type {function}
+     * @param {object} this
+     * @param {mixed} data
+     */
     opts.onContent.call(this, this, data);
 
     if (mtype) {
@@ -499,7 +529,7 @@ class Lightbox extends Modal {
   }
 
   /**
-   * The content preparation stage
+   * Prepares contents object
    *
    * @param {object} contents Passed object of contents
    * @returns {array} Array of contents
@@ -567,7 +597,7 @@ class Lightbox extends Modal {
    * @param {Compo} content A compo
    */
   add(content) {
-    this.gallery.append(content.$);
+    this.$.append(content.$);
 
     this.options.arrows && this.arrows();
   }
@@ -575,10 +605,10 @@ class Lightbox extends Modal {
   /**
    * Removes a content
    *
-   * @param {eCompo} content A compo
+   * @param {Compo} content A compo
    */
   remove(content) {
-    this.gallery.remove(content.$);
+    this.$.remove(content.$);
 
     this.options.arrows && this.arrows();
   }
@@ -613,7 +643,7 @@ class Lightbox extends Modal {
    * Steps based on language text direction [i18n]
    *
    * @param {Event} evt An Event
-   * @param {int} step Step to: previous = -1, next = 1
+   * @param {number} step Step to: previous = -1, next = 1
    */
   route(evt, step) {
     step = this.dir == 'rtl' ? ! (step > 0) : step > 0;
@@ -624,7 +654,10 @@ class Lightbox extends Modal {
   /**
    * Moves to previous or next slide
    *
-   * @param {int} step Step to: previous = -1, next = 1
+   * @emits #options.onStep
+   * @emits #options.onSlide
+   *
+   * @param {number} step Step to: previous = -1, next = 1
    */
   slide(step) {
     const {options: opts, stepper, contents} = this;
@@ -635,6 +668,13 @@ class Lightbox extends Modal {
     let {index, current} = this;
     let adjacent = current;
 
+    /**
+     * @event #options.onStep
+     * @type {function}
+     * @param {object} this
+     * @param {Compo} current
+     * @param {number} step
+     */
     opts.onStep.call(this, this, current, step);
 
     if (contents.length == 0)
@@ -668,6 +708,14 @@ class Lightbox extends Modal {
     adjacent.render('inner');
     adjacent.$.append(adjacent.inner);
 
+    /**
+     * @event #options.onSlide
+     * @type {function}
+     * @param {object} this
+     * @param {Compo} current
+     * @param {number} step
+     * @param {?Compo} adjacent
+     */
     opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
 
     step != 0 && current.$.remove(current.inner);
@@ -681,7 +729,7 @@ class Lightbox extends Modal {
   /**
    * Arrows navigation controller
    *
-   * @param {int} stepper Allow steps: 0 = both, next = -1, previous = 1
+   * @param {number} stepper Allow steps: 0 = both, next = -1, previous = 1
    */
   arrows(stepper) {
     const {options: opts, nav} = this;
@@ -708,6 +756,8 @@ class Lightbox extends Modal {
   /**
    * Caption text controller
    *
+   * @emits #options.onCaption
+   *
    * @param {string} text Text content
    */
   caption(text) {
@@ -715,7 +765,15 @@ class Lightbox extends Modal {
 
     captions.$.empty();
 
-    if (opts.onCaption(this, this, current, text))
+    /**
+     * @event #options.onCaption
+     * @type {function}
+     * @param {object} this
+     * @param {Compo} current
+     * @param {string} text
+     * @returns {boolean} Discard caption
+     */
+    if (opts.onCaption.call(this, this, current, text))
       return;
 
     if (! text) {
@@ -728,7 +786,7 @@ class Lightbox extends Modal {
           text = this.getAttr(ref, 'title');
         } else if (current.type == 'image') {
           const img = this.selector('img', ref);
-          text = img.alt;
+          if (img) text = img.alt;
         }
       }
     }
@@ -744,14 +802,13 @@ class Lightbox extends Modal {
   }
 
   /**
-   * Arrow navigation inner
+   * Arrow buttons
    */
-  navt() {
+  buttons() {
     const {options: opts, nav} = this;
     const {icons, locale} = opts;
-    const compo = nav.$;
 
-    compo.empty();
+    nav.$.empty();
 
     for (let i = 0; i < 2; i++) {
       const prev = 'prev', next = 'next';
@@ -771,7 +828,7 @@ class Lightbox extends Modal {
         button.append(icon);
       }
 
-      compo.append(button);
+      nav.$.append(button);
     }
   }
 
@@ -781,7 +838,7 @@ class Lightbox extends Modal {
    * @see TouchEvent
    * @see MouseEvent
    *
-   * @todo
+   * @mixin
    * @return {object}
    */
   pointers() {
@@ -793,6 +850,11 @@ class Lightbox extends Modal {
     let y = 0;
 
     return {
+      /**
+       * Hit event handler
+       *
+       * @param {Event} evt
+       */
       hit(evt) {
         const h = evt.changedTouches;
         const s = h ? h[0] : evt;
@@ -800,6 +862,11 @@ class Lightbox extends Modal {
         x = s.screenX;
         y = s.screenY;
       },
+      /**
+       * Drop event handler
+       *
+       * @param {Event} evt
+       */
       drop(evt) {
         const h = evt.changedTouches;
         const s = h ? h[0] : evt;
@@ -822,11 +889,14 @@ class Lightbox extends Modal {
         }
 
         if (rx > ry) {
-          console.log('swipe', evt, xx >= 0 ? -1 : 1);
-
           self.route(evt, xx >= 0 ? -1 : 1);
         }
       },
+      /**
+       * Nullish event handler
+       *
+       * @param {Event} evt
+       */
       nil(evt) {
         y = x = t = 0;
       }
@@ -842,6 +912,10 @@ class Lightbox extends Modal {
     super.keyboard(evt);
 
     switch (evt.keyCode) {
+      case 37:
+      case 39:
+        this.event().prevent(evt);
+
       // Left
       case 37: this.route(evt, -1); break;
       // Right

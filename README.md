@@ -46,7 +46,8 @@ const lightbox = new ensemble.Lightbox(
     contents: [
       {
         type: "image",
-        src: "image.png"
+        src: "image.png",
+        alt: "Image"
       },
       {
         type: "iframe",
