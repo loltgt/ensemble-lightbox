@@ -2,9 +2,9 @@
 
 ensemble.Lightbox JavaScript class, based on ensemble.Modal and ensemble from loltgt
 
-This lightbox modal component supports: image, video, audio, iframe, JS and inline content, PDF.
+This lightbox dialog component supports: image, video, audio, iframe, JS and inline content, PDF.
 
-It has a slider, built-in modal dialog and swipe gesture navigation.
+It has a slider, built-in HTMLDialogElement and swipe gesture navigation.
 
 It comes with options and hooks to customize.
 
@@ -46,7 +46,8 @@ const lightbox = new ensemble.Lightbox(
     contents: [
       {
         type: "image",
-        src: "image.png"
+        src: "image.png",
+        alt: "Image"
       },
       {
         type: "iframe",

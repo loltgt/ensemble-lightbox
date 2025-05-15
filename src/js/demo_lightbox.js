@@ -14,12 +14,12 @@ function ready() {
   u.innerText = ' Allow remote contents';
   m.type = 'checkbox';
   m.id = 'allow-remote';
-  m.checked = m.ariaChecked = true;
+  m.checked = true;
   o.id = 'options';
   o.readOnly = true;
   o.rows = 19;
   o.cols = 34;
-  o.dir = 'rtl';
+  o.dir = 'ltr';
   o.ariaLabel = 'Displays option "contents" object';
 
   u.prepend(m);
@@ -55,7 +55,6 @@ function ready() {
       contents: m.checked ? contents : contents.slice(4)
     });
 
-    m.ariaChecked = m.checked;
     r.addEventListener('click', lightbox.open);
     out();
   }

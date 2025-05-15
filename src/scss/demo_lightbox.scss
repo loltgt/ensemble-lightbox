@@ -6,7 +6,7 @@
  * @license MIT License
  */
 
- @use "sass:string";
+@use "sass:string";
 
 @import "demo_common";
 @import "demo_button";
@@ -115,10 +115,16 @@ textarea {
   min-height: 8rem;
   color: #000;
   background: #e9e9e9;
-}
-.modal .inline-content {
-  min-width: 50vh;
-  min-height: 25vh;
+
+  .modal & {
+    min-width: 100vmin;
+    min-height: 50vh;
+  }
+  .modal-window & {
+    width: 100%;
+    height: 100%;
+    background: string.unquote("transparent");
+  }
 }
 
 main {
