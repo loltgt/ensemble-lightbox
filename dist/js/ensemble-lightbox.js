@@ -12,30 +12,22 @@
 
 
   
-  class locale {
-
+  const l10n = new Proxy({}, {
     
-    constructor(lang) {
-      if (typeof locale[lang] == 'object') {
-        return locale[lang];
-      } else {
-        return locale[0];
-      }
+    get(self, marker) {
+      return self.lang && self[self.lang][marker] || marker;
     }
-
-    
-    static defaults() {
-      return Object.fromEntries(['ETAGN', 'EPROP', 'EMTAG', 'EOPTS', 'EELEM', 'EMETH', 'DOM'].map(a => [a, a]));
-    }
-  }
-  
-  const l10n = locale.defaults();
+  });
 
   
 
 
 
-  const REJECTED_TAGS$1 = 'html|head|body|meta|link|style|script';
+  
+  const REJECTED_TAGS = 'html|head|body|meta|link|style|script';
+
+  
+  const DENIED_PROPS = 'attributes|classList|innerHTML|outerHTML|nodeName|nodeType';
 
 
   
@@ -88,7 +80,7 @@
 
     
     fill(node) {
-      if (! node instanceof Element || RegExp(REJECTED_TAGS$1, 'i').test(node.tagName) || RegExp(`(<(${REJECTED_TAGS$1})*>)`, 'i').test(node.innerHTML)) {
+      if (! node instanceof Element || RegExp(REJECTED_TAGS, 'i').test(node.tagName) || RegExp(`(<(${REJECTED_TAGS})*>)`, 'i').test(node.innerHTML)) {
         throw new Error(l10n.EMTAG);
       }
 
@@ -125,11 +117,6 @@
 
   
 
-
-
- 
-  const REJECTED_TAGS = 'html|head|body|meta|link|style|script';
-  const DENIED_PROPS ='attributes|classList|innerHTML|outerHTML|nodeName|nodeType';
 
 
   
@@ -518,18 +505,28 @@
         if (type == 'symbol' || type == 'shape') {
           const svgNsUri = 'http://www.w3.org/2000/svg';
           const svg = new Compo(ns, 'svg', false, false, null, svgNsUri);
-          const node = new Compo(ns, type == 'symbol' ? 'use' : 'path', false, false, null, svgNsUri);
+          const tag = type == 'symbol' ? 'use' : 'path';
+          const node = new Compo(ns, tag, false, false, null, svgNsUri);
 
           if (viewBox) {
-            svg.setAttr('viewBox', viewBox);
+            const m = viewBox.match(/\d+ \d+ (\d+) (\d+)/);
+
+            if (m) {
+              Object.entries({
+                width: m[1],
+                height: m[2],
+                viewBox: m[0]
+              }).forEach(a => svg.setAttr(a[0], a[1]));
+            }
           }
-          if (type == 'symbol') {
+
+          if (tag == 'use') {
             node.setAttr('href', `#${hash}`);
           } else {
             node.setAttr('d', path);
           }
-          svg.append(node);
 
+          svg.append(node);
           icon.append(svg);
         } else if (type == 'svg' && this.origin()) {
           const img = this.compo(ns, 'img', false, {
@@ -639,7 +636,7 @@
 
     
     init(target) {
-      const {options: opts, element: el} = this;
+      const el = this.element;
       if (! el) return;
 
       this.layout();
@@ -649,13 +646,13 @@
       this.stage.append(content);
 
       
-      opts.onInit.call(this, this, target);
+      this.options.onInit.call(this, this, target);
     }
 
     
     resume(target) {
       
-      opts.onResume.call(this, this, target);
+      this.options.onResume.call(this, this, target);
     }
 
     
@@ -673,6 +670,7 @@
           data.onclick && typeof data.onclick == 'function' && data.onclick.apply(this, arguments);
         }
       });
+      const body = this.modal.body = this.compo(false, 'body');
       const stage = this.stage = this.compo(false, 'stage');
       const nav = this.nav = this.data(true);
 
@@ -689,24 +687,27 @@
         const {icon: ref, viewBox: v} = closeParams;
         const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? path, v ?? viewBox);
 
+        const svg = icon.first;
+        svg.setAttr('stroke', 'currentColor');
+        svg.setAttr('stroke-width', '2px');
+
         close.append(icon);
       }
 
-      modal.append(stage);
+      body.append(stage);
+      body.append(close);
+      modal.append(body);
 
       if (opts.window) {
-        modal.classList.add(opts.ns + '-window');
-        stage.append(close);
-      } else {
-        modal.append(close);
+        modal.classList.add(`${opts.ns}-window`);
       }
       if (opts.backdrop) {
-        modal.classList.add(opts.ns + '-backdrop');
+        modal.classList.add(`${opts.ns}-backdrop`);
         data.onclick = this.backdrop;
       }
 
       if (opts.effects) {
-        modal.classList.add(opts.ns + '-effects');
+        modal.classList.add(`${opts.ns}-effects`);
       }
 
       this.root = this.selector(opts.root);
@@ -862,41 +863,11 @@
     backdrop(evt) {
       this.event().prevent(evt);
 
+      const opts = this.options;
       const target = evt.target;
-      const parent = target.parentElement;
-      const ns = this.options.ns;
-      let regex = new RegExp(ns + '-content');
+      const regex = new RegExp(`${opts.ns}-backdrop`);
 
-      if (regex.test(target.className) || regex.test(parent.className)) {
-        this.close(evt);
-      }
-
-      regex = new RegExp(ns + '-object');
-
-      if (! regex.test(target.className))
-        return;
-    
-     
-      const inner = target.firstElementChild;
-      const inner_w = inner.offsetWidth;
-      const inner_h = inner.offsetHeight;
-      const target_t = target.offsetTop;
-      const target_l = target.offsetLeft;
-      const target_w = target.offsetWidth;
-      const target_h = target.offsetHeight;
-
-      const x = evt.x;
-      const y = evt.y;
-
-      const crop_t = (target_h - inner_h) / 2;
-      const crop_l = (target_w - inner_w) / 2;
-      const crop_b = crop_t + inner_h;
-      const crop_r = crop_l + inner_w;
-
-      if (
-        (y > target_t || x > target_l || x < target_w || y < target_h) &&
-        (y < crop_t || x > crop_r || y > crop_b || x < crop_l)
-      ) {
+      if (regex.test(target.className) || regex.test(target.parentElement.className)) {
         this.close(evt);
       }
     }
@@ -905,10 +876,7 @@
     keyboard(evt) {
       switch (evt.keyCode) {
        
-        case 27:
-          this.event().prevent(evt);
-          this.close(evt);
-        break;
+        case 27: this.event().prevent(evt), this.close(evt); break;
       }
     }
 
@@ -936,11 +904,11 @@
         backdrop: false,
         touch: true,
         mouse: true,
-        arrows: true,
-        captions: true,
+        controls: true,
+        caption: true,
         infinite: true,
         autoDiscover: true,
-        autoHide: 'arrows',
+        autoHide: 'controls',
         overlay: false,
         checkOrigin: true,
         prev: {
@@ -1005,15 +973,13 @@
           this.current = content;
         }
 
-        this.add(content);
+        this.$.append(content.$);
       }
 
-      this.current = this.current || contents[0];
-      this.index = this.index || 0;
-      this.slide(0);
+      this.step(0);
 
-      opts.arrows && this.arrows();
-      opts.captions && this.caption();
+      opts.controls && this.controls();
+      opts.caption && this.caption();
 
       
       opts.onInit.call(this, this, target);
@@ -1032,15 +998,13 @@
         }
       }
 
-      this.current = this.current || contents[0];
-      this.index = this.index || 0;
-      this.slide(0);
+      this.step(0);
 
-      if (opts.arrows && this.dir != this.bidi)
-        this.buttons();
+      if (opts.controls && this.dir != this.bidi)
+        this.arrows();
 
-      opts.arrows && this.arrows();
-      opts.captions && this.caption();
+      opts.controls && this.controls();
+      opts.caption && this.caption();
 
       
       opts.onResume.call(this, this, target);
@@ -1050,7 +1014,7 @@
     layout() {
       super.layout();
 
-      const modal = this.modal.$;
+      const {$: modal, body} = this.modal;
       const {stage, options: opts, nav} = this;
 
       this.bidi = this.dir;
@@ -1079,17 +1043,17 @@
       const content = this.$ = this.compo(false, 'content', props);
       stage.append(content);
 
-      if (opts.arrows) {
+      if (opts.controls) {
         nav.$ = this.compo('nav', 'nav');
-        this.buttons();
+        this.arrows();
       }
 
-      if (opts.captions) {
-        var captions = this.captions = this.data(true);
-        captions.$ = this.compo(false, 'captions');
+      if (opts.caption) {
+        var heading = this.heading = this.data(true);
+        heading.$ = this.compo(false, 'caption');
       }
 
-      const regexp = /captions|arrows/;
+      const regexp = /caption|controls/;
 
       if (opts.overlay) {
         const overlay = opts.overlay.toString().match(regexp);
@@ -1108,13 +1072,8 @@
         }
       }
 
-      if (opts.window) {
-        opts.arrows && stage.append(nav.$);
-        opts.captions && stage.append(captions.$);
-      } else {
-        opts.arrows && modal.append(nav.$);
-        opts.captions && modal.append(captions.$);
-      }
+      opts.controls && body.append(nav.$);
+      opts.caption && body.append(heading.$);
     }
 
     
@@ -1127,7 +1086,7 @@
 
       if (typeof source == 'string') {
         data = this.data({source});
-      } else {
+      } else if (this.data().isData(source)) {
         data = source;
       }
 
@@ -1200,6 +1159,24 @@
       data.ref = data.ref || null;
       data.type = mtype;
       data.src = srcref;
+
+      const ref = data.ref;
+      let alt, title, caption = data.caption;
+
+      if (opts.selector && ref) {
+        if (this.hasAttr(ref, 'title')) {
+          title = this.getAttr(ref, 'title');
+        } else if (data.type == 'image') {
+          const img = this.selector('img', ref);
+          if (img) alt = img.alt;
+        }
+      }
+
+      data.caption = caption || title || alt;
+
+      if (data.type == 'image') {
+        data.alt = alt || caption.replace(/\n/g, ' ');
+      }
 
       
       opts.onContent.call(this, this, data);
@@ -1346,9 +1323,6 @@
               data.type = 'element';
               data.node = obj;
             }
-            if (dc.caption) {
-              data.caption = dc.caption;
-            }
 
             a.push(data);
           } else if (typeof obj == 'string') {
@@ -1365,24 +1339,48 @@
     }
 
     
-    add(content) {
-      this.$.append(content.$);
+    modus(item) {
+      if (! this.data().isData(item)) {
+        const obj = this.prepare([item]);
+        item = this.content(obj[0]);
+      }
 
-      this.options.arrows && this.arrows();
+      return item.$ ? item : null;
     }
 
     
-    remove(content) {
-      this.$.remove(content.$);
+    add(item) {
+      const content = modus(item);
 
-      this.options.arrows && this.arrows();
+      if (content) {
+        this.contents.push(content);
+        this.$.append(content.$);
+      }
+
+      this.options.controls && this.controls();
+    }
+
+    
+    remove(item) {
+      const content = modus(item);
+
+      if (content) {
+        const index = this.contents.indexOf(content);
+
+        if (index != -1) {
+          this.contents.splice(index, 1);
+          this.$.remove(content.$);
+        }
+      }
+
+      this.options.controls && this.controls();
     }
 
     
     prev(evt) {
       this.event().prevent(evt);
 
-      this.slide(-1);
+      this.step(-1);
 
       this.event().blur(evt);
     }
@@ -1391,75 +1389,89 @@
     next(evt) {
       this.event().prevent(evt);
 
-      this.slide(1);
+      this.step(1);
 
       this.event().blur(evt);
     }
 
     
-    route(evt, step) {
-      step = this.dir == 'rtl' ? ! (step > 0) : step > 0;
+    route(evt, point) {
+      point = this.dir == 'rtl' ? ! (point > 0) : point > 0;
 
-      this[step ? 'next' : 'prev'](evt);
+      this[point ? 'next' : 'prev'](evt);
     }
 
     
-    slide(step) {
-      const {options: opts, stepper, contents} = this;
-
-      if (! opts.infinite && stepper != 0 && stepper === step)
-        return;
+    step(point) {
+      const {options: opts, abs, contents} = this;
+    
+      if (point === 0) {
+        this.current = this.current || contents[0];
+        this.index = this.index || 0;
+      }
 
       let {index, current} = this;
-      let adjacent = current;
+      const len = contents.length;
 
       
-      opts.onStep.call(this, this, current, step);
-
-      if (contents.length == 0)
-        return;
-
-      if (step != 0) {
-        const len = contents.length;
-        const sibling = step === -1 ? contents[index - 1] : contents[index + 1];
-        const child = step === -1 ? contents[len - 1] : contents[0];
-
-        adjacent = !! sibling ? sibling : child;
-        index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len - 1 : 0);
-
-        current.unload('inner');
+      if (! opts.onStep.call(this, this, current, point)) {
+        if (len == 0)
+          return;
+        if (! opts.infinite && abs != 0 && abs === point)
+          return;
       }
 
-      if (! opts.infinite) {
-        let stepper = 0;
-
-        if (! adjacent.$.previous) {
-          stepper = -1;
-        } else if (! adjacent.$.next) {
-          stepper = 1;
-        }
-
-        this.stepper = parseInt(stepper);
-
-        opts.arrows && this.arrows(stepper);
+      if (point != 0) {
+        const sibling = point === -1 ? contents[index - 1] : contents[index + 1];
+        index = !! sibling ? (point === -1 ? index - 1 : index + 1) : (point === -1 ? len - 1 : 0);
       }
 
-      adjacent.render('inner');
-      adjacent.$.append(adjacent.inner);
-
-      
-      opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
-
-      step != 0 && current.$.remove(current.inner);
-
-      this.index = index;
-      this.current = contents[index];
-
-      opts.captions && this.caption();
+      this.slide(index);
     }
 
     
-    arrows(stepper) {
+    slide(index) {
+      const {options: opts, contents} = this;
+
+      const len = contents.length;
+      let current = this.current;
+      let content = contents[index];
+      let move = current != content;
+
+      if (len == 0 || ! content)
+        return;
+
+      move && current.unload('inner');
+
+      if (! opts.infinite) {
+        let abs = 0;
+
+        if (! content.$.previous)
+          abs = -1;
+        else if (! content.$.next)
+          abs = 1;
+
+        this.abs = abs;
+
+        opts.controls && this.controls(abs);
+      }
+
+      content.render('inner');
+      content.$.append(content.inner);
+
+      
+      opts.onSlide.call(this, this, content, current);
+
+      move && current.$.remove(current.inner);
+
+      this.index = index;
+      this.current = content;
+
+      opts.caption && this.caption();
+    }
+
+    
+    controls(abs) {
       const {options: opts, nav} = this;
 
       if (this.contents.length > 1) {
@@ -1470,10 +1482,10 @@
         return;
       }
 
-      if (! opts.infinite && typeof stepper != 'undefined') {
+      if (! opts.infinite && typeof abs != 'undefined') {
         const {prev, next} = nav;
 
-        switch (stepper) {
+        switch (abs) {
           case -1: prev.disable(), next.enable(); break;
           case 1: prev.enable(), next.disable(); break;
           default: prev.enable(), next.enable();
@@ -1483,41 +1495,29 @@
 
     
     caption(text) {
-      const {options: opts, captions, current} = this;
+      const {options: opts, heading, current} = this;
 
-      captions.$.empty();
+      heading.$.empty();
+
+      text = text ?? current.caption;
 
       
-      if (opts.onCaption.call(this, this, current, text))
+      if (opts.onCaption.call(this, this, current, text)) {
         return;
-
-      if (! text) {
-        if (current.caption) {
-          text = current.caption;
-        } else if (opts.selector) {
-          const {ref} = current;
-
-          if (this.hasAttr(ref, 'title')) {
-            text = this.getAttr(ref, 'title');
-          } else if (current.type == 'image') {
-            const img = this.selector('img', ref);
-            if (img) text = img.alt;
-          }
-        }
       }
 
       if (text) {
-        text = text.split(/\n{2}/);
+        text = text.split(/\n{2}/g);
 
         for (const line of text) {
           const caption = this.compo('p', false, {innerText: line});
-          captions.$.append(caption);
+          heading.$.append(caption);
         }
       }
     }
 
     
-    buttons() {
+    arrows() {
       const {options: opts, nav} = this;
       const {icons, locale} = opts;
 
@@ -1537,7 +1537,11 @@
           const {type, prefix, src, viewBox} = icons;
           const {icon: ref, viewBox: v} = opts[ipath];
           const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? ipath, v ?? viewBox);
-    
+
+          const svg = icon.first;
+          svg.setAttr('stroke', 'currentColor');
+          svg.setAttr('stroke-width', '2px');
+
           button.append(icon);
         }
 
@@ -1600,15 +1604,13 @@
     keyboard(evt) {
       super.keyboard(evt);
 
-      switch (evt.keyCode) {
-        case 37:
-        case 39:
-          this.event().prevent(evt);
+      const p = () => this.event().prevent(evt);
 
+      switch (evt.keyCode) {
        
-        case 37: this.route(evt, -1); break;
+        case 37: p(), this.route(evt, -1); break;
        
-        case 39: this.route(evt, 1); break;
+        case 39: p(), this.route(evt, 1); break;
       }
 
       if (this.options.autoHide) {

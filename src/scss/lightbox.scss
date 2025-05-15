@@ -13,9 +13,25 @@
 
 
 .modal-lightbox {
-  color: $ensemble-modal_lightbox_color;
-  background: $ensemble-modal_lightbox_background;
-  z-index: $ensemble-modal_lightbox_zindex;
+  color: $ensemble-modal-lightbox_color;
+  background: $ensemble-modal-lightbox_background;
+  z-index: $ensemble-modal-lightbox_zindex;
+}
+
+.modal-lightbox {
+  .modal-backdrop {
+    background: $ensemble-modal-lightbox_backdrop_color;
+  }
+
+  &.modal-window .modal-body {
+    width: $ensemble-modal-lightbox_window_width;
+    height: $ensemble-modal-lightbox_window_height;
+    background: $ensemble-modal-lightbox_window_background;
+  }
+  .modal-stage {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .modal-object {
@@ -121,26 +137,26 @@
   inset: 0;
 }
 }
-.modal-captions {
+.modal-caption {
   bottom: 0;
   width: 100%;
-  min-height: $ensemble-modal_captions_height;
-  padding: $ensemble-modal_captions_padding;
-  font-family: $ensemble-modal_captions_font-family;
-  font-size: $ensemble-modal_captions_font-size;
-  font-weight: $ensemble-modal_captions_font-weight;
-  line-height: $ensemble-modal_captions_line-height;
-  text-align: $ensemble-modal_captions_text-align;
-  color: $ensemble-modal_captions_color;
-  background: $ensemble-modal_captions_background;
+  min-height: $ensemble-modal_caption_height;
+  padding: $ensemble-modal_caption_padding;
+  font-family: $ensemble-modal_caption_font-family;
+  font-size: $ensemble-modal_caption_font-size;
+  font-weight: $ensemble-modal_caption_font-weight;
+  line-height: $ensemble-modal_caption_line-height;
+  text-align: $ensemble-modal_caption_text-align;
+  color: $ensemble-modal_caption_color;
+  background: $ensemble-modal_caption_background;
 }
-.modal-captions:empty {
+.modal-caption:empty {
   display: none;
 }
-.modal-captions p {
-  margin: $ensemble-modal_captions_paragraph_margin;
+.modal-caption p {
+  margin: $ensemble-modal_caption_paragraph_margin;
 }
-.modal-captions p:last-child {
+.modal-caption p:last-child {
   margin: 0;
 }
 
@@ -184,35 +200,35 @@
   -webkit-transition: $ensemble-modal_effects_object_transition;
 }
 }
-.modal.modal-effects .modal-captions:empty {
+.modal.modal-effects .modal-caption:empty {
   opacity: 0 !important;
 }
-.modal.modal-effects .modal-captions {
+.modal.modal-effects .modal-caption {
   display: block !important;
   opacity: 1;
-  transition: $ensemble-modal_effects_captions_transition;
+  transition: $ensemble-modal_effects_caption_transition;
 @if $ensemble_compat {
-  -webkit-transition: $ensemble-modal_effects_captions_transition;
+  -webkit-transition: $ensemble-modal_effects_caption_transition;
 }
 }
 
 .modal.modal-autohide .modal-nav,
-.modal.modal-autohide .modal-captions {
+.modal.modal-autohide .modal-caption {
   opacity: $ensemble-modal_effects_controls_autohide_visible_opacity;
   animation: $ensemble-modal_effects_controls_autohide_animation-fill-mode $ensemble-modal_effects_controls_autohide_animation-duration ensemble-modal_autoHide $ensemble-modal_effects_controls_autohide_animation-timing-function $ensemble-modal_effects_controls_autohide_hidden_animation-delay;
 }
 .modal.modal-autohide:active .modal-nav,
-.modal.modal-autohide:active .modal-captions {
+.modal.modal-autohide:active .modal-caption {
   animation: none;
 }
-.modal.modal-autohide-arrows .modal-captions,
-.modal.modal-autohide-captions .modal-nav {
+.modal.modal-autohide-controls .modal-caption,
+.modal.modal-autohide-caption .modal-nav {
   opacity: $ensemble-modal_effects_controls_autohide_visible_opacity !important;
   animation: none !important;
 }
 @media (hover: hover) {
   .modal.modal-autohide:hover .modal-nav,
-  .modal.modal-autohide:hover .modal-captions {
+  .modal.modal-autohide:hover .modal-caption {
     animation-delay: $ensemble-modal_effects_controls_autohide_visible_animation-delay;
   }
 }
@@ -223,11 +239,11 @@
 }
 
 .modal.modal-overlay .modal-nav,
-.modal.modal-overlay .modal-captions {
+.modal.modal-overlay .modal-caption {
   position: absolute;
 }
-.modal.modal-overlay-arrows .modal-captions,
-.modal.modal-overlay-captions .modal-nav {
+.modal.modal-overlay-controls .modal-caption,
+.modal.modal-overlay-caption .modal-nav {
 @if $ensemble_compat {
   position: relative;
 }
@@ -275,7 +291,7 @@
     max-height: 100%;
   }
 
-  .modal-captions {
-    font-size: $ensemble-modal_lg__captions_font-size;
+  .modal-caption {
+    font-size: $ensemble-modal_lg__caption_font-size;
   }
 }

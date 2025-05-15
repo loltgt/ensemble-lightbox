@@ -45,12 +45,12 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {boolean} [options.keyboard=true] Allow keyboard navigation
  * @param {boolean} [options.touch=true] Allow touch navigation
  * @param {boolean} [options.mouse=true] Allow mouse navigation
- * @param {boolean} [options.arrows=true] Allow arrows on screen navigation
- * @param {boolean} [options.captions=true] Allow captions
+ * @param {boolean} [options.controls=true] Allow controls on screen navigation
+ * @param {boolean} [options.caption=true] Allow content caption
  * @param {boolean} [options.infinite=true] Allow carousel alike loop navigation
  * @param {boolean} [options.autoDiscover=true] Allow auto-discover type of contents
- * @param {boolean|string} [options.autoHide='arrows'] Allow auto-hide "arrows" or "captions", "true" for both
- * @param {boolean|string} [options.overlay=false] Allow overlay for "arrows" or "captions", "true" for both
+ * @param {boolean|string} [options.autoHide='controls'] Allow auto-hide "controls" or "caption", "true" for both
+ * @param {boolean|string} [options.overlay=false] Allow overlay for "controls" or "caption", "true" for both
  * @param {boolean} [options.checkOrigin=true] Allow check origin for URLs
  * @param {object} [options.close] Parameters for close button
  * @param {function} [options.close.trigger] Function trigger, default to self.close
@@ -102,11 +102,11 @@ class Lightbox extends Modal {
       backdrop: false,
       touch: true,
       mouse: true,
-      arrows: true,
-      captions: true,
+      controls: true,
+      caption: true,
       infinite: true,
       autoDiscover: true,
-      autoHide: 'arrows',
+      autoHide: 'controls',
       overlay: false,
       checkOrigin: true,
       prev: {
@@ -183,15 +183,13 @@ class Lightbox extends Modal {
         this.current = content;
       }
 
-      this.add(content);
+      this.$.append(content.$);
     }
 
-    this.current = this.current || contents[0];
-    this.index = this.index || 0;
-    this.slide(0);
+    this.step(0);
 
-    opts.arrows && this.arrows();
-    opts.captions && this.caption();
+    opts.controls && this.controls();
+    opts.caption && this.caption();
 
     /**
      * @event #options.onInit
@@ -221,15 +219,13 @@ class Lightbox extends Modal {
       }
     }
 
-    this.current = this.current || contents[0];
-    this.index = this.index || 0;
-    this.slide(0);
+    this.step(0);
 
-    if (opts.arrows && this.dir != this.bidi)
-      this.buttons();
+    if (opts.controls && this.dir != this.bidi)
+      this.arrows();
 
-    opts.arrows && this.arrows();
-    opts.captions && this.caption();
+    opts.controls && this.controls();
+    opts.caption && this.caption();
 
     /**
      * @event #options.onResume
@@ -246,7 +242,7 @@ class Lightbox extends Modal {
   layout() {
     super.layout();
 
-    const modal = this.modal.$;
+    const {$: modal, body} = this.modal;
     const {stage, options: opts, nav} = this;
 
     this.bidi = this.dir;
@@ -275,17 +271,17 @@ class Lightbox extends Modal {
     const content = this.$ = this.compo(false, 'content', props);
     stage.append(content);
 
-    if (opts.arrows) {
+    if (opts.controls) {
       nav.$ = this.compo('nav', 'nav');
-      this.buttons();
+      this.arrows();
     }
 
-    if (opts.captions) {
-      var captions = this.captions = this.data(true);
-      captions.$ = this.compo(false, 'captions');
+    if (opts.caption) {
+      var heading = this.heading = this.data(true);
+      heading.$ = this.compo(false, 'caption');
     }
 
-    const regexp = /captions|arrows/;
+    const regexp = /caption|controls/;
 
     if (opts.overlay) {
       const overlay = opts.overlay.toString().match(regexp);
@@ -304,13 +300,8 @@ class Lightbox extends Modal {
       }
     }
 
-    if (opts.window) {
-      opts.arrows && stage.append(nav.$);
-      opts.captions && stage.append(captions.$);
-    } else {
-      opts.arrows && modal.append(nav.$);
-      opts.captions && modal.append(captions.$);
-    }
+    opts.controls && body.append(nav.$);
+    opts.caption && body.append(heading.$);
   }
 
   /**
@@ -319,7 +310,7 @@ class Lightbox extends Modal {
    * @emits #options.onContent
    *
    * @param {mixed} source A URL or an ensemble Data object
-   * @param {boolean} clone Clones the whole Element node tree
+   * @param {boolean} clone Clones inner nodes
    * @returns {Data} data An ensemble Data instance
    */
   content(source, clone) {
@@ -331,7 +322,7 @@ class Lightbox extends Modal {
 
     if (typeof source == 'string') {
       data = this.data({source});
-    } else {
+    } else if (this.data().isData(source)) {
       data = source;
     }
 
@@ -404,6 +395,24 @@ class Lightbox extends Modal {
     data.ref = data.ref || null;
     data.type = mtype;
     data.src = srcref;
+
+    const ref = data.ref;
+    let alt, title, caption = data.caption;
+
+    if (opts.selector && ref) {
+      if (this.hasAttr(ref, 'title')) {
+        title = this.getAttr(ref, 'title');
+      } else if (data.type == 'image') {
+        const img = this.selector('img', ref);
+        if (img) alt = img.alt;
+      }
+    }
+
+    data.caption = caption || title || alt;
+
+    if (data.type == 'image') {
+      data.alt = alt || caption.replace(/\n/g, ' ');
+    }
 
     /**
      * @event #options.onContent
@@ -573,9 +582,6 @@ class Lightbox extends Modal {
             data.type = 'element';
             data.node = obj;
           }
-          if (dc.caption) {
-            data.caption = dc.caption;
-          }
 
           a.push(data);
         } else if (typeof obj == 'string') {
@@ -592,49 +598,78 @@ class Lightbox extends Modal {
   }
 
   /**
+   * Transforms item to content
+   *
+   * @param {object} item Content object
+   * @returns {Data} An ensemble Data instance
+   */
+  modus(item) {
+    if (! this.data().isData(item)) {
+      const obj = this.prepare([item]);
+      item = this.content(obj[0]);
+    }
+
+    return item.$ ? item : null;
+  }
+
+  /**
    * Adds a content
    *
-   * @param {Compo} content A compo
+   * @param {object} item Content object
    */
-  add(content) {
-    this.$.append(content.$);
+  add(item) {
+    const content = modus(item);
 
-    this.options.arrows && this.arrows();
+    if (content) {
+      this.contents.push(content);
+      this.$.append(content.$);
+    }
+
+    this.options.controls && this.controls();
   }
 
   /**
    * Removes a content
    *
-   * @param {Compo} content A compo
+   * @param {object} item Content object
    */
-  remove(content) {
-    this.$.remove(content.$);
+  remove(item) {
+    const content = modus(item);
 
-    this.options.arrows && this.arrows();
+    if (content) {
+      const index = this.contents.indexOf(content);
+
+      if (index != -1) {
+        this.contents.splice(index, 1);
+        this.$.remove(content.$);
+      }
+    }
+
+    this.options.controls && this.controls();
   }
 
   /**
-   * Steps to previous slide
+   * Steps to previous content
    *
    * @param {Event} evt An Event
    */
   prev(evt) {
     this.event().prevent(evt);
 
-    this.slide(-1);
+    this.step(-1);
 
     this.event().blur(evt);
   }
 
   /**
-   * Steps to next slide
+   * Steps to next content
    *
    * @param {Event} evt An Event
    */
   next(evt) {
     this.event().prevent(evt);
 
-    this.slide(1);
+    this.step(1);
 
     this.event().blur(evt);
   }
@@ -643,95 +678,114 @@ class Lightbox extends Modal {
    * Steps based on language text direction [i18n]
    *
    * @param {Event} evt An Event
-   * @param {number} step Step to: previous = -1, next = 1
+   * @param {number} point Step to: previous = -1, next = 1
    */
-  route(evt, step) {
-    step = this.dir == 'rtl' ? ! (step > 0) : step > 0;
+  route(evt, point) {
+    point = this.dir == 'rtl' ? ! (point > 0) : point > 0;
 
-    this[step ? 'next' : 'prev'](evt);
+    this[point ? 'next' : 'prev'](evt);
   }
 
   /**
-   * Moves to previous or next slide
+   * Steps to previous or next content
    *
    * @emits #options.onStep
-   * @emits #options.onSlide
    *
-   * @param {number} step Step to: previous = -1, next = 1
+   * @param {number} point Step to: previous = -1, next = 1, null = 0
    */
-  slide(step) {
-    const {options: opts, stepper, contents} = this;
-
-    if (! opts.infinite && stepper != 0 && stepper === step)
-      return;
+  step(point) {
+    const {options: opts, abs, contents} = this;
+  
+    if (point === 0) {
+      this.current = this.current || contents[0];
+      this.index = this.index || 0;
+    }
 
     let {index, current} = this;
-    let adjacent = current;
+    const len = contents.length;
 
     /**
      * @event #options.onStep
      * @type {function}
      * @param {object} this
-     * @param {Compo} current
-     * @param {number} step
+     * @param {Data} current
+     * @param {number} point
+     * @returns {boolean} Force move
      */
-    opts.onStep.call(this, this, current, step);
+    if (! opts.onStep.call(this, this, current, point)) {
+      if (len == 0)
+        return;
+      if (! opts.infinite && abs != 0 && abs === point)
+        return;
+    }
 
-    if (contents.length == 0)
+    if (point != 0) {
+      const sibling = point === -1 ? contents[index - 1] : contents[index + 1];
+      index = !! sibling ? (point === -1 ? index - 1 : index + 1) : (point === -1 ? len - 1 : 0);
+    }
+
+    this.slide(index);
+  }
+
+  /**
+   * Slides to index content
+   *
+   * @emits #options.onSlide
+   *
+   * @param {number} index Slide to index
+   */
+  slide(index) {
+    const {options: opts, contents} = this;
+
+    const len = contents.length;
+    let current = this.current;
+    let content = contents[index];
+    let move = current != content;
+
+    if (len == 0 || ! content)
       return;
 
-    if (step != 0) {
-      const len = contents.length;
-      const sibling = step === -1 ? contents[index - 1] : contents[index + 1];
-      const child = step === -1 ? contents[len - 1] : contents[0];
-
-      adjacent = !! sibling ? sibling : child;
-      index = !! sibling ? (step === -1 ? index - 1 : index + 1) : (step === -1 ? len - 1 : 0);
-
-      current.unload('inner');
-    }
+    move && current.unload('inner');
 
     if (! opts.infinite) {
-      let stepper = 0;
+      let abs = 0;
 
-      if (! adjacent.$.previous) {
-        stepper = -1;
-      } else if (! adjacent.$.next) {
-        stepper = 1;
-      }
+      if (! content.$.previous)
+        abs = -1;
+      else if (! content.$.next)
+        abs = 1;
 
-      this.stepper = parseInt(stepper);
+      this.abs = abs;
 
-      opts.arrows && this.arrows(stepper);
+      opts.controls && this.controls(abs);
     }
 
-    adjacent.render('inner');
-    adjacent.$.append(adjacent.inner);
+    content.render('inner');
+    content.$.append(content.inner);
 
     /**
      * @event #options.onSlide
      * @type {function}
      * @param {object} this
-     * @param {Compo} current
-     * @param {number} step
-     * @param {?Compo} adjacent
+     * @param {Data} content
+     * @param {Data} current
      */
-    opts.onSlide.call(this, this, current, step, (current.$ != adjacent.$ ? adjacent.$ : null));
+    opts.onSlide.call(this, this, content, current);
 
-    step != 0 && current.$.remove(current.inner);
+    move && current.$.remove(current.inner);
 
     this.index = index;
-    this.current = contents[index];
+    this.current = content;
 
-    opts.captions && this.caption();
+    opts.caption && this.caption();
   }
 
   /**
-   * Arrows navigation controller
+   * Controls navigation controller
    *
-   * @param {number} stepper Allow steps: 0 = both, next = -1, previous = 1
+   * @param {number} abs Can step: 0 = both, next = -1, previous = 1
    */
-  arrows(stepper) {
+  controls(abs) {
     const {options: opts, nav} = this;
 
     if (this.contents.length > 1) {
@@ -742,10 +796,10 @@ class Lightbox extends Modal {
       return;
     }
 
-    if (! opts.infinite && typeof stepper != 'undefined') {
+    if (! opts.infinite && typeof abs != 'undefined') {
       const {prev, next} = nav;
 
-      switch (stepper) {
+      switch (abs) {
         case -1: prev.disable(), next.enable(); break;
         case 1: prev.enable(), next.disable(); break;
         default: prev.enable(), next.enable();
@@ -761,42 +815,30 @@ class Lightbox extends Modal {
    * @param {string} text Text content
    */
   caption(text) {
-    const {options: opts, captions, current} = this;
+    const {options: opts, heading, current} = this;
 
-    captions.$.empty();
+    heading.$.empty();
+
+    text = text ?? current.caption;
 
     /**
      * @event #options.onCaption
      * @type {function}
      * @param {object} this
-     * @param {Compo} current
+     * @param {Data} current
      * @param {string} text
      * @returns {boolean} Discard caption
      */
-    if (opts.onCaption.call(this, this, current, text))
+    if (opts.onCaption.call(this, this, current, text)) {
       return;
-
-    if (! text) {
-      if (current.caption) {
-        text = current.caption;
-      } else if (opts.selector) {
-        const {ref} = current;
-
-        if (this.hasAttr(ref, 'title')) {
-          text = this.getAttr(ref, 'title');
-        } else if (current.type == 'image') {
-          const img = this.selector('img', ref);
-          if (img) text = img.alt;
-        }
-      }
     }
 
     if (text) {
-      text = text.split(/\n{2}/);
+      text = text.split(/\n{2}/g);
 
       for (const line of text) {
         const caption = this.compo('p', false, {innerText: line});
-        captions.$.append(caption);
+        heading.$.append(caption);
       }
     }
   }
@@ -804,7 +846,7 @@ class Lightbox extends Modal {
   /**
    * Arrow buttons
    */
-  buttons() {
+  arrows() {
     const {options: opts, nav} = this;
     const {icons, locale} = opts;
 
@@ -824,7 +866,11 @@ class Lightbox extends Modal {
         const {type, prefix, src, viewBox} = icons;
         const {icon: ref, viewBox: v} = opts[ipath];
         const icon = this.icon(type, type == 'font' ? ref : path, prefix, src ?? ref, ref ?? ipath, v ?? viewBox);
-  
+
+        const svg = icon.first;
+        svg.setAttr('stroke', 'currentColor');
+        svg.setAttr('stroke-width', '2px');
+
         button.append(icon);
       }
 
@@ -911,15 +957,13 @@ class Lightbox extends Modal {
   keyboard(evt) {
     super.keyboard(evt);
 
-    switch (evt.keyCode) {
-      case 37:
-      case 39:
-        this.event().prevent(evt);
+    const p = () => this.event().prevent(evt);
 
+    switch (evt.keyCode) {
       // Left
-      case 37: this.route(evt, -1); break;
+      case 37: p(), this.route(evt, -1); break;
       // Right
-      case 39: this.route(evt, 1); break;
+      case 39: p(), this.route(evt, 1); break;
     }
 
     if (this.options.autoHide) {
