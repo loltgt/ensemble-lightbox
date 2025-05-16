@@ -14,8 +14,8 @@
   "bugs": "https://github.com/loltgt/ensemble-lightbox/issues",
   "homepage": "https://github.com/loltgt/ensemble-lightbox",
   "devDependencies": {
-    "@loltgt/ensemble--demo": "github:loltgt/ensemble#demo",
-    "@loltgt/ensemble-modal--demo": "github:loltgt/ensemble-modal#demo",
+    "ensemble--demo": "github:loltgt/ensemble#demo",
+    "ensemble-modal--demo": "github:loltgt/ensemble-modal#demo",
     "gulp": "^5.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^6.0.0",

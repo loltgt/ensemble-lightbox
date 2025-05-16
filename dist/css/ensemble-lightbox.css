@@ -342,6 +342,7 @@
   animation: none;
 }
 
+.modal.modal-autohide-lock .modal-nav,
 .modal.modal-autohide-controls .modal-caption,
 .modal.modal-autohide-caption .modal-nav {
   opacity: 1 !important;
