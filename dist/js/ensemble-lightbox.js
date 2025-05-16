@@ -717,19 +717,19 @@
     
     content(node, clone) {
       const opts = this.options;
-      const compo = this.compo(false, 'content');
+      const content = this.compo(false, 'content');
 
       clone = clone ?? opts.clone;
       let inner = clone ? this.cloneNode(node, true) : node;
 
       
-      opts.onContent.call(this, this, compo, inner);
+      opts.onContent.call(this, this, content, inner);
 
       if (inner) {
-        compo.fill(inner);
+        content.fill(inner);
       }
 
-      return compo;
+      return content;
     }
 
     
@@ -861,8 +861,6 @@
 
     
     backdrop(evt) {
-      this.event().prevent(evt);
-
       const opts = this.options;
       const target = evt.target;
       const regex = new RegExp(`${opts.ns}-backdrop`);
@@ -876,7 +874,7 @@
     keyboard(evt) {
       switch (evt.keyCode) {
        
-        case 27: this.event().prevent(evt), this.close(evt); break;
+        case 27: this.close(evt); break;
       }
     }
 
@@ -978,9 +976,6 @@
 
       this.step(0);
 
-      opts.controls && this.controls();
-      opts.caption && this.caption();
-
       
       opts.onInit.call(this, this, target);
     }
@@ -998,13 +993,10 @@
         }
       }
 
-      this.step(0);
-
       if (opts.controls && this.dir != this.bidi)
         this.arrows();
 
-      opts.controls && this.controls();
-      opts.caption && this.caption();
+      this.step(0);
 
       
       opts.onResume.call(this, this, target);
@@ -1403,18 +1395,18 @@
 
     
     step(point) {
-      const {options: opts, abs, contents} = this;
+      const {options: opts, contents} = this;
     
       if (point === 0) {
         this.current = this.current || contents[0];
         this.index = this.index || 0;
       }
 
-      let {index, current} = this;
+      let {index, current, abs} = this;
       const len = contents.length;
 
       
-      if (! opts.onStep.call(this, this, current, point)) {
+      if (! opts.onStep.call(this, this, point, current)) {
         if (len == 0)
           return;
         if (! opts.infinite && abs != 0 && abs === point)
@@ -1434,14 +1426,14 @@
       const {options: opts, contents} = this;
 
       const len = contents.length;
-      let current = this.current;
+      let previous = this.current;
       let content = contents[index];
-      let move = current != content;
+      let move = previous != content;
 
       if (len == 0 || ! content)
         return;
 
-      move && current.unload('inner');
+      move && previous.unload('inner');
 
       if (! opts.infinite) {
         let abs = 0;
@@ -1460,14 +1452,35 @@
       content.$.append(content.inner);
 
       
-      opts.onSlide.call(this, this, content, current);
+      opts.onSlide.call(this, this, content, previous);
 
-      move && current.$.remove(current.inner);
+      move && previous.$.remove(previous.inner);
 
       this.index = index;
       this.current = content;
 
       opts.caption && this.caption();
+      opts.autoHide && this.autoHide(content);
+    }
+
+    
+    autoHide(content) {
+      const modal = this.modal.$;
+      let cssName = 'modal-autohide';
+
+      if (content && this.data().isData(content)) {
+        if (/true|controls/.test(this.options.autoHide)) {
+          cssName = `${cssName}-lock`;
+
+          if (content.type == 'iframe')
+            modal.classList.add(cssName);
+          else if (modal.classList.contains(cssName))
+            modal.classList.remove(cssName);
+        }
+      } else {
+        modal.classList.remove(cssName);
+        this.delay(() => modal.classList.add(cssName));
+      }
     }
 
     
@@ -1604,21 +1617,14 @@
     keyboard(evt) {
       super.keyboard(evt);
 
-      const p = () => this.event().prevent(evt);
-
       switch (evt.keyCode) {
        
-        case 37: p(), this.route(evt, -1); break;
+        case 37: this.route(evt, -1); break;
        
-        case 39: p(), this.route(evt, 1); break;
+        case 39: this.route(evt, 1); break;
       }
 
-      if (this.options.autoHide) {
-        const modal = this.modal.$;
-        const cssName = 'modal-autohide';
-        modal.classList.remove(cssName);
-        this.delay(() => modal.classList.add(cssName));
-      }
+      this.options.autoHide && this.autoHide();
     }
 
     

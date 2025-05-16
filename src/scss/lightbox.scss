@@ -221,6 +221,7 @@
 .modal.modal-autohide:active .modal-caption {
   animation: none;
 }
+.modal.modal-autohide-lock .modal-nav,
 .modal.modal-autohide-controls .modal-caption,
 .modal.modal-autohide-caption .modal-nav {
   opacity: $ensemble-modal_effects_controls_autohide_visible_opacity !important;

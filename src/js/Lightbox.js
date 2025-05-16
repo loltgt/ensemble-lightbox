@@ -15,7 +15,7 @@
  * @exports Modal
  */
 
-import { Modal } from "@loltgt/ensemble-modal";
+import { Modal } from 'ensemble-modal';
 
 
 /**
@@ -25,7 +25,7 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @extends Modal
  * @inheritdoc
  * @param {Element} [element] An optional Element node for lightbox grouping
- * @param {object} options Options object
+ * @param {object} [options] Options object
  * @param {string} [options.ns=modal] The namespace for lightbox
  * @param {string} [options.root=body] A root Element node
  * @param {string[]} [options.className=[modal, modal-lightbox]] The component CSS class name
@@ -49,8 +49,8 @@ import { Modal } from "@loltgt/ensemble-modal";
  * @param {boolean} [options.caption=true] Allow content caption
  * @param {boolean} [options.infinite=true] Allow carousel alike loop navigation
  * @param {boolean} [options.autoDiscover=true] Allow auto-discover type of contents
- * @param {boolean|string} [options.autoHide='controls'] Allow auto-hide "controls" or "caption", "true" for both
- * @param {boolean|string} [options.overlay=false] Allow overlay for "controls" or "caption", "true" for both
+ * @param {boolean|string} [options.autoHide='controls'] Allow auto-hide "controls" or "caption", (true) for both
+ * @param {boolean|string} [options.overlay=false] Allow overlay for "controls" or "caption", (true) for both
  * @param {boolean} [options.checkOrigin=true] Allow check origin for URLs
  * @param {object} [options.close] Parameters for close button
  * @param {function} [options.close.trigger] Function trigger, default to self.close
@@ -188,14 +188,12 @@ class Lightbox extends Modal {
 
     this.step(0);
 
-    opts.controls && this.controls();
-    opts.caption && this.caption();
-
     /**
+     * options.onInit callback
      * @event #options.onInit
      * @type {function}
-     * @param {object} this
-     * @param {Element} target
+     * @param {object} this This component object
+     * @param {Element} target The element is invoking
      */
     opts.onInit.call(this, this, target);
   }
@@ -219,19 +217,17 @@ class Lightbox extends Modal {
       }
     }
 
-    this.step(0);
-
     if (opts.controls && this.dir != this.bidi)
       this.arrows();
 
-    opts.controls && this.controls();
-    opts.caption && this.caption();
+    this.step(0);
 
     /**
+     * options.onResume callback
      * @event #options.onResume
      * @type {function}
-     * @param {object} this
-     * @param {Element} target
+     * @param {object} this This component object
+     * @param {Element} target The element is invoking
      */
     opts.onResume.call(this, this, target);
   }
@@ -309,9 +305,9 @@ class Lightbox extends Modal {
    *
    * @emits #options.onContent
    *
-   * @param {mixed} source A URL or an ensemble Data object
+   * @param {mixed} source A URL or data object
    * @param {boolean} clone Clones inner nodes
-   * @returns {Data} data An ensemble Data instance
+   * @returns {Data} data Content data object
    */
   content(source, clone) {
     const opts = this.options;
@@ -415,10 +411,11 @@ class Lightbox extends Modal {
     }
 
     /**
+     * options.onContent callback
      * @event #options.onContent
      * @type {function}
-     * @param {object} this
-     * @param {mixed} data
+     * @param {object} this This component object
+     * @param {Data} data Content data object
      */
     opts.onContent.call(this, this, data);
 
@@ -446,17 +443,17 @@ class Lightbox extends Modal {
   }
 
   /**
-   * Detects and handles inner contents
+   * Handles inner contents
    *
-   * @param {Data} data An ensemble Data instance
-   * @param {ref} [data.ref] A reference to Element found by selector
-   * @param {type} [data.type] Content type
-   * @param {src} [data.src] Content source URL
-   * @param {Element} [data.node] A valid Element node that will be pushed
-   * @param {function} [data.load] load callback, on content load
-   * @param {function} [data.unload] unload callback, on content unload
-   * @param {Compo} [data.compo] The main compo of content
-   * @param {mixed} [data.inner] The inner content, Object placeholder or compo
+   * @param {Data} data Content data object
+   * @param {ref} data.ref A reference to Element found by selector
+   * @param {type} data.type Content type
+   * @param {src} data.src Content source URL
+   * @param {Element} data.node A valid Element node that will be pushed
+   * @param {function} data.load load callback, on content load
+   * @param {function} data.unload unload callback, on content unload
+   * @param {Compo} data.compo The main compo of content
+   * @param {mixed} data.inner The inner content, placeholder or compo
    * @returns {object} props Properties for compo
    */
   inner(data) {
@@ -540,8 +537,8 @@ class Lightbox extends Modal {
   /**
    * Prepares contents object
    *
-   * @param {object} contents Passed object of contents
-   * @returns {array} Array of contents
+   * @param {object} contents Contents object
+   * @returns {array} Array of content objects
    */
   prepare(contents) {
     const a = [];
@@ -601,7 +598,7 @@ class Lightbox extends Modal {
    * Transforms item to content
    *
    * @param {object} item Content object
-   * @returns {Data} An ensemble Data instance
+   * @returns {Data} Content data object
    */
   modus(item) {
     if (! this.data().isData(item)) {
@@ -694,25 +691,26 @@ class Lightbox extends Modal {
    * @param {number} point Step to: previous = -1, next = 1, null = 0
    */
   step(point) {
-    const {options: opts, abs, contents} = this;
+    const {options: opts, contents} = this;
   
     if (point === 0) {
       this.current = this.current || contents[0];
       this.index = this.index || 0;
     }
 
-    let {index, current} = this;
+    let {index, current, abs} = this;
     const len = contents.length;
 
     /**
+     * options.onStep callback
      * @event #options.onStep
      * @type {function}
-     * @param {object} this
-     * @param {Data} current
-     * @param {number} point
+     * @param {object} this This component object
+     * @param {number} point Step to: previous = -1, next = 1, null = 0
+     * @param {Data} current Current content
      * @returns {boolean} Force move
      */
-    if (! opts.onStep.call(this, this, current, point)) {
+    if (! opts.onStep.call(this, this, point, current)) {
       if (len == 0)
         return;
       if (! opts.infinite && abs != 0 && abs === point)
@@ -738,14 +736,14 @@ class Lightbox extends Modal {
     const {options: opts, contents} = this;
 
     const len = contents.length;
-    let current = this.current;
+    let previous = this.current;
     let content = contents[index];
-    let move = current != content;
+    let move = previous != content;
 
     if (len == 0 || ! content)
       return;
 
-    move && current.unload('inner');
+    move && previous.unload('inner');
 
     if (! opts.infinite) {
       let abs = 0;
@@ -764,20 +762,49 @@ class Lightbox extends Modal {
     content.$.append(content.inner);
 
     /**
+     * options.onSlide callback
      * @event #options.onSlide
      * @type {function}
-     * @param {object} this
-     * @param {Data} content
-     * @param {Data} current
+     * @param {object} this This component object
+     * @param {Data} content New current content
+     * @param {Data} previous Previous content
      */
-    opts.onSlide.call(this, this, content, current);
+    opts.onSlide.call(this, this, content, previous);
 
-    move && current.$.remove(current.inner);
+    move && previous.$.remove(previous.inner);
 
     this.index = index;
     this.current = content;
 
     opts.caption && this.caption();
+    opts.autoHide && this.autoHide(content);
+  }
+
+  /**
+   * Auto-hide controller
+   *
+   * When called with "content" argument, locks auto-hide for type = iframe;
+   * without "content" argument, kicks auto-hide to regain focus.
+   *
+   * @param {Data} [content] Content data object
+   */
+  autoHide(content) {
+    const modal = this.modal.$;
+    let cssName = 'modal-autohide';
+
+    if (content && this.data().isData(content)) {
+      if (/true|controls/.test(this.options.autoHide)) {
+        cssName = `${cssName}-lock`;
+
+        if (content.type == 'iframe')
+          modal.classList.add(cssName);
+        else if (modal.classList.contains(cssName))
+          modal.classList.remove(cssName);
+      }
+    } else {
+      modal.classList.remove(cssName);
+      this.delay(() => modal.classList.add(cssName));
+    }
   }
 
   /**
@@ -812,7 +839,7 @@ class Lightbox extends Modal {
    *
    * @emits #options.onCaption
    *
-   * @param {string} text Text content
+   * @param {string} text Text for caption
    */
   caption(text) {
     const {options: opts, heading, current} = this;
@@ -822,11 +849,12 @@ class Lightbox extends Modal {
     text = text ?? current.caption;
 
     /**
+     * options.onCaption callback
      * @event #options.onCaption
      * @type {function}
-     * @param {object} this
-     * @param {Data} current
-     * @param {string} text
+     * @param {object} this This component object
+     * @param {Data} current Current content
+     * @param {string} text Text for caption
      * @returns {boolean} Discard caption
      */
     if (opts.onCaption.call(this, this, current, text)) {
@@ -957,21 +985,14 @@ class Lightbox extends Modal {
   keyboard(evt) {
     super.keyboard(evt);
 
-    const p = () => this.event().prevent(evt);
-
     switch (evt.keyCode) {
       // Left
-      case 37: p(), this.route(evt, -1); break;
+      case 37: this.route(evt, -1); break;
       // Right
-      case 39: p(), this.route(evt, 1); break;
+      case 39: this.route(evt, 1); break;
     }
 
-    if (this.options.autoHide) {
-      const modal = this.modal.$;
-      const cssName = 'modal-autohide';
-      modal.classList.remove(cssName);
-      this.delay(() => modal.classList.add(cssName));
-    }
+    this.options.autoHide && this.autoHide();
   }
 
   /**
