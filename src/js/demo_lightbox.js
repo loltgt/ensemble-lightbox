@@ -1,3 +1,11 @@
+/**
+ * ensemble demo Lightbox
+ *
+ * @version 0.5.0
+ * @copyright Copyright (C) Leonardo Laureti
+ * @license MIT License
+ */
+
 function ready() {
   if (document.readyState != 'interactive')
     return;
