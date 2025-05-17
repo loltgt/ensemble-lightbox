@@ -1,6 +1,6 @@
 /*!
  * ensemble Lightbox
- * @version 0.4.0
+ * @version 0.5.0
  * @link https://github.com/loltgt/ensemble-lightbox
  * @copyright Copyright (C) Leonardo Laureti
  * @license MIT License
@@ -11,13 +11,18 @@
   
 
 
+
   
-  const l10n = new Proxy({}, {
+  const $locale = (l10n) => new Proxy(l10n, {
     
     get(self, marker) {
       return self.lang && self[self.lang][marker] || marker;
     }
   });
+
+
+  
+  const l10n = $locale({});
 
   
 
@@ -1096,15 +1101,15 @@
       let mfn;
 
       if (opts.autoDiscover && srcref && ! mtype) {
-        if (/\.jpg|\.jpeg|\.png|\.apng|\.gif|\.webp|\.avif|\.bmp|\.svg$/i.test(srcref)) {
+        if (/\.(jpg|jpeg|png|apng|gif|webp|avif|bmp|svg)$/i.test(srcref)) {
           mtype = 'image';
         } else if (/\.pdf$/.test(srcref)) {
           mtype = 'pdf';
-        } else if (/\.mp4|\.webm|\.ogv|\.m4v|\.hevc|\.ivf|\.obu|\.ismv|\.mkv$/i.test(srcref)) {
+        } else if (/\.(mp4|webm|ogv|m4v|hevc|ivf|obu|ismv|mkv)$/i.test(srcref)) {
           mtype = 'video';
-        } else if (/\.mp3|\.opus|\.ogg|\.m4a|\.aac|\.flac|\.wav|\.weba|\.mka$/i.test(srcref)) {
+        } else if (/\.(mp3|opus|ogg|m4a|aac|flac|wav|weba|mka)$/i.test(srcref)) {
           mtype = 'audio';
-        } else if (/^data:image\/jpeg|png|apng|gif|webp|avif|bmp|svg\+xml/.test(srcref)) {
+        } else if (/^data:image\/(jpeg|png|apng|gif|webp|avif|bmp|svg\+xml)/.test(srcref)) {
           bsrc = true;
           mtype = 'image';
         }
